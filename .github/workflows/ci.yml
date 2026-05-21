@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.10, 3.11]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run formatters/linters
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          # check formatting with black and isort (diff-only)
+          black --check .
+          isort --check-only .
+          flake8
+
+      - name: Run type checks and tests with coverage
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          mypy --ignore-missing-imports .
+          coverage run -m pytest -q
+          coverage report -m
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml || coverage.txt || .
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run syntax check (py_compile)
+        run: |
+          python -m py_compile $(git ls-files '*.py')
+
+      - name: Run tests
+        run: |
+          pytest -q

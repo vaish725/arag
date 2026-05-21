@@ -1,0 +1,18 @@
+# Ignore local environment file with secrets
+.env
+
+# Python cache and env
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+
+# Data/artifacts (FAISS indexes, trained models, etc.)
+data/
+
+ARAG_IMPLEMENTATION.MD
+

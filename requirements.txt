@@ -1,0 +1,17 @@
+pytest==7.4.2
+rank_bm25==0.2.2
+numpy==1.26.4
+black==24.3.0
+flake8==6.1.0
+isort==5.13.0
+mypy==1.10.0
+coverage==7.5.0
+python-dotenv==1.0.0
+faiss-cpu==1.8.5
+# Optional (only install if you want embeddings/FAISS):
+# rank_bm25>=0.2
+# faiss-cpu>=1.8
+streamlit
+prometheus_client
+# llama-index>=0.8
+# openai>=1.0

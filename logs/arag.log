@@ -1,0 +1,207 @@
+2026-05-20 12:43:00,109 INFO faiss.loader Loading faiss.
+2026-05-20 12:43:00,131 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:43:01,062 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:43:02,811 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 12:46:30,560 INFO faiss.loader Loading faiss.
+2026-05-20 12:46:30,580 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:46:31,637 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:46:32,683 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 12:47:22,837 INFO faiss.loader Loading faiss.
+2026-05-20 12:47:22,855 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:47:24,245 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:47:25,257 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 12:51:26,497 INFO faiss.loader Loading faiss.
+2026-05-20 12:51:26,505 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:51:27,395 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:51:27,799 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:51:28,262 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:51:28,577 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:56:26,422 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:56:26,947 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:56:27,201 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:56:28,803 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:57:27,048 INFO faiss.loader Loading faiss.
+2026-05-20 12:57:27,055 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:57:27,807 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:57:28,807 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 12:57:31,332 INFO faiss.loader Loading faiss.
+2026-05-20 12:57:31,338 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:57:31,798 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:57:32,620 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 12:58:06,238 INFO faiss.loader Loading faiss.
+2026-05-20 12:58:06,245 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:58:06,928 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:58:08,530 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 12:58:47,834 INFO faiss.loader Loading faiss.
+2026-05-20 12:58:47,841 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:58:48,540 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:58:49,913 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 12:59:30,459 INFO faiss.loader Loading faiss.
+2026-05-20 12:59:30,465 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 12:59:30,938 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:59:31,441 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 12:59:32,692 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:00:15,212 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:00:15,490 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:00:17,767 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:01:29,207 INFO faiss.loader Loading faiss.
+2026-05-20 13:01:29,214 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:01:29,938 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:01:30,367 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:01:32,322 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:01:33,380 INFO faiss.loader Loading faiss.
+2026-05-20 13:01:33,386 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:01:33,967 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:01:34,321 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:01:35,893 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:02:04,951 INFO faiss.loader Loading faiss.
+2026-05-20 13:02:04,956 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:02:05,439 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:02:05,776 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:02:06,017 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:02:07,958 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:04:05,019 INFO faiss.loader Loading faiss.
+2026-05-20 13:04:05,025 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:04:05,854 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:04:06,106 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:04:06,361 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:04:46,483 INFO faiss.loader Loading faiss.
+2026-05-20 13:04:46,490 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:04:47,070 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:04:47,288 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:04:47,781 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:04:50,774 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:12:25,219 INFO faiss.loader Loading faiss.
+2026-05-20 13:12:25,226 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:12:26,117 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:12:26,699 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:12:26,972 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:12:28,917 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:19:53,918 INFO faiss.loader Loading faiss.
+2026-05-20 13:19:53,925 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:19:55,413 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:19:55,705 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:19:56,211 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:19:57,810 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:20:53,248 INFO faiss.loader Loading faiss.
+2026-05-20 13:20:53,255 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 13:20:54,374 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:54,718 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:55,041 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:56,214 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:56,830 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:57,403 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:57,676 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:58,205 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:58,879 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:59,391 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:20:59,901 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:00,229 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:00,496 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:01,028 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:01,540 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:02,034 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:02,564 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:02,804 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 13:21:04,408 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 18:05:49,622 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:50,134 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:51,465 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:52,094 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:52,798 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:53,299 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:53,822 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:54,320 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:54,664 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:55,025 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:55,245 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:55,864 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:56,386 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:57,075 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:57,343 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:58,537 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:05:59,009 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:00,375 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:02,681 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 18:06:13,012 INFO faiss.loader Loading faiss.
+2026-05-20 18:06:13,034 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 18:06:13,779 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:14,214 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:14,867 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:15,403 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:16,451 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:17,114 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:17,372 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:17,787 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:18,208 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:18,574 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:18,841 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:19,243 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:19,509 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:19,831 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:20,164 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:20,505 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:21,129 INFO faiss.loader Loading faiss.
+2026-05-20 18:06:21,135 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 18:06:21,823 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:22,077 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:22,395 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:22,630 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:22,980 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:23,341 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:24,064 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:24,745 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:24,982 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:25,268 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:25,757 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:26,024 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:26,307 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:26,587 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:26,948 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:27,432 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:27,845 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:28,192 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:31,811 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 18:06:40,428 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:40,707 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:40,999 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:41,476 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:41,845 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:42,161 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:42,422 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:43,074 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:43,484 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:43,998 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:44,297 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:44,623 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:44,977 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:45,532 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:46,375 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:46,839 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:47,135 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:48,006 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:49,892 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 18:06:54,992 INFO faiss.loader Loading faiss.
+2026-05-20 18:06:54,999 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 18:06:55,637 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:55,899 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:56,180 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:56,575 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:57,206 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:57,516 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:57,771 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:58,127 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:06:59,189 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:00,997 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 18:07:08,061 INFO faiss.loader Loading faiss.
+2026-05-20 18:07:08,068 INFO faiss.loader Successfully loaded faiss.
+2026-05-20 18:07:08,780 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:09,089 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:09,454 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:09,790 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:10,063 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:10,315 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:10,654 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:10,950 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:11,270 INFO httpx HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 18:07:13,080 INFO httpx HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

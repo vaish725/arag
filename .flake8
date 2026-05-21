@@ -1,0 +1,15 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203
+
+# Some test files and large agent/indexing modules have intentional
+# scaffolding or dynamic imports that trigger false positives; keep
+# flake8 strict for everything else.
+per-file-ignores =
+    tests/*: F401,F841
+    agent_loop.py: F401,F841
+    hierarchical_index_builder.py: F401,F841
+    retrieval_tools.py: F401,F824,F841
+    embedding_backend.py: F401,F811,F841
+    runtime_ops.py: F401
+    evaluate/*: E501
