@@ -93,7 +93,6 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
             "FAISS index not available. Build with --build_faiss or run hierarchical_index_builder.py with embeddings configured."
         )
     assert _faiss_index is not None
-
     try:
         from arag.embedding_backend import get_embedding
 
@@ -101,12 +100,25 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
     except Exception as e:
         raise RuntimeError(f"Failed to obtain embeddings for semantic search: {e}")
 
-    import faiss
-    import numpy as np
+    try:
+        import faiss
+        import numpy as np
 
-    q_vec_arr = np.array(q_vec_raw).astype("float32").reshape(1, -1)
-    faiss.normalize_L2(q_vec_arr)
-    scores, indices = _faiss_index.search(q_vec_arr, k)
+        q_vec_arr = np.array(q_vec_raw).astype("float32").reshape(1, -1)
+        faiss.normalize_L2(q_vec_arr)
+        # Run the FAISS search inside a try/except to catch backend errors
+        try:
+            scores, indices = _faiss_index.search(q_vec_arr, k)
+        except Exception as e:
+            raise RuntimeError(f"FAISS search failed: {e}")
+
+        # Normalize numpy arrays for consistent indexing
+        scores_arr = np.array(scores)
+        indices_arr = np.array(indices)
+    except Exception as e:
+        # Any import/np errors are surfaced as runtime errors
+        raise RuntimeError(f"Error preparing FAISS search: {e}")
+
     out: List[Dict[str, Any]] = []
 
     try:
@@ -119,39 +131,60 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
     max_chunks_with_sentence_snippets = 2
     max_sentences_per_chunk = 3
 
-    for i, idx in enumerate(indices[0]):
-        if idx < 0:
-            continue
-        c = _chunks[idx]
-        snippet = c["text"][:400]
+    # Ensure indices_arr is 2-D: (n_queries, k)
+    if indices_arr.ndim == 1:
+        indices_arr = indices_arr.reshape(1, -1)
+    if scores_arr.ndim == 1:
+        scores_arr = scores_arr.reshape(1, -1)
 
-        try:
-            if get_embeddings is not None and i < max_chunks_with_sentence_snippets:
-                import re
+    num_chunks = len(_chunks)
 
-                sents = [
-                    s.strip()
-                    for s in re.split(r"(?<=[.?!])\s+", c["text"]) if s.strip()
-                ]
-                max_sents = min(max_sentences_per_chunk, len(sents))
-                if max_sents > 0:
-                    sent_batch = sents[:max_sents]
-                    sent_embs = get_embeddings(sent_batch, "text-embedding-3-small")
-                    q_emb = q_vec_arr.reshape(-1)
-                    import numpy as _np
+    for row_idx in range(indices_arr.shape[0]):
+        for col_idx, idx in enumerate(indices_arr[row_idx]):
+            try:
+                idx_int = int(idx)
+            except Exception:
+                # Skip non-integer indices
+                continue
+            if idx_int < 0 or idx_int >= num_chunks:
+                # Out-of-range index, skip
+                continue
 
-                    sent_matrix = _np.array(sent_embs).astype("float32")
-                    sent_norm = sent_matrix / (_np.linalg.norm(sent_matrix, axis=1, keepdims=True) + 1e-10)
-                    q_norm = q_emb / (_np.linalg.norm(q_emb) + 1e-10)
-                    sims = (sent_norm @ q_norm).tolist()
-                    top_idx = sorted(range(len(sims)), key=lambda x: -sims[x])[:3]
-                    matched_sentences = [sent_batch[j] for j in top_idx if sims[j] > 0]
-                    if matched_sentences:
-                        snippet = " ... ".join(matched_sentences)
-        except Exception:
-            pass
+            c = _chunks[idx_int]
+            snippet = c["text"][:400]
 
-        out.append({"chunk_id": c["id"], "text": snippet[:400], "score": float(scores[0][i])})
+            # Optionally refine the snippet by finding the most relevant sentences
+            try:
+                if get_embeddings is not None and col_idx < max_chunks_with_sentence_snippets:
+                    import re
+
+                    sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", c["text"]) if s.strip()]
+                    max_sents = min(max_sentences_per_chunk, len(sents))
+                    if max_sents > 0:
+                        sent_batch = sents[:max_sents]
+                        sent_embs = get_embeddings(sent_batch, "text-embedding-3-small")
+                        q_emb = q_vec_arr.reshape(-1)
+                        import numpy as _np
+
+                        sent_matrix = _np.array(sent_embs).astype("float32")
+                        sent_norm = sent_matrix / (_np.linalg.norm(sent_matrix, axis=1, keepdims=True) + 1e-10)
+                        q_norm = q_emb / (_np.linalg.norm(q_emb) + 1e-10)
+                        sims = (sent_norm @ q_norm).tolist()
+                        top_idx = sorted(range(len(sims)), key=lambda x: -sims[x])[:3]
+                        matched_sentences = [sent_batch[j] for j in top_idx if sims[j] > 0]
+                        if matched_sentences:
+                            snippet = " ... ".join(matched_sentences)
+            except Exception:
+                # If anything fails during refinement, fall back to the chunk snippet
+                pass
+
+            # obtain score safely
+            try:
+                score_val = float(scores_arr[row_idx][col_idx])
+            except Exception:
+                score_val = 0.0
+
+            out.append({"chunk_id": c["id"], "text": snippet[:400], "score": score_val})
 
     return out
 

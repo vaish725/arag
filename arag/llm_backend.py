@@ -41,17 +41,35 @@ def synthesize_answer(
     contexts: List[str],
     model: str | None = None,
     max_tokens: int = 512,
-) -> str:
-    system = (
-        "You are a concise assistant. Answer only using the provided "
-        "contexts. "
-        "If the context doesn't support an answer, respond: 'I don't know "
-        "based on the provided context.'"
-        "\nIMPORTANT: Return output as a JSON object with exactly two fields: "
-        "`answer` (string) and `citations` (list of integers referencing the "
-        "provided contexts, 1-based). Example: {"
-        '"answer": "Short answer.", "citations": [1,3]}'
-    )
+    allow_fallback: bool = False,
+) -> tuple[str, list[int], bool]:
+    # When allow_fallback is True, the assistant is permitted to use external
+    # world knowledge to answer if the provided contexts are insufficient.
+    # If fallback is used the assistant must clearly indicate it used knowledge
+    # outside the provided contexts.
+    if allow_fallback:
+        system = (
+            "You are a concise assistant. First attempt to answer using only "
+            "the provided contexts. If the contexts do not contain the answer, "
+            "you are allowed to use your general world knowledge to answer, but "
+            "you MUST add a short note saying: 'Note: this answer uses external "
+            "knowledge outside the provided contexts.'"
+            "\nIMPORTANT: Return output as a JSON object with exactly two fields: "
+            "`answer` (string) and `citations` (list of integers referencing the "
+            "provided contexts, 1-based). Example: {"
+            '"answer": "Short answer.", "citations": [1,3]}'
+        )
+    else:
+        system = (
+            "You are a concise assistant. Answer only using the provided "
+            "contexts. "
+            "If the context doesn't support an answer, respond: 'I don't know "
+            "based on the provided context.'"
+            "\nIMPORTANT: Return output as a JSON object with exactly two fields: "
+            "`answer` (string) and `citations` (list of integers referencing the "
+            "provided contexts, 1-based). Example: {"
+            '"answer": "Short answer.", "citations": [1,3]}'
+        )
     joined_ctx = "\n\n---\n\n".join(contexts[-6:])
     user = (
         f"CONTEXT:\n{joined_ctx}\n\nQUESTION: {question}\n\n"
@@ -106,9 +124,11 @@ def synthesize_answer(
             if isinstance(parsed, dict) and "answer" in parsed:
                 ans = str(parsed.get("answer", ""))
                 citations = parsed.get("citations", []) or []
-                if citations:
-                    ans = f"{ans} " + " ".join([f"[{i}]" for i in citations])
-                return ans
+                used_fallback = False
+                # If allow_fallback True and the assistant indicated fallback in text, mark it
+                if allow_fallback and "Note: this answer uses external knowledge" in ans:
+                    used_fallback = True
+                return ans, [int(c) for c in citations if isinstance(c, int)], used_fallback
             try:
                 budget.consume_tokens(max_tokens)
             except BudgetExceededError as e:
@@ -120,7 +140,8 @@ def synthesize_answer(
                 inc_token_metric(max_tokens)
             except Exception:
                 pass
-            return str(out or "")
+            # Fall back to returning a plain string answer with no citations
+            return str(out or ""), [], False
         except Exception as e:
             raise RuntimeError(f"OpenAI chat call failed: {e}")
 
@@ -149,9 +170,10 @@ def synthesize_answer(
             if isinstance(parsed, dict) and "answer" in parsed:
                 ans = str(parsed.get("answer", ""))
                 citations = parsed.get("citations", []) or []
-                if citations:
-                    ans = f"{ans} " + " ".join([f"[{i}]" for i in citations])
-                return ans
+                used_fallback = False
+                if allow_fallback and "Note: this answer uses external knowledge" in ans:
+                    used_fallback = True
+                return ans, [int(c) for c in citations if isinstance(c, int)], used_fallback
             try:
                 budget.consume_tokens(max_tokens)
             except BudgetExceededError as e:
@@ -163,7 +185,7 @@ def synthesize_answer(
                 inc_token_metric(max_tokens)
             except Exception:
                 pass
-            return str(out or "")
+            return str(out or ""), [], False
         except Exception as e:
             raise RuntimeError(f"Anthropic call failed: {e}")
 

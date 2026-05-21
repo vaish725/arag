@@ -73,9 +73,26 @@ def run_agent(
             from . import llm_backend
 
             if llm_backend.llm_available():
-                answer = llm_backend.synthesize_answer(
-                    q, contexts, max_tokens=max_tokens
+                # Prefer context-first answers: only allow fallback when there are
+                # no retrieved contexts available.
+                allow_fallback_for_call = allow_fallback and not bool(contexts)
+                res = llm_backend.synthesize_answer(
+                    q, contexts, max_tokens=max_tokens, allow_fallback=allow_fallback_for_call
                 )
+                # synthesize_answer returns (answer, citations_list, used_fallback)
+                if isinstance(res, tuple) and len(res) == 3:
+                    answer_text, citations_list, used_fallback = res
+                    provenance_note = (
+                        "Note: this answer uses external knowledge outside the provided contexts."
+                        if used_fallback
+                        else ""
+                    )
+                    if provenance_note:
+                        answer_text = f"{answer_text} {provenance_note}"
+                    answer = answer_text
+                else:
+                    # Unexpected return format, fall back to raw string
+                    answer = str(res)
             else:
                 answer = "\n\n".join(contexts)
         except Exception:
