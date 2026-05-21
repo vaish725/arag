@@ -124,6 +124,5 @@ tests for any new behavior.
 License
 -------
 
-This repository does not include a license by default. Add a LICENSE file (MIT
-or Apache-2.0 are common choices) before publishing if you want to permit
-reuse.
+This project is licensed under the MIT License. See the `LICENSE` file for
+details and the full license text.
