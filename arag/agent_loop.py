@@ -63,10 +63,12 @@ def run_agent(
     max_steps: int = 10,
     max_tokens: int = 2000,
     allow_fallback: bool = True,
+    enable_director_flow: bool = False,
 ) -> Dict[str, Any]:
     q = question or ""
     local_citations: List[int] = []
-    if re.search(r"\bdirector\b|\bdirected\b", q, re.IGNORECASE):
+    # Only run the specialized director→award two-hop flow if explicitly enabled
+    if enable_director_flow and re.search(r"\bdirector\b|\bdirected\b", q, re.IGNORECASE):
         retrieval = two_hop_director_award_flow(q)
         contexts = [t.get("text", "") for t in retrieval.get("retrieved_texts", [])]
 
@@ -722,6 +724,12 @@ def detect_award_evidence(
         r"received an academy award",
         r"received the academy award",
         r"awarded the academy award",
+        # additional common phrasing
+        r"won (the )?academy award for",
+        r"won (the )?oscar for",
+        r"won (the )?best director",
+        r"academy award for best director",
+        r"won the academy award for best director",
     ]
     patterns_nom = [
         r"nominated for (an |the )?academy award",
@@ -829,6 +837,59 @@ def detect_award_evidence(
         entry = dict(c)
         entry.pop("priority", None)
         evidence.append(entry)
+    # If a person page was present among the entries, do a dedicated
+    # full-text scan of those person-page chunks for strong 'win' phrases
+    # (e.g. "won X Academy Awards", "winner of the Academy Award for ...")
+    # and promote any nomination -> win when found. This helps catch
+    # wins that are listed on person award pages without repeating the
+    # person's full name in the same sentence.
+    try:
+        if person_page_present:
+            for idx, e in enumerate(entries):
+                cid = (e.get("chunk_id") or "").lower()
+                src = (e.get("source") or "").lower()
+                # check if this entry looks like a person page by matching
+                # any of the person_variants or awards indicators
+                is_person_like = False
+                for pv in person_variants:
+                    if pv and (pv in cid or pv in src):
+                        is_person_like = True
+                        break
+                if not is_person_like:
+                    continue
+                raw_text = e.get("text") or ""
+                txt_low = raw_text.lower()
+                # look for win patterns first
+                matched_win = False
+                for p in patterns_win:
+                    if re.search(p, txt_low):
+                        matched_win = True
+                        break
+                if matched_win:
+                    # If a win is found on a person page, prefer it and
+                    # insert as highest-priority evidence (if not already present)
+                    existing = False
+                    for ev in evidence:
+                        if ev.get("chunk_id") == e.get("chunk_id"):
+                            existing = True
+                            # upgrade type to win if it's currently nom
+                            if ev.get("type") != "win":
+                                ev["type"] = "win"
+                                ev.setdefault("citations", [idx + 1])
+                            break
+                    if not existing:
+                        evidence.insert(0, {
+                            "entry_index": idx,
+                            "chunk_id": e.get("chunk_id"),
+                            "source": e.get("source"),
+                            "text": raw_text,
+                            "type": "win",
+                            "pattern": "person_page_fulltext_win_scan",
+                            "citations": [idx + 1],
+                        })
+    except Exception:
+        pass
+
     return evidence
     return evidence
 
@@ -1542,7 +1603,20 @@ if __name__ == "__main__":
         action="store_false",
         help="Do not allow LLM fallback (answer strictly from contexts)",
     )
+    parser.add_argument(
+        "--enable-director-flow",
+        dest="enable_director_flow",
+        action="store_true",
+        help="Enable specialized director->award two-hop flow for demo (default ON in CLI)",
+    )
+    parser.add_argument(
+        "--no-enable-director-flow",
+        dest="enable_director_flow",
+        action="store_false",
+        help="Disable specialized director->award two-hop flow",
+    )
     parser.set_defaults(allow_fallback=True)
+    parser.set_defaults(enable_director_flow=True)
     args = parser.parse_args()
 
     result = run_agent(

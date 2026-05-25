@@ -32,8 +32,15 @@ if st.button("Run"):
             "Allow LLM fallback to external knowledge if corpus lacks answer", value=True
         )
     with st.spinner("Running agent..."):
+        # For the demo UI we enable the director/award flow so sample movie
+        # queries work out-of-the-box. Programmatic callers default to
+        # enable_director_flow=False unless they opt in.
         res = run_agent(
-            question, max_steps=max_steps, max_tokens=max_tokens, allow_fallback=allow_fallback
+            question,
+            max_steps=max_steps,
+            max_tokens=max_tokens,
+            allow_fallback=allow_fallback,
+            enable_director_flow=True,
         )
     st.subheader("Answer")
     st.write(res.get("answer"))
