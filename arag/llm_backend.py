@@ -60,15 +60,23 @@ def synthesize_answer(
             '"answer": "Short answer.", "citations": [1,3]}'
         )
     else:
+        # For context-only mode, encourage the assistant to answer any parts
+        # of the question that are supported by the provided contexts and to
+        # explicitly mark parts that are not supported. This avoids returning
+        # a blanket "I don't know" when contexts do contain partial facts
+        # (e.g. the director's name) but lack evidence for other sub-questions
+        # (e.g. award wins).
         system = (
-            "You are a concise assistant. Answer only using the provided "
-            "contexts. "
-            "If the context doesn't support an answer, respond: 'I don't know "
-            "based on the provided context.'"
-            "\nIMPORTANT: Return output as a JSON object with exactly two fields: "
-            "`answer` (string) and `citations` (list of integers referencing the "
-            "provided contexts, 1-based). Example: {"
-            '"answer": "Short answer.", "citations": [1,3]}'
+            "You are a concise assistant. Use ONLY the provided contexts to "
+            "answer the question. If some parts of the question are supported "
+            "by the contexts, answer those parts and provide the 1-based indices "
+            "of the contexts used in a `citations` list. For any sub-question or "
+            "claim that is NOT supported by the contexts, explicitly state: "
+            "'Unknown based on provided contexts' for that part. Do not use "
+            "external knowledge.\nIMPORTANT: Return output as a JSON object "
+            "with exactly two fields: `answer` (string) and `citations` (list "
+            "of integers referencing the provided contexts, 1-based). Example: "
+            '{"answer": "Director: Scott Derrickson. Unknown based on provided contexts whether he won Academy Awards.", "citations": [1]}'
         )
     joined_ctx = "\n\n---\n\n".join(contexts[-6:])
     user = (

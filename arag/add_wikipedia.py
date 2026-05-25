@@ -37,7 +37,7 @@ def fetch_wikipedia_extract(title: str) -> str:
     raise RuntimeError(f"No extract found for title: {title}")
 
 
-def append_chunks_for_title(title: str, text: str, out_dir: str = "data") -> List[Dict]:
+def append_chunks_for_title(title: str, text: str, out_dir: str = "data", dedupe: bool = True) -> List[Dict]:
     # Import the chunking helper from the index builder
     from arag.hierarchical_index_builder import chunk_text
 
@@ -58,6 +58,15 @@ def append_chunks_for_title(title: str, text: str, out_dir: str = "data") -> Lis
     if os.path.exists(chunks_path):
         with open(chunks_path, "rb") as f:
             chunks = pickle.load(f)
+
+    # Deduplication: if dedupe enabled and the title already exists in the corpus,
+    # do not append again. We check by chunk 'source' field which stores the title.
+    if dedupe:
+        existing_sources = {c.get("source") for c in chunks}
+        if title in existing_sources:
+            print(f"Title '{title}' already present in corpus; skipping append (dedupe=True)")
+            return chunks
+
     chunks.extend(new_chunks)
     with open(chunks_path, "wb") as f:
         pickle.dump(chunks, f)
