@@ -1,3 +1,9 @@
+pytest
+numpy
+requests
+python-dotenv
+rank_bm25
+faiss-cpu
 pytest==7.4.2
 rank_bm25==0.2.2
 numpy==1.26.4
