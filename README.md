@@ -90,6 +90,23 @@ Run tests
 pytest -q
 ```
 
+Rebuild & recommended commands
+------------------------------
+
+After adding new pages or changing the indexing code, rebuild the indexes and the sentence FAISS index (if used):
+
+```bash
+# from repo root
+PYTHONPATH=. python -m arag.hierarchical_index_builder --input data/corpus --build_faiss True --build_sentence_faiss True
+PYTHONPATH=. pytest -q
+```
+
+Run a quick deterministic director->award smoke check:
+
+```bash
+PYTHONPATH=. python -c "from arag import agent_loop as a; print(a.run_agent('Who directed Titanic (1997 film) and did they win any Academy Awards?', allow_fallback=False, enable_director_flow=True))"
+```
+
 Static checks
 
 ```bash

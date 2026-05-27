@@ -35,6 +35,26 @@ def approx_token_count(text: str) -> int:
     return max(1, len(re.findall(r"\w+", text)))
 
 
+def normalize_title(title: str) -> str:
+    """Normalize a work title for chunk lookup and matching.
+
+    - Strip surrounding whitespace
+    - Remove trailing parenthetical qualifiers like '(1997 film)'
+    - Remove trailing "Part N" or "Part II" style suffixes
+    """
+    if not title:
+        return ""
+    t = title.strip()
+    try:
+        # remove trailing parentheticals
+        t = re.sub(r"\s*\(.*?\)\s*$", "", t)
+        # remove trailing 'Part N' or roman numerals
+        t = re.sub(r"\b[Pp]art\s+(?:[IVX]+|\d+)\b", "", t).strip()
+    except Exception:
+        pass
+    return t
+
+
 def _safe_source(cr: Any) -> str:
     if not isinstance(cr, dict):
         return ""
@@ -80,11 +100,16 @@ def run_agent(
             work_hint = None
             # Capture the work title but stop before conjunctions like " and ...",
             # commas, or the end of the sentence so we don't grab trailing clauses
-            m = re.search(r"who directed\s+([A-Za-z0-9'\- ]+?)(?:\s+and\b|,|\?|$)", q, re.IGNORECASE)
+            # Capture the work title more flexibly: allow parentheses and
+            # additional tokens. Use a non-greedy capture up to common
+            # delimiters like ' and', comma, question mark or end of string.
+            # Afterwards strip parenthetical qualifiers such as
+            # '(1997 film)'. This fixes titles like 'Titanic (1997 film)'.
+            m = re.search(r"who directed\s+(.+?)(?:\s+and\b|,|\?|$)", q, re.IGNORECASE)
             if not m:
-                m = re.search(r"director of\s+([A-Za-z0-9'\- ]+?)(?:\s+and\b|,|\?|$)", q, re.IGNORECASE)
+                m = re.search(r"director of\s+(.+?)(?:\s+and\b|,|\?|$)", q, re.IGNORECASE)
             if m:
-                work_hint = m.group(1).strip()
+                work_hint = normalize_title(m.group(1))
 
             if work_hint and not allow_fallback and semantic_search is not None and callable(chunk_read):
                 # If none of the current contexts explicitly include both the
@@ -190,6 +215,29 @@ def run_agent(
                                     break
                     except Exception:
                         pass
+                    # Also try a variant of the work title with trailing 'Part II/Part 2' removed
+                    try:
+                        alt_work = normalize_title(work_hint)
+                        if alt_work and alt_work.lower() != work_hint.lower():
+                            alt_norm = alt_work.replace(" ", "_")
+                            candidates_ids = [alt_norm, f"{alt_norm}_0", f"{alt_norm}_1"]
+                            for pid in candidates_ids:
+                                cr = _call_chunk_read(pid)
+                                if not cr:
+                                    continue
+                                tb = _safe_text(cr)
+                                if not tb:
+                                    continue
+                                if alt_work.lower() in tb.lower() or alt_norm.lower() in (pid or "").lower():
+                                    name_direct = extract_person_name_from_text(tb, work_hint=work_hint)
+                                    if name_direct:
+                                        director = name_direct
+                                        retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": pid, "source": _safe_source(cr), "text": tb})
+                                        contexts.insert(0, tb)
+                                        director_citation = 1
+                                        break
+                    except Exception:
+                        pass
                 # If still not found, scan tool_trace and retrieved_texts for candidate ids
                 if not director and work_hint:
                     try:
@@ -236,6 +284,27 @@ def run_agent(
                                     director = name
                                     director_citation = idx
                                     break
+                    # Final attempt: run a targeted semantic search for the work title
+                    if not director and semantic_search is not None and callable(chunk_read):
+                        try:
+                            sem_res = semantic_search(work_hint, k=6)
+                            retrieval.setdefault("tool_trace", []).append({"tool": "semantic_search", "args": {"query": work_hint, "k": 6}, "raw_results": sem_res})
+                            for r in sem_res:
+                                cid = r.get("chunk_id")
+                                if isinstance(cid, str):
+                                    cr = _call_chunk_read(cid)
+                                    tb = _safe_text(cr)
+                                    if not tb:
+                                        continue
+                                    name = extract_person_name_from_text(tb, work_hint=work_hint)
+                                    if name:
+                                        director = name
+                                        retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": cid, "source": _safe_source(cr), "text": tb})
+                                        contexts.insert(0, tb)
+                                        director_citation = 1
+                                        break
+                        except Exception:
+                            pass
                     else:
                         for idx, entry in enumerate(retrieved, start=1):
                             text = entry.get("text") or entry.get("full_context") or ""
@@ -248,6 +317,29 @@ def run_agent(
                 # Collect award evidence and assemble verdict
                 award_evidence = []
                 try:
+                    # If we found a director, but the current retrieved_texts
+                    # don't include an authoritative person page, try a
+                    # targeted semantic search for the person and promote their
+                    # page so award detection can scan it.
+                    if director and semantic_search is not None and callable(chunk_read):
+                        try:
+                            sem_res = semantic_search(director, k=6)
+                            retrieval.setdefault("tool_trace", []).append({"tool": "semantic_search", "args": {"query": director, "k": 6}, "raw_results": sem_res})
+                            for r in sem_res:
+                                cid = r.get("chunk_id")
+                                if isinstance(cid, str):
+                                    cr = _call_chunk_read(cid)
+                                    tb = _safe_text(cr)
+                                    if not tb:
+                                        continue
+                                    # promote the first likely person page (heuristic)
+                                    src = _safe_source(cr) or ""
+                                    if director.lower().split()[-1] in src.lower() or director.lower() in tb.lower():
+                                        retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": cid, "source": src, "text": tb})
+                                        contexts.insert(0, tb)
+                                        break
+                        except Exception:
+                            pass
                     award_evidence = detect_award_evidence(retrieval.get("retrieved_texts", []), name_hint=director)
                 except Exception:
                     award_evidence = []
