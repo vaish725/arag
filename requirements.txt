@@ -3,7 +3,6 @@ numpy
 requests
 python-dotenv
 rank_bm25
-faiss-cpu==1.14.2
 pytest==7.4.2
 rank_bm25==0.2.2
 numpy==1.26.4
@@ -20,3 +19,4 @@ streamlit
 prometheus_client
 # llama-index>=0.8
 # openai>=1.0
+pytest==7.4.2

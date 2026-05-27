@@ -54,3 +54,39 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml || coverage.txt || .
+
+    test-faiss:
+      runs-on: ubuntu-latest
+      if: github.event_name == 'push' || github.event_name == 'pull_request'
+      env:
+        FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+      strategy:
+        matrix:
+          python-version: [3.11]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: ${{ matrix.python-version }}
+
+        - name: Install FAISS and heavy deps
+          run: |
+            python -m pip install --upgrade pip
+            if [ -f requirements-faiss.txt ]; then pip install -r requirements-faiss.txt; fi
+
+        - name: Run FAISS smoke test
+          env:
+            PYTHONPATH: ${{ github.workspace }}
+          run: |
+            # minimal smoke test to ensure FAISS imports and basic functions
+            python - <<'PY'
+            try:
+                import faiss
+                print('faiss OK')
+            except Exception as e:
+                print('faiss import failed:', e)
+                raise
+            PY
