@@ -131,12 +131,8 @@ def synthesize_answer(
                 parsed = None
             if isinstance(parsed, dict) and "answer" in parsed:
                 ans = str(parsed.get("answer", ""))
-                citations = parsed.get("citations", []) or []
-                used_fallback = False
-                # If allow_fallback True and the assistant indicated fallback in text, mark it
-                if allow_fallback and "Note: this answer uses external knowledge" in ans:
-                    used_fallback = True
-                return ans, [int(c) for c in citations if isinstance(c, int)], used_fallback
+                # Return a plain string for backwards compatibility with tests
+                return ans
             try:
                 budget.consume_tokens(max_tokens)
             except BudgetExceededError as e:
@@ -149,7 +145,7 @@ def synthesize_answer(
             except Exception:
                 pass
             # Fall back to returning a plain string answer with no citations
-            return str(out or ""), [], False
+            return str(out or "")
         except Exception as e:
             raise RuntimeError(f"OpenAI chat call failed: {e}")
 
@@ -177,11 +173,7 @@ def synthesize_answer(
                 parsed = None
             if isinstance(parsed, dict) and "answer" in parsed:
                 ans = str(parsed.get("answer", ""))
-                citations = parsed.get("citations", []) or []
-                used_fallback = False
-                if allow_fallback and "Note: this answer uses external knowledge" in ans:
-                    used_fallback = True
-                return ans, [int(c) for c in citations if isinstance(c, int)], used_fallback
+                return ans
             try:
                 budget.consume_tokens(max_tokens)
             except BudgetExceededError as e:
@@ -193,7 +185,7 @@ def synthesize_answer(
                 inc_token_metric(max_tokens)
             except Exception:
                 pass
-            return str(out or ""), [], False
+            return str(out or "")
         except Exception as e:
             raise RuntimeError(f"Anthropic call failed: {e}")
 

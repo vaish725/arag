@@ -15,8 +15,9 @@ python-dotenv==1.0.0
 # Optional (only install if you want embeddings/FAISS):
 # rank_bm25>=0.2
 # faiss-cpu>=1.8
-streamlit
+# heavy runtime/interactive packages (moved to requirements-optional.txt):
+# streamlit
+# pandas
+# pyarrow
 prometheus_client
-# llama-index>=0.8
-# openai>=1.0
 pytest==7.4.2

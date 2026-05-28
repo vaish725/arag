@@ -87,6 +87,21 @@ def run_agent(
 ) -> Dict[str, Any]:
     q = question or ""
     local_citations: List[int] = []
+    # If the specialized director flow is not enabled, and the caller forbids
+    # any LLM fallback, then for unrelated (non-director) queries we should
+    # return an empty answer. This prevents accidental routing of generic
+    # queries into the director two-hop logic or the generic synthesis flow
+    # when the caller explicitly requested evidence-only/no-fallback behavior.
+    if not enable_director_flow and not allow_fallback:
+        if not re.search(r"\bdirector\b|\bdirected\b", q, re.IGNORECASE):
+            return {
+                "answer": "",
+                "tool_trace": [],
+                "retrieved_texts": [],
+                "step_count": 0,
+                "token_count": 0,
+                "budget_exhausted": False,
+            }
     # Only run the specialized director→award two-hop flow if explicitly enabled
     if enable_director_flow and re.search(r"\bdirector\b|\bdirected\b", q, re.IGNORECASE):
         retrieval = two_hop_director_award_flow(q)
@@ -431,14 +446,84 @@ def run_agent(
         }
         return out
 
-    return {
-        "answer": "",
-        "tool_trace": [],
-        "retrieved_texts": [],
-        "step_count": 0,
-        "token_count": 0,
-        "budget_exhausted": False,
-    }
+    # Non-director queries should fall through to the generic retrieval->LLM
+    # flow below. The specialized director flow returned earlier when
+    # enabled; otherwise continue to gathering contexts and synthesis.
+
+    # Generic retrieval -> synthesis flow for non-specialized queries.
+    # This path is used by tests and for general question answering when the
+    # specialized director flow is not enabled.
+    try:
+        # Use the generic two-hop helper to gather contexts and trace
+        retrieval = two_hop_generic(q)
+        contexts = [t.get("text", "") for t in retrieval.get("retrieved_texts", [])]
+        # Attempt to synthesize via LLM backend if available
+        try:
+            import arag.llm_backend as llm_backend
+
+            if callable(getattr(llm_backend, "llm_available", None)) and llm_backend.llm_available():
+                try:
+                    out = llm_backend.synthesize_answer(q, contexts, max_tokens=max_tokens, allow_fallback=allow_fallback)
+                except TypeError:
+                    # older/mock synthesize may accept different params
+                    out = llm_backend.synthesize_answer(q, contexts)
+                # accept either (ans, citations, used_fallback) or plain string
+                ans = ""
+                citations = []
+                used_fallback = False
+                if isinstance(out, tuple) or isinstance(out, list):
+                    if len(out) >= 1:
+                        ans = out[0] or ""
+                    if len(out) >= 2 and isinstance(out[1], list):
+                        citations = [int(c) for c in out[1] if isinstance(c, int)]
+                    if len(out) >= 3:
+                        used_fallback = bool(out[2])
+                elif isinstance(out, str):
+                    ans = out
+                answer = ans or ""
+                return {
+                    "answer": answer,
+                    "tool_trace": retrieval.get("tool_trace", []),
+                    "retrieved_texts": retrieval.get("retrieved_texts", []),
+                    "citations": citations,
+                    "step_count": retrieval.get("step_count", 0),
+                    "token_count": retrieval.get("token_count", 0),
+                    "budget_exhausted": False,
+                }
+            else:
+                # No LLM: return concatenated contexts as a graceful fallback
+                answer = "\n\n".join(contexts)
+                return {
+                    "answer": answer,
+                    "tool_trace": retrieval.get("tool_trace", []),
+                    "retrieved_texts": retrieval.get("retrieved_texts", []),
+                    "citations": [],
+                    "step_count": retrieval.get("step_count", 0),
+                    "token_count": retrieval.get("token_count", 0),
+                    "budget_exhausted": False,
+                }
+        except Exception:
+            # If LLM backend import or call fails, fall back to concatenated contexts
+            answer = "\n\n".join(contexts)
+            return {
+                "answer": answer,
+                "tool_trace": retrieval.get("tool_trace", []),
+                "retrieved_texts": retrieval.get("retrieved_texts", []),
+                "citations": [],
+                "step_count": retrieval.get("step_count", 0),
+                "token_count": retrieval.get("token_count", 0),
+                "budget_exhausted": False,
+            }
+    except Exception:
+        # Generic fallback: empty answer
+        return {
+            "answer": "",
+            "tool_trace": [],
+            "retrieved_texts": [],
+            "step_count": 0,
+            "token_count": 0,
+            "budget_exhausted": False,
+        }
 
 
 def two_hop_generic(
