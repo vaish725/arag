@@ -45,10 +45,19 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: |
-          # these checks are helpful but optional; failures can be addressed separately
+          # install dev deps (cached) and run linters
+          if [ -f requirements-dev.txt ]; then python -m pip install --upgrade pip && pip install -r requirements-dev.txt; fi
           black --check . || true
           isort --check-only . || true
           flake8 || true
+
+      - name: Cache dev pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-dev-${{ hashFiles('requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-dev-
 
       - name: Run type checks and tests
         env:

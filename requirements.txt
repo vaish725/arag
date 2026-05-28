@@ -1,23 +1,7 @@
-pytest
-numpy
-requests
-python-dotenv
-rank_bm25
 pytest==7.4.2
-rank_bm25==0.2.2
 numpy==1.26.4
-black==24.3.0
-flake8==6.1.0
-isort==5.13.0
-mypy==1.10.0
-coverage==7.5.0
+requests==2.34.2
 python-dotenv==1.0.0
-# Optional (only install if you want embeddings/FAISS):
-# rank_bm25>=0.2
-# faiss-cpu>=1.8
-# heavy runtime/interactive packages (moved to requirements-optional.txt):
-# streamlit
-# pandas
-# pyarrow
-prometheus_client
-pytest==7.4.2
+rank_bm25==0.2.2
+prometheus_client==0.25.0
+# For FAISS and heavy optional deps see requirements-faiss.txt and requirements-optional.txt
