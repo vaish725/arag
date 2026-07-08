@@ -4,4 +4,7 @@ requests==2.34.2
 python-dotenv==1.0.0
 rank_bm25==0.2.2
 prometheus_client==0.25.0
-# For FAISS and heavy optional deps see requirements-faiss.txt and requirements-optional.txt
+streamlit==1.57.0
+faiss-cpu==1.14.2
+openai==1.109.1
+# For heavy optional deps (llama-index, pandas/pyarrow) see requirements-optional.txt

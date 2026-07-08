@@ -5,7 +5,18 @@ Run: streamlit run streamlit_app.py
 
 from __future__ import annotations
 
+import os
+
 import streamlit as st
+
+# Bridge Streamlit Cloud secrets into the process environment, since the
+# arag backends read credentials via os.environ (populated from .env locally).
+for _key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
+    try:
+        if _key in st.secrets and not os.environ.get(_key):
+            os.environ[_key] = st.secrets[_key]
+    except Exception:
+        pass
 
 from arag.agent_loop import run_agent
 

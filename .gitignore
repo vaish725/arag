@@ -11,8 +11,10 @@ build/
 # Virtual environment
 .venv/
 
-# Data/artifacts (FAISS indexes, trained models, etc.)
-data/
+# Data/artifacts: runtime index files (bm25/faiss/chunks/sentences) are
+# committed so the Streamlit Cloud deploy has data to load. Only the large
+# build-time-only embedding cache stays ignored.
+data/*.embcache.pkl
 
 ARAG_IMPLEMENTATION.MD
 
