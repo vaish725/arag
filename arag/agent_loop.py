@@ -336,25 +336,43 @@ def run_agent(
                     # don't include an authoritative person page, try a
                     # targeted semantic search for the person and promote their
                     # page so award detection can scan it.
-                    if director and semantic_search is not None and callable(chunk_read):
-                        try:
-                            sem_res = semantic_search(director, k=6)
-                            retrieval.setdefault("tool_trace", []).append({"tool": "semantic_search", "args": {"query": director, "k": 6}, "raw_results": sem_res})
-                            for r in sem_res:
-                                cid = r.get("chunk_id")
-                                if isinstance(cid, str):
-                                    cr = _call_chunk_read(cid)
-                                    tb = _safe_text(cr)
-                                    if not tb:
-                                        continue
-                                    # promote the first likely person page (heuristic)
-                                    src = _safe_source(cr) or ""
-                                    if director.lower().split()[-1] in src.lower() or director.lower() in tb.lower():
-                                        retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": cid, "source": src, "text": tb})
-                                        contexts.insert(0, tb)
-                                        break
-                        except Exception:
-                            pass
+                    if director and callable(chunk_read):
+                        # Include the work title and explicit award keywords so
+                        # the BM25 fallback (used when no embedding backend/API
+                        # key is configured) is likely to surface the specific
+                        # award-evidence sentence, not just the person's bio
+                        # intro (which rarely states win/nomination verdicts).
+                        person_query = f"{director} {work_hint} won Best Director Academy Award nominated" if work_hint else f"{director} academy award"
+                        person_res: List[Dict[str, Any]] = []
+                        if semantic_search is not None:
+                            try:
+                                person_res = semantic_search(person_query, k=6)
+                                retrieval.setdefault("tool_trace", []).append({"tool": "semantic_search", "args": {"query": person_query, "k": 6}, "raw_results": person_res})
+                            except Exception:
+                                person_res = []
+                        if not person_res and keyword_search is not None:
+                            try:
+                                person_res = keyword_search(person_query, k=6)
+                                retrieval.setdefault("tool_trace", []).append({"tool": "keyword_search", "args": {"query": person_query, "k": 6}, "raw_results": person_res})
+                            except Exception:
+                                person_res = []
+                        for r in person_res:
+                            cid = r.get("chunk_id")
+                            if isinstance(cid, str):
+                                cr = _call_chunk_read(cid)
+                                tb = _safe_text(cr)
+                                if not tb:
+                                    continue
+                                # promote the first likely person/work page (heuristic)
+                                src = _safe_source(cr) or ""
+                                if (
+                                    director.lower().split()[-1] in src.lower()
+                                    or director.lower() in tb.lower()
+                                    or (work_hint and work_hint.lower() in (cid or "").lower())
+                                ):
+                                    retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": cid, "source": src, "text": tb})
+                                    contexts.insert(0, tb)
+                                    break
                     award_evidence = detect_award_evidence(retrieval.get("retrieved_texts", []), name_hint=director)
                 except Exception:
                     award_evidence = []
@@ -1079,14 +1097,16 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
 
     import re
 
-    m = re.search(r"director of ([A-Za-z0-9\'\- ]+?)(\?|$)", question, re.IGNORECASE)
+    # Non-greedy capture stopping at " and", a comma, "?", or end-of-string so
+    # titles containing punctuation (e.g. "Titanic (1997 film)") are captured
+    # in full instead of failing to match at all (a restrictive character
+    # class here previously excluded parentheses).
+    m = re.search(r"director of\s+(.+?)(?:\s+and\b|,|\?|$)", question, re.IGNORECASE)
     work = None
     if m:
         work = m.group(1).strip()
     else:
-        m = re.search(
-            r"who directed ([A-Za-z0-9\'\- ]+?)(\?|$)", question, re.IGNORECASE
-        )
+        m = re.search(r"who directed\s+(.+?)(?:\s+and\b|,|\?|$)", question, re.IGNORECASE)
         if m:
             work = m.group(1).strip()
 
@@ -1166,6 +1186,11 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
         f"{work} (film) director",
         f"{work} director",
         f"{work} film director",
+        # Include an award-focused variant so the BM25 fallback (used when no
+        # embedding backend/API key is configured) also has a chance to pull
+        # in the director's award-evidence chunks in this same first hop,
+        # not just the film page.
+        f"{work} director academy award",
     ]
 
     first_results = []
