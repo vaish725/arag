@@ -33,7 +33,14 @@ question = st.text_input(
 max_steps = st.slider("Max steps", 1, 20, 6)
 max_tokens = st.slider("Max tokens", 100, 20000, 2000)
 
+MAX_QUESTIONS_PER_SESSION = int(os.environ.get("ARAG_MAX_QUESTIONS_PER_SESSION", "10"))
+asked = st.session_state.get("questions_asked", 0)
+
 if st.button("Run"):
+    if asked >= MAX_QUESTIONS_PER_SESSION:
+        st.error(f"Session limit reached ({MAX_QUESTIONS_PER_SESSION} questions). Reload the page to start a new session.")
+        st.stop()
+    st.session_state["questions_asked"] = asked + 1
     # allow_fallback toggle: evidence-only mode disables LLM fallback so
     # answers come strictly from retrieved corpus snippets. In the other
     # mode the checkbox controls whether the LLM may fall back to external

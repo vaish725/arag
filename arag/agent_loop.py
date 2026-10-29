@@ -13,6 +13,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 # retrieval_tools symbols may not be available at import-time; declare
 # typed optional placeholders which will be replaced at runtime if available.
+DATA_DIR = "data"
 chunk_read: Optional[Callable[[str], Dict[str, Any]]] = None
 keyword_search: Optional[Callable[..., List[Dict[str, Any]]]] = None
 semantic_search: Optional[Callable[..., List[Dict[str, Any]]]] = None
@@ -20,6 +21,7 @@ try:
     import importlib
 
     _rt = importlib.import_module("arag.retrieval_tools")
+    DATA_DIR = _rt.DATA_DIR
     chunk_read = getattr(_rt, "chunk_read", None)
     keyword_search = getattr(_rt, "keyword_search", None)
     semantic_search = getattr(_rt, "semantic_search", None)
@@ -402,7 +404,7 @@ def run_agent(
                             lname = dps[0].lower()
                             try:
                                 import os, pickle
-                                chunks_path = os.path.join("data", "chunks.pkl")
+                                chunks_path = os.path.join(DATA_DIR, "chunks.pkl")
                                 if os.path.exists(chunks_path):
                                     with open(chunks_path, "rb") as f:
                                         all_chunks = pickle.load(f)
@@ -1670,7 +1672,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     # probe chunks metadata for a person page with this last name
                     try:
                         import os, pickle, re as _re
-                        chunks_path = os.path.join("data", "chunks.pkl")
+                        chunks_path = os.path.join(DATA_DIR, "chunks.pkl")
                         if os.path.exists(chunks_path):
                             with open(chunks_path, "rb") as f:
                                 _all_chunks = pickle.load(f)
@@ -1806,7 +1808,10 @@ if __name__ == "__main__":
 
     from dotenv import load_dotenv
 
+    from arag.runtime_ops import setup_logging
+
     load_dotenv()
+    setup_logging()
 
     parser = argparse.ArgumentParser(
         description="Run the lightweight A-RAG agent (heuristic policy)"

@@ -2,6 +2,7 @@ import pickle
 
 from rank_bm25 import BM25Okapi
 
+from arag import agent_loop
 from arag.agent_loop import run_agent
 
 
@@ -64,6 +65,8 @@ def test_agent_integration(tmp_path, monkeypatch):
 
     bm25_path, chunks_path = write_test_indexes(tmp_path)
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(rt, "DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(agent_loop, "DATA_DIR", str(tmp_path))
     for name in ("_bm25", "_chunks", "_faiss_index", "_sentence_faiss_index", "_sentences"):
         monkeypatch.setattr(rt, name, None)
     rt.load_indexes(

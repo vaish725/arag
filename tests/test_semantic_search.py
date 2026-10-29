@@ -75,6 +75,7 @@ def indexed(tmp_path, monkeypatch):
     monkeypatch.setattr(eb, "get_embedding", fake_get_embedding)
     # Relative paths inside retrieval_tools (sentence cache) must not touch data/.
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(rt, "DATA_DIR", str(tmp_path))
 
     chunks = hib.build_chunks(DOCS)
     paths = {

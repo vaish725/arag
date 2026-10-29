@@ -5,7 +5,12 @@ from __future__ import annotations
 import os
 import pickle
 import re
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
+
+# Index files live in <repo>/data unless ARAG_DATA_DIR points elsewhere, so the
+# code works from any working directory.
+DATA_DIR = os.environ.get("ARAG_DATA_DIR") or str(Path(__file__).resolve().parents[1] / "data")
 
 _bm25: Optional[Any] = None
 _chunks: Optional[List[Dict[str, Any]]] = None
@@ -28,12 +33,18 @@ GetEmbeddingsFn = Callable[[List[str], str], List[List[float]]]
 
 
 def load_indexes(
-    bm25_path: str = os.path.join("data", "bm25_index.pkl"),
-    chunks_path: str = os.path.join("data", "chunks.pkl"),
-    faiss_path: str = os.path.join("data", "faiss_index.bin"),
-    sentence_faiss_path: str = os.path.join("data", "sentence_faiss_index.bin"),
-    sentences_path: str = os.path.join("data", "sentences.pkl"),
+    bm25_path: Optional[str] = None,
+    chunks_path: Optional[str] = None,
+    faiss_path: Optional[str] = None,
+    sentence_faiss_path: Optional[str] = None,
+    sentences_path: Optional[str] = None,
 ) -> None:
+    # Defaults are resolved at call time so DATA_DIR can be redirected.
+    bm25_path = bm25_path or os.path.join(DATA_DIR, "bm25_index.pkl")
+    chunks_path = chunks_path or os.path.join(DATA_DIR, "chunks.pkl")
+    faiss_path = faiss_path or os.path.join(DATA_DIR, "faiss_index.bin")
+    sentence_faiss_path = sentence_faiss_path or os.path.join(DATA_DIR, "sentence_faiss_index.bin")
+    sentences_path = sentences_path or os.path.join(DATA_DIR, "sentences.pkl")
     global _bm25, _chunks, _faiss_index
 
     if os.path.exists(bm25_path):
@@ -689,7 +700,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
                 return out
 
             # Load or create a simple on-disk cache for sentence embeddings to avoid repeated API calls
-            cache_path = os.path.join("data", "sentence_embedding_cache.pkl")
+            cache_path = os.path.join(DATA_DIR, "sentence_embedding_cache.pkl")
             sent_cache = {}
             try:
                 if os.path.exists(cache_path):

@@ -27,7 +27,7 @@ def test_bm25_non_empty():
     assert len(res) > 0, "BM25 returned no results for a common query"
 
 
-def test_semantic_search_when_faiss_exists(monkeypatch):
+def test_semantic_search_when_faiss_exists(monkeypatch, tmp_path):
     """Semantic search should return results when FAISS index and
     embedding backend are available.
 
@@ -46,6 +46,11 @@ def test_semantic_search_when_faiss_exists(monkeypatch):
     faiss_path = os.path.join("data", "faiss_index.bin")
     if not os.path.exists(faiss_path):
         pytest.skip("FAISS index not present; skip semantic search test")
+
+    # Indexes are loaded; keep the query-embedding cache out of the repo.
+    import arag.retrieval_tools as rt
+
+    monkeypatch.setattr(rt, "DATA_DIR", str(tmp_path))
 
     # The committed index holds real 1536-d OpenAI vectors; use a fixed query
     # vector of that size so the real FAISS search runs with no network.

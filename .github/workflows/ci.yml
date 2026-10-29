@@ -37,6 +37,10 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Lint workflow files (actionlint)
+        if: matrix.python-version == '3.12'
+        uses: raven-actions/actionlint@v2
+
       - name: Run syntax check (py_compile)
         run: |
           python -m py_compile $(git ls-files '*.py')
@@ -64,7 +68,8 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           mypy --ignore-missing-imports . || true
-          pytest -q
+          coverage run -m pytest -q
+          coverage xml
 
       - name: Upload coverage artifact (if generated)
         uses: actions/upload-artifact@v4
