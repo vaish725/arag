@@ -87,6 +87,9 @@ def run_agent(
     allow_fallback: bool = True,
     enable_director_flow: bool = False,
 ) -> Dict[str, Any]:
+    from arag.runtime_ops import start_run
+
+    start_run()  # fresh per-question API budget
     q = question or ""
     local_citations: List[int] = []
     # If the specialized director flow is not enabled, and the caller forbids
@@ -1195,7 +1198,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     try:
                         nm = extract_person_name_from_text(txt_top, work_hint=work)
                         if nm:
-                            name = nm
+                            early_name_guess = nm
                     except Exception:
                         pass
     except Exception:
@@ -1380,9 +1383,11 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     break
     except Exception:
         pass
-    # Deliberate reset: the early guess above is discarded and the director is
-    # re-derived by the scan below. Keeping the guess made the Inception award
-    # regression test answer "Unknown" (see tests/test_award_regression.py).
+    # Deliberate reset: the early guesses above are discarded and the director is
+    # re-derived by the scan below. Removing the reset made the Inception test in
+    # tests/test_award_regression.py answer "Unknown". Likely cause: the early
+    # guess can come from a person page rather than the film page, so the later
+    # scan is skipped. Not confirmed (nothing reads `name` before this line).
     name = None
     inspected = 0
 

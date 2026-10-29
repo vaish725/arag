@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime
 import logging
 import os
 import threading
@@ -122,7 +123,6 @@ class BudgetMonitor:
 
 
 _GLOBAL_RATE_LIMITER: Optional[RateLimiter] = None
-_GLOBAL_BUDGET: Optional[BudgetMonitor] = None
 
 
 def get_global_rate_limiter() -> RateLimiter:
@@ -132,34 +132,82 @@ def get_global_rate_limiter() -> RateLimiter:
     return _GLOBAL_RATE_LIMITER
 
 
-DEFAULT_MAX_API_CALLS = 50
-DEFAULT_MAX_TOKENS = 200_000
+# Spend caps. API calls are counted per request (one embeddings or chat
+# request = 1), not per text. Two scopes:
+#   per run : reset at the start of every run_agent() call (one question)
+#   per day : whole process, resets when the calendar day changes
+# Override with the env vars below; use the word "none" to remove a cap.
+# A number is taken literally, so 0 means "no calls allowed".
+DEFAULTS = {
+    "ARAG_MAX_API_CALLS_PER_RUN": 50,
+    "ARAG_MAX_TOKENS_PER_RUN": 100_000,
+    "ARAG_MAX_API_CALLS_PER_DAY": 500,
+    "ARAG_MAX_TOKENS_PER_DAY": 1_000_000,
+}
 
 
-def _limit_from_env(name: str, default: int) -> Optional[int]:
-    """Read a cap from the environment. "0", "none" or "unlimited" disable it."""
+def _limit_from_env(name: str) -> Optional[int]:
     raw = os.environ.get(name)
     if raw is None or raw.strip() == "":
-        return default
-    if raw.strip().lower() in ("0", "none", "unlimited"):
+        return DEFAULTS[name]
+    if raw.strip().lower() == "none":
         return None
     try:
-        return int(raw)
+        return max(0, int(raw))
     except ValueError:
-        return default
+        return DEFAULTS[name]
 
 
-def get_global_budget() -> BudgetMonitor:
-    """Process-wide budget. Defaults are a safety net against runaway spend;
-    raise them with ARAG_MAX_API_CALLS / ARAG_MAX_TOKENS (0 = unlimited), e.g.
-    when rebuilding the indexes."""
+def _make_monitor(scope: str) -> BudgetMonitor:
+    return BudgetMonitor(
+        max_api_calls=_limit_from_env(f"ARAG_MAX_API_CALLS_PER_{scope}"),
+        max_tokens=_limit_from_env(f"ARAG_MAX_TOKENS_PER_{scope}"),
+    )
+
+
+class _Budget:
+    """Charges the current run's budget (if any) and the daily budget."""
+
+    def __init__(self) -> None:
+        self.day = datetime.date.today()
+        self.daily = _make_monitor("DAY")
+        self.run: Optional[BudgetMonitor] = None
+
+    def _roll_day(self) -> None:
+        today = datetime.date.today()
+        if today != self.day:
+            self.day = today
+            self.daily = _make_monitor("DAY")
+
+    def start_run(self) -> None:
+        self.run = _make_monitor("RUN")
+
+    def consume_api_call(self, n: int = 1) -> None:
+        self._roll_day()
+        if self.run is not None:
+            self.run.consume_api_call(n)
+        self.daily.consume_api_call(n)
+
+    def consume_tokens(self, n: int) -> None:
+        self._roll_day()
+        if self.run is not None:
+            self.run.consume_tokens(n)
+        self.daily.consume_tokens(n)
+
+
+_GLOBAL_BUDGET: Optional[_Budget] = None
+
+
+def get_global_budget() -> _Budget:
     global _GLOBAL_BUDGET
     if _GLOBAL_BUDGET is None:
-        _GLOBAL_BUDGET = BudgetMonitor(
-            max_api_calls=_limit_from_env("ARAG_MAX_API_CALLS", DEFAULT_MAX_API_CALLS),
-            max_tokens=_limit_from_env("ARAG_MAX_TOKENS", DEFAULT_MAX_TOKENS),
-        )
+        _GLOBAL_BUDGET = _Budget()
     return _GLOBAL_BUDGET
+
+
+def start_run() -> None:
+    """Begin a new per-question budget. Called at the start of run_agent()."""
+    get_global_budget().start_run()
 
 
 def reset_global_budget() -> None:
