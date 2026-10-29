@@ -74,6 +74,31 @@ jobs:
         continue-on-error: true
         run: python scripts/regression_report.py --out out/regression.json --baseline scripts/regression_baseline.json 2>&1 | tee out/regression_report.txt
 
+      # --- Debug steps (read-only): why did a verdict move, and what does the app cost in memory? ---
+      - name: Debug - La La Land retrieval, old (BM25 fallback) vs new (local embeddings)
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/debug_retrieval.py --film "La La Land" 2>&1 | tee out/debug_la_la_land.txt
+
+      - name: Debug - model size on disk
+        continue-on-error: true
+        run: |
+          du -sh .fastembed_cache | tee out/model_size.txt
+          find .fastembed_cache -type f -exec du -h {} + | sort -h | tail -8 | tee -a out/model_size.txt
+
+      - name: Debug - memory and load time, manual phases (fresh process)
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/measure_app_memory.py --mode manual 2>&1 | tee out/memory_manual.txt
+
+      - name: Debug - memory and load time, real streamlit_app.py via AppTest (fresh process)
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/measure_app_memory.py --mode streamlit 2>&1 | tee out/memory_streamlit.txt
+
       - name: Upload artifact
         if: always()
         uses: actions/upload-artifact@v4
