@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import pickle
 import re
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
+
+from arag.index_meta import IndexMismatchError
 
 # Index files live in <repo>/data unless ARAG_DATA_DIR points elsewhere, so the
 # code works from any working directory.
@@ -118,7 +121,12 @@ def load_indexes(
     # set globals from local variables
     globals().update({"_sentence_faiss_index": _sentence_faiss_index, "_sentences": _sentences})
 
-    _assert_index_matches_config()
+    # A mismatch disables VECTOR search only: BM25 stays usable. semantic_search()
+    # re-checks on every call and raises, so the error shows up in tool_trace too.
+    try:
+        _assert_index_matches_config()
+    except IndexMismatchError as e:
+        logging.getLogger(__name__).error("Vector search disabled: %s", e)
 
 
 def keyword_search(query: str, k: int = 5) -> List[Dict]:

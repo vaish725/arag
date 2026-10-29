@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 import pickle
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 def load_hotpot_corpus(max_examples: int = 1000) -> List[Dict[str, str]]:
     try:
@@ -85,7 +85,7 @@ def build_bm25(chunks: List[Dict[str, str]], out_path: str = "bm25_index.pkl") -
     print(f"Saved BM25 index to {out_path}")
 
 
-def build_faiss(chunks: List[Dict[str, str]], out_index: str = "faiss_index.bin", out_chunks: str = "chunks.pkl") -> None:
+def build_faiss(chunks: List[Dict[str, str]], out_index: str = "faiss_index.bin", out_chunks: Optional[str] = "chunks.pkl") -> None:
     try:
         import faiss
         import numpy as np
@@ -116,31 +116,18 @@ def build_faiss(chunks: List[Dict[str, str]], out_index: str = "faiss_index.bin"
     index = faiss.IndexFlatIP(dim)
     index.add(embeddings_arr)
     faiss.write_index(index, out_index)
-    with open(out_chunks, "wb") as f:
-        pickle.dump(chunks, f)
+    if out_chunks:  # None = leave an existing chunks.pkl untouched
+        with open(out_chunks, "wb") as f:
+            pickle.dump(chunks, f)
     record_build(os.path.dirname(out_index) or ".", info, dim, num_chunks=len(chunks))
     print(f"Saved FAISS index to {out_index} and chunks to {out_chunks}")
 
 
-def build_sentence_faiss(chunks: List[Dict[str, str]], out_index: str = "sentence_faiss_index.bin", out_sentences: str = "sentences.pkl") -> None:
-    """
-    Build a sentence-level FAISS index. Splits each chunk into sentences, embeds
-    them, and writes a FAISS index and sentences metadata. Each sentence record
-    keeps a reference to the parent chunk id so retrieval can map back to chunk
-    metadata and BM25 scores.
-    """
-    try:
-        import faiss
-        import numpy as np
-    except Exception as e:
-        raise RuntimeError("Please install 'faiss-cpu' and 'numpy' to build FAISS index: pip install faiss-cpu numpy") from e
-
-    from arag.embedding_backend import get_embedding_info, get_embeddings
-    from arag.index_meta import record_build
-
+def extract_sentences(chunks: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    """Split chunks into sentence records {'id', 'text', 'chunk_id', 'source'}."""
     import re
 
-    sentences = []  # list of {'id', 'text', 'chunk_id', 'source'}
+    sentences = []
     for c in chunks:
         chunk_id = c.get("id")
         text = c.get("text") or ""
@@ -150,10 +137,19 @@ def build_sentence_faiss(chunks: List[Dict[str, str]], out_index: str = "sentenc
                 continue
             sid = f"{chunk_id}__sent_{i}"
             sentences.append({"id": sid, "text": s, "chunk_id": chunk_id, "source": c.get("coarse") or c.get("source") or ""})
+    return sentences
 
-    if not sentences:
-        print("No sentences extracted; skipping sentence FAISS build")
-        return
+
+def embed_sentence_index(sentences: List[Dict[str, str]], out_index: str) -> None:
+    """Embed existing sentence records into a FAISS index (and update index_meta.json)."""
+    try:
+        import faiss
+        import numpy as np
+    except Exception as e:
+        raise RuntimeError("Please install 'faiss-cpu' and 'numpy' to build FAISS index: pip install faiss-cpu numpy") from e
+
+    from arag.embedding_backend import get_embedding_info, get_embeddings
+    from arag.index_meta import record_build
 
     batch_size = 256
     embeddings: List[List[float]] = []
@@ -171,10 +167,25 @@ def build_sentence_faiss(chunks: List[Dict[str, str]], out_index: str = "sentenc
     index = faiss.IndexFlatIP(dim)
     index.add(embeddings_arr)
     faiss.write_index(index, out_index)
+    record_build(os.path.dirname(out_index) or ".", info, dim, num_sentences=len(sentences))
+    print(f"Saved sentence FAISS index to {out_index}")
+
+
+def build_sentence_faiss(chunks: List[Dict[str, str]], out_index: str = "sentence_faiss_index.bin", out_sentences: str = "sentences.pkl") -> None:
+    """
+    Build a sentence-level FAISS index. Splits each chunk into sentences, embeds
+    them, and writes a FAISS index and sentences metadata. Each sentence record
+    keeps a reference to the parent chunk id so retrieval can map back to chunk
+    metadata and BM25 scores.
+    """
+    sentences = extract_sentences(chunks)
+    if not sentences:
+        print("No sentences extracted; skipping sentence FAISS build")
+        return
+    embed_sentence_index(sentences, out_index)
     with open(out_sentences, "wb") as f:
         pickle.dump(sentences, f)
-    record_build(os.path.dirname(out_index) or ".", info, dim, num_sentences=len(sentences))
-    print(f"Saved sentence FAISS index to {out_index} and sentences metadata to {out_sentences}")
+    print(f"Saved sentences metadata to {out_sentences}")
 
 
 def bm25_search_example(query: str, top_k: int = 5, bm25_path: str = "bm25_index.pkl") -> List[Dict]:

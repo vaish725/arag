@@ -134,3 +134,44 @@ def test_semantic_search_works_with_no_openai_key(eb, tmp_path, monkeypatch):
     )
     assert "OPENAI_API_KEY" not in str(res["tool_trace"])
     assert "Failed to obtain embeddings" not in str(res["tool_trace"])
+
+
+def test_reembed_script_changes_only_the_vector_indexes(eb, tmp_path, monkeypatch):
+    """scripts/reembed_indexes.py: new FAISS indexes + meta, source files byte-identical."""
+    pytest.importorskip("faiss")
+    pytest.importorskip("rank_bm25")
+    import hashlib
+    import importlib.util
+    import pickle
+    from pathlib import Path
+
+    import faiss
+    import test_semantic_search as tss
+    from arag import hierarchical_index_builder as hib
+    from arag.index_meta import read_meta
+
+    spec = importlib.util.spec_from_file_location(
+        "reembed_indexes", Path(__file__).resolve().parents[1] / "scripts" / "reembed_indexes.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    chunks = hib.build_chunks(tss.DOCS)
+    chunks[0]["source"] = "Inception"  # pretend one of the 8 added articles is present
+    hib.build_bm25(chunks, out_path=str(tmp_path / "bm25_index.pkl"))
+    (tmp_path / "chunks.pkl").write_bytes(pickle.dumps(chunks))
+    (tmp_path / "sentences.pkl").write_bytes(pickle.dumps(hib.extract_sentences(chunks)))
+    stale = tmp_path / "sentences.pkl.embcache.pkl"
+    stale.write_bytes(b"old openai vectors")
+    sha = lambda n: hashlib.sha256((tmp_path / n).read_bytes()).hexdigest()  # noqa: E731
+    before = {n: sha(n) for n in mod.KEEP_UNCHANGED}
+
+    assert mod.main(str(tmp_path)) == 0
+
+    assert {n: sha(n) for n in mod.KEEP_UNCHANGED} == before
+    assert not stale.exists()
+    assert faiss.read_index(str(tmp_path / "faiss_index.bin")).ntotal == len(chunks)
+    assert faiss.read_index(str(tmp_path / "sentence_faiss_index.bin")).d == DIM
+    meta = read_meta(str(tmp_path))
+    assert meta["dimension"] == DIM and meta["num_chunks"] == len(chunks)
+    assert meta["wikipedia_revisions"] == {"Inception": mod.UNKNOWN_REVISION}

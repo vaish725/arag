@@ -64,19 +64,45 @@ def test_stale_vector_count_raises(indexed, tmp_path):
         rt.semantic_search("anything at all", k=2)
 
 
-def test_load_time_check_raises(indexed, monkeypatch, tmp_path):
+def _paths(tmp_path):
+    return dict(
+        bm25_path=str(tmp_path / "bm25_index.pkl"),
+        chunks_path=str(tmp_path / "chunks.pkl"),
+        faiss_path=str(tmp_path / "faiss_index.bin"),
+        sentence_faiss_path=str(tmp_path / "sentence_faiss_index.bin"),
+        sentences_path=str(tmp_path / "sentences.pkl"),
+    )
+
+
+def test_mismatch_at_load_disables_vector_search_only(indexed, monkeypatch, tmp_path, caplog):
     import arag.embedding_backend as eb
 
     rt, _ = indexed
     monkeypatch.setattr(eb, "get_embedding_info", lambda: {"provider": "local", "model": "m", "dim": 384})
+    with caplog.at_level("ERROR"):
+        rt.load_indexes(**_paths(tmp_path))  # must not raise
+    assert "Vector search disabled" in caplog.text and "fake/hashed-bow" in caplog.text
+    assert rt.keyword_search("lighthouse keeper", k=2), "BM25 must keep working"
     with pytest.raises(IndexMismatchError):
-        rt.load_indexes(
-            bm25_path=str(tmp_path / "bm25_index.pkl"),
-            chunks_path=str(tmp_path / "chunks.pkl"),
-            faiss_path=str(tmp_path / "faiss_index.bin"),
-            sentence_faiss_path=str(tmp_path / "sentence_faiss_index.bin"),
-            sentences_path=str(tmp_path / "sentences.pkl"),
-        )
+        rt.semantic_search("lighthouse", k=2)
+
+
+def test_mismatch_shows_in_tool_trace_while_keyword_search_still_answers(indexed, monkeypatch):
+    import arag.embedding_backend as eb
+    from arag import agent_loop
+
+    rt, _ = indexed
+    monkeypatch.setattr(eb, "get_embedding_info", lambda: {"provider": "local", "model": "m", "dim": 384})
+    monkeypatch.setattr(agent_loop, "DATA_DIR", rt.DATA_DIR)
+    res = agent_loop.run_agent(
+        'Who directed "Lighthouse Keeper" and did they win any Academy Awards?',
+        allow_fallback=False,
+        enable_director_flow=True,
+    )
+    trace = str(res["tool_trace"])
+    assert "Embedding mismatch" in trace, "the specific error must appear in tool_trace"
+    keyword = [t for t in res["tool_trace"] if t.get("tool") == "keyword_search"]
+    assert keyword and not any("error" in t for t in keyword), "keyword search must keep running"
 
 
 def test_check_compat_ignores_missing_indexes(tmp_path):
