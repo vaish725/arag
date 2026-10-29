@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -37,9 +37,13 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Lint workflow files (actionlint)
+        if: matrix.python-version == '3.12'
+        uses: raven-actions/actionlint@v2
+
       - name: Run syntax check (py_compile)
         run: |
-          python -m py_compile $(git ls-files '*.py')
+          git ls-files -z '*.py' | xargs -0 python -m py_compile
 
       - name: Run formatters/linters (optional)
         env:
@@ -64,7 +68,8 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           mypy --ignore-missing-imports . || true
-          pytest -q
+          coverage run -m pytest -q
+          coverage xml
 
       - name: Upload coverage artifact (if generated)
         uses: actions/upload-artifact@v4
@@ -86,7 +91,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 

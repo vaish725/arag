@@ -143,4 +143,7 @@ def run_eval(k: int = 5):
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
     run_eval(k=5)

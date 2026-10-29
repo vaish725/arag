@@ -2,21 +2,15 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import os
+import re
 from typing import Any, List
 
 from arag.runtime_ops import BudgetExceededError, get_global_budget, get_global_rate_limiter
 
 log = logging.getLogger(__name__)
-
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except Exception:
-    pass
-
 
 def llm_available() -> bool:
     import importlib
@@ -36,13 +30,49 @@ def llm_available() -> bool:
     return False
 
 
+def _parse_reply(text: str, allow_fallback: bool) -> dict[str, Any]:
+    """Turn the model's raw reply into {answer, citations, used_fallback}.
+
+    The model is asked for a JSON object; a reply wrapped in a markdown code
+    fence is unwrapped first. Anything that is not valid JSON is returned as
+    a plain answer with no citations.
+    """
+    raw = (text or "").strip()
+    fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", raw, re.DOTALL | re.IGNORECASE)
+    if fenced:
+        raw = fenced.group(1).strip()
+    answer, citations = raw, []
+    try:
+        parsed = json.loads(raw)
+    except ValueError:
+        parsed = None
+    if isinstance(parsed, dict) and "answer" in parsed:
+        answer = str(parsed.get("answer", ""))
+        cites = parsed.get("citations")
+        if isinstance(cites, list):
+            citations = [c for c in cites if isinstance(c, int)]
+    used_fallback = allow_fallback and "external knowledge" in answer.lower()
+    return {"answer": answer, "citations": citations, "used_fallback": used_fallback}
+
+
+def _record_usage(budget: Any, max_tokens: int) -> None:
+    try:
+        budget.consume_tokens(max_tokens)
+    except BudgetExceededError as e:
+        log.warning("Budget exceeded after LLM call: %s", e)
+    from arag.runtime_ops import inc_api_call_metric, inc_token_metric
+
+    inc_api_call_metric(1)
+    inc_token_metric(max_tokens)
+
+
 def synthesize_answer(
     question: str,
     contexts: List[str],
     model: str | None = None,
     max_tokens: int = 512,
     allow_fallback: bool = False,
-) -> tuple[str, list[int], bool]:
+) -> dict[str, Any]:
     # When allow_fallback is True, the assistant is permitted to use external
     # world knowledge to answer if the provided contexts are insufficient.
     # If fallback is used the assistant must clearly indicate it used knowledge
@@ -107,45 +137,12 @@ def synthesize_answer(
                 max_tokens=max_tokens,
             )
             choice0 = resp.choices[0]
-            m = None
-            if hasattr(choice0, "message"):
-                m = choice0.message
-            elif isinstance(choice0, dict) and "message" in choice0:
-                m = choice0["message"]
-            out = ""
-            if m is None:
-                out = str(choice0)
-            else:
-                if hasattr(m, "content"):
-                    out = m.content or ""
-                elif isinstance(m, dict) and "content" in m:
-                    out = m["content"] or ""
-                else:
-                    out = str(m)
-            parsed: object | None = None
-            try:
-                import json as _json
-
-                parsed = _json.loads(out.strip()) if isinstance(out, str) else None
-            except Exception:
-                parsed = None
-            if isinstance(parsed, dict) and "answer" in parsed:
-                ans = str(parsed.get("answer", ""))
-                # Return a plain string for backwards compatibility with tests
-                return ans
-            try:
-                budget.consume_tokens(max_tokens)
-            except BudgetExceededError as e:
-                log.warning("Budget exceeded after LLM call: %s", e)
-            try:
-                from arag.runtime_ops import inc_api_call_metric, inc_token_metric
-
-                inc_api_call_metric(1)
-                inc_token_metric(max_tokens)
-            except Exception:
-                pass
-            # Fall back to returning a plain string answer with no citations
-            return str(out or "")
+            m = choice0.message if hasattr(choice0, "message") else choice0.get("message")
+            content = m.content if hasattr(m, "content") else (m or {}).get("content")
+            _record_usage(budget, max_tokens)
+            return _parse_reply(content or "", allow_fallback)
+        except BudgetExceededError:
+            raise
         except Exception as e:
             raise RuntimeError(f"OpenAI chat call failed: {e}")
 
@@ -159,33 +156,21 @@ def synthesize_answer(
             if not rl.acquire(timeout=5.0):
                 raise RuntimeError("Rate limiter timeout while attempting Anthropic call")
             budget.consume_api_call(1)
-            anthropic_client: Any = anthropic.Client(api_key=api_key)
-            prompt = f"{system}\n\n{user}"
-            model_name = model or os.environ.get("ANTHROPIC_MODEL") or "claude-2.1"
-            res = getattr(anthropic_client.completions, "create")(model=model_name, prompt=prompt, max_tokens_to_sample=max_tokens)
-            out = (res["completion"] if isinstance(res, dict) and "completion" in res else res.get("completion", str(res)))
-            parsed = None
-            try:
-                import json as _json
-
-                parsed = _json.loads(out.strip()) if isinstance(out, str) else None
-            except Exception:
-                parsed = None
-            if isinstance(parsed, dict) and "answer" in parsed:
-                ans = str(parsed.get("answer", ""))
-                return ans
-            try:
-                budget.consume_tokens(max_tokens)
-            except BudgetExceededError as e:
-                log.warning("Budget exceeded after Anthropic call: %s", e)
-            try:
-                from arag.runtime_ops import inc_api_call_metric, inc_token_metric
-
-                inc_api_call_metric(1)
-                inc_token_metric(max_tokens)
-            except Exception:
-                pass
-            return str(out or "")
+            anthropic_client: Any = anthropic.Anthropic(api_key=api_key)
+            model_name = model or os.environ.get("ANTHROPIC_MODEL") or "claude-haiku-5-5"
+            res = anthropic_client.messages.create(
+                model=model_name,
+                max_tokens=max_tokens,
+                system=system,
+                messages=[{"role": "user", "content": user}],
+            )
+            text = "".join(
+                getattr(block, "text", "") for block in res.content if getattr(block, "type", "text") == "text"
+            )
+            _record_usage(budget, max_tokens)
+            return _parse_reply(text, allow_fallback)
+        except BudgetExceededError:
+            raise
         except Exception as e:
             raise RuntimeError(f"Anthropic call failed: {e}")
 

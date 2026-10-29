@@ -106,4 +106,7 @@ def main(argv: List[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
     raise SystemExit(main())

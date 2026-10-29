@@ -13,6 +13,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 # retrieval_tools symbols may not be available at import-time; declare
 # typed optional placeholders which will be replaced at runtime if available.
+DATA_DIR = "data"
 chunk_read: Optional[Callable[[str], Dict[str, Any]]] = None
 keyword_search: Optional[Callable[..., List[Dict[str, Any]]]] = None
 semantic_search: Optional[Callable[..., List[Dict[str, Any]]]] = None
@@ -20,6 +21,7 @@ try:
     import importlib
 
     _rt = importlib.import_module("arag.retrieval_tools")
+    DATA_DIR = _rt.DATA_DIR
     chunk_read = getattr(_rt, "chunk_read", None)
     keyword_search = getattr(_rt, "keyword_search", None)
     semantic_search = getattr(_rt, "semantic_search", None)
@@ -85,6 +87,9 @@ def run_agent(
     allow_fallback: bool = True,
     enable_director_flow: bool = False,
 ) -> Dict[str, Any]:
+    from arag.runtime_ops import start_run
+
+    start_run()  # fresh per-question API budget
     q = question or ""
     local_citations: List[int] = []
     # If the specialized director flow is not enabled, and the caller forbids
@@ -190,7 +195,7 @@ def run_agent(
             # initialize local director vars used below
             director = None
             director_citation = None
-            if contexts and not allow_fallback:
+            if contexts:
                 retrieved = retrieval.get("retrieved_texts", [])
                 # Quick deterministic check: if we've promoted a film chunk
                 # to the front (contexts[0]) try extracting the director from
@@ -402,7 +407,7 @@ def run_agent(
                             lname = dps[0].lower()
                             try:
                                 import os, pickle
-                                chunks_path = os.path.join("data", "chunks.pkl")
+                                chunks_path = os.path.join(DATA_DIR, "chunks.pkl")
                                 if os.path.exists(chunks_path):
                                     with open(chunks_path, "rb") as f:
                                         all_chunks = pickle.load(f)
@@ -439,6 +444,22 @@ def run_agent(
                 cite_str = f" Citations: {final_citations}." if final_citations else ""
                 answer = " ".join(parts) + cite_str
                 local_citations = final_citations
+                # The evidence-only template is always built first. Only when it
+                # could not find the director and the caller allows fallback do
+                # we hand the contexts to the LLM instead.
+                if not director and allow_fallback:
+                    try:
+                        import arag.llm_backend as llm_backend
+
+                        if llm_backend.llm_available():
+                            llm_out = llm_backend.synthesize_answer(
+                                q, contexts, max_tokens=max_tokens, allow_fallback=True
+                            )
+                            llm_ans = llm_out.get("answer") if isinstance(llm_out, dict) else (llm_out[0] if isinstance(llm_out, (tuple, list)) else llm_out)
+                            if llm_ans:
+                                answer = str(llm_ans)
+                    except Exception as e:
+                        logging.getLogger(__name__).warning("LLM fallback failed: %s", e)
                 out = {
                     "answer": answer,
                     "tool_trace": retrieval.get("tool_trace", []),
@@ -496,6 +517,10 @@ def run_agent(
                         citations = [int(c) for c in out[1] if isinstance(c, int)]
                     if len(out) >= 3:
                         used_fallback = bool(out[2])
+                elif isinstance(out, dict):
+                    ans = out.get("answer") or ""
+                    citations = [c for c in out.get("citations", []) if isinstance(c, int)]
+                    used_fallback = bool(out.get("used_fallback"))
                 elif isinstance(out, str):
                     ans = out
                 answer = ans or ""
@@ -1086,7 +1111,6 @@ def detect_award_evidence(
         pass
 
     return evidence
-    return evidence
 
 
 def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
@@ -1174,7 +1198,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     try:
                         nm = extract_person_name_from_text(txt_top, work_hint=work)
                         if nm:
-                            name = nm
+                            early_name_guess = nm
                     except Exception:
                         pass
     except Exception:
@@ -1340,7 +1364,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                             # try extracting right away
                             nm = extract_person_name_from_text(txt_try, work_hint=work)
                             if nm:
-                                name = nm
+                                early_name_guess = nm
                             found = True
                             break
                 if found:
@@ -1355,10 +1379,15 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     local_steps += 1
                     nm = extract_person_name_from_text(txtp, work_hint=work)
                     if nm:
-                        name = nm
+                        early_name_guess = nm
                     break
     except Exception:
         pass
+    # Deliberate reset: the early guesses above are discarded and the director is
+    # re-derived by the scan below. Removing the reset made the Inception test in
+    # tests/test_award_regression.py answer "Unknown". Likely cause: the early
+    # guess can come from a person page rather than the film page, so the later
+    # scan is skipped. Not confirmed (nothing reads `name` before this line).
     name = None
     inspected = 0
 
@@ -1651,7 +1680,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     # probe chunks metadata for a person page with this last name
                     try:
                         import os, pickle, re as _re
-                        chunks_path = os.path.join("data", "chunks.pkl")
+                        chunks_path = os.path.join(DATA_DIR, "chunks.pkl")
                         if os.path.exists(chunks_path):
                             with open(chunks_path, "rb") as f:
                                 _all_chunks = pickle.load(f)
@@ -1757,9 +1786,9 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
     # If we didn't find explicit awards pages, try a heuristic scan across
     # chunks for sentences that mention awards and the person's last name.
     if not retrieved_texts:
-        try:
-            from .retrieval_tools import find_award_mentions
+        from .retrieval_tools import find_award_mentions
 
+        try:
             fallback_hits = find_award_mentions(person, max_results=6)
             for fh in fallback_hits:
                 retrieved_texts.append(
@@ -1771,8 +1800,9 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                 )
                 local_token_count += approx_token_count(fh.get("text") or "")
                 local_steps += 1
-        except Exception:
-            pass
+        except Exception as e:
+            logging.getLogger(__name__).warning("find_award_mentions failed: %s", e)
+            trace.append({"tool": "find_award_mentions", "args": {"name": person}, "error": str(e)})
 
     return {
         "tool_trace": trace,
@@ -1785,6 +1815,13 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
 if __name__ == "__main__":
     import argparse
 
+    from dotenv import load_dotenv
+
+    from arag.runtime_ops import setup_logging
+
+    load_dotenv()
+    setup_logging()
+
     parser = argparse.ArgumentParser(
         description="Run the lightweight A-RAG agent (heuristic policy)"
     )
@@ -1792,7 +1829,7 @@ if __name__ == "__main__":
         "--question", type=str, default="Who directed Titanic?", help="Question to ask"
     )
     parser.add_argument("--max_steps", type=int, default=10)
-    parser.add_argument("--max_tokens", type=int, default=4000)
+    parser.add_argument("--max_tokens", type=int, default=2000)
     parser.add_argument(
         "--allow-fallback",
         dest="allow_fallback",
@@ -1826,5 +1863,6 @@ if __name__ == "__main__":
         max_steps=args.max_steps,
         max_tokens=args.max_tokens,
         allow_fallback=args.allow_fallback,
+        enable_director_flow=args.enable_director_flow,
     )
     print(json.dumps(result, indent=2))

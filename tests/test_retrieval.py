@@ -27,7 +27,7 @@ def test_bm25_non_empty():
     assert len(res) > 0, "BM25 returned no results for a common query"
 
 
-def test_semantic_search_when_faiss_exists():
+def test_semantic_search_when_faiss_exists(monkeypatch, tmp_path):
     """Semantic search should return results when FAISS index and
     embedding backend are available.
 
@@ -43,15 +43,26 @@ def test_semantic_search_when_faiss_exists():
     except FileNotFoundError:
         pytest.skip("Indexes not built; skipping semantic search test")
 
-    faiss_path = "faiss_index.bin"
+    faiss_path = os.path.join("data", "faiss_index.bin")
     if not os.path.exists(faiss_path):
         pytest.skip("FAISS index not present; skip semantic search test")
 
-    try:
-        res = semantic_search("Who directed Doctor Strange?", k=3)
-    except RuntimeError as e:
-        # Embedding backend not available or other runtime blockage
-        pytest.skip(f"Semantic search could not run: {e}")
+    # Indexes are loaded; keep the query-embedding cache out of the repo.
+    import arag.retrieval_tools as rt
+
+    monkeypatch.setattr(rt, "DATA_DIR", str(tmp_path))
+
+    # The committed index holds real 1536-d OpenAI vectors; use a fixed query
+    # vector of that size so the real FAISS search runs with no network.
+    import numpy as np
+
+    import arag.embedding_backend as eb
+
+    vec = np.random.default_rng(0).normal(size=1536).tolist()
+    monkeypatch.setattr(eb, "get_embedding", lambda text, model="x": vec)
+    monkeypatch.setattr(eb, "get_embeddings", lambda texts, model="x": [vec for _ in texts])
+
+    res = semantic_search("Who directed Doctor Strange?", k=3)
 
     assert isinstance(res, list)
     assert (

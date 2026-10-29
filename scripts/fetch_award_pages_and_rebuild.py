@@ -92,11 +92,32 @@ def main():
     else:
         print("Added pages:\n", "\n".join(added))
         # rebuild sentence FAISS index to include new sentences
-        print("Rebuilding sentence-level FAISS index (this will use embeddings)...")
-        import subprocess
+        # Rebuild from the existing data/chunks.pkl (which now includes the new
+        # pages). Do NOT re-run the full builder: it reloads HotpotQA and
+        # overwrites chunks.pkl / bm25_index.pkl with a 200-doc corpus.
+        print(
+            "Rebuilding the sentence-level FAISS index. This calls the OpenAI "
+            "embeddings API for any sentence not already in the embedding cache "
+            "and spends API credits."
+        )
+        if "--yes" not in sys.argv and input("Continue? [y/N] ").strip().lower() != "y":
+            print("Skipped sentence index rebuild.")
+            return
+        import pickle
 
-        subprocess.run([sys.executable, "-m", "arag.hierarchical_index_builder", "--max_examples", "200", "--build_sentence_faiss", "true", "--out_dir", "data", "--quick_test", "false"], check=True)
+        from arag import hierarchical_index_builder as hib
+
+        with open("data/chunks.pkl", "rb") as f:
+            all_chunks = pickle.load(f)
+        hib.build_sentence_faiss(
+            all_chunks,
+            out_index="data/sentence_faiss_index.bin",
+            out_sentences="data/sentences.pkl",
+        )
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
     main()

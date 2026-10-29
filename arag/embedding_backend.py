@@ -10,15 +10,16 @@ from arag.runtime_ops import get_global_budget, get_global_rate_limiter
 
 log = logging.getLogger(__name__)
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except Exception:
-    pass
-
-
 def get_embeddings(texts: List[str], model: str = "text-embedding-3-small") -> List[List[float]]:
+    # Enforce the spend caps before either backend is tried, so the
+    # llama-index path is limited too (BudgetExceededError must not be
+    # swallowed by the fallback handling below).
+    rl = get_global_rate_limiter()
+    budget = get_global_budget()
+    if not rl.acquire(timeout=5.0):
+        raise RuntimeError("Rate limiter timeout while attempting to obtain embeddings")
+    budget.consume_api_call(1)
+
     try:
         from llama_index.embeddings.openai import OpenAIEmbedding
 
@@ -40,14 +41,8 @@ def get_embeddings(texts: List[str], model: str = "text-embedding-3-small") -> L
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY is not set in environment; cannot obtain embeddings")
 
-    rl = get_global_rate_limiter()
-    budget = get_global_budget()
-
-    if not rl.acquire(timeout=5.0):
-        raise RuntimeError("Rate limiter timeout while attempting to obtain embeddings")
-    budget.consume_api_call(1)
     try:
-        from arag.runtime_ops import inc_api_call_metric, inc_token_metric
+        from arag.runtime_ops import inc_api_call_metric
 
         inc_api_call_metric(1)
     except Exception:
