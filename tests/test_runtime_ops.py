@@ -31,7 +31,7 @@ def test_defaults_are_finite(monkeypatch):
         monkeypatch.delenv(name, raising=False)
     b = runtime_ops.get_global_budget()
     b.start_run()
-    assert b.run.max_api_calls == 50
+    assert runtime_ops._RUN_BUDGET.get().max_api_calls == 50
     assert b.daily.max_api_calls == 500
 
 
@@ -92,3 +92,58 @@ def test_embedding_backend_stops_at_cap(monkeypatch):
         eb.get_embeddings(["a"])
     with pytest.raises(BudgetExceededError):
         eb.get_embeddings(["b"])
+
+
+def test_concurrent_runs_do_not_reset_each_other(monkeypatch):
+    """Two threads, per-run cap of 1: each gets exactly one call, then stops."""
+    import threading
+
+    monkeypatch.setenv("ARAG_MAX_API_CALLS_PER_RUN", "1")
+    monkeypatch.setenv("ARAG_MAX_API_CALLS_PER_DAY", "none")
+    b = runtime_ops.get_global_budget()
+    started = threading.Barrier(2)
+    first_done = threading.Barrier(2)
+    results = {}
+
+    def worker(name):
+        runtime_ops.start_run()
+        started.wait(timeout=5)  # both runs have started before either spends
+        b.consume_api_call()
+        first_done.wait(timeout=5)  # both have spent their one call
+        try:
+            b.consume_api_call()
+            results[name] = "no-error"
+        except BudgetExceededError:
+            results[name] = "stopped"
+
+    threads = [threading.Thread(target=worker, args=(n,)) for n in ("a", "b")]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(timeout=10)
+    assert results == {"a": "stopped", "b": "stopped"}
+
+
+def test_daily_counter_is_thread_safe(monkeypatch):
+    import threading
+
+    monkeypatch.setenv("ARAG_MAX_API_CALLS_PER_DAY", "none")
+    b = runtime_ops.get_global_budget()
+
+    def spend():
+        for _ in range(1000):
+            b.consume_api_call()
+
+    threads = [threading.Thread(target=spend) for _ in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert b.daily.api_calls == 8000
+
+
+def test_old_env_vars_log_a_warning(monkeypatch, caplog):
+    monkeypatch.setenv("ARAG_MAX_API_CALLS", "5")
+    with caplog.at_level("WARNING"):
+        runtime_ops.get_global_budget()
+    assert "ARAG_MAX_API_CALLS is set but no longer used" in caplog.text

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextvars
 import datetime
 import logging
 import os
@@ -146,6 +147,20 @@ DEFAULTS = {
 }
 
 
+_OLD_VARS = {
+    "ARAG_MAX_API_CALLS": "ARAG_MAX_API_CALLS_PER_RUN / ARAG_MAX_API_CALLS_PER_DAY",
+    "ARAG_MAX_TOKENS": "ARAG_MAX_TOKENS_PER_RUN / ARAG_MAX_TOKENS_PER_DAY",
+}
+
+
+def _warn_old_vars() -> None:
+    for old, new in _OLD_VARS.items():
+        if os.environ.get(old) is not None:
+            logging.getLogger(__name__).warning(
+                "%s is set but no longer used; set %s instead.", old, new
+            )
+
+
 def _limit_from_env(name: str) -> Optional[int]:
     raw = os.environ.get(name)
     if raw is None or raw.strip() == "":
@@ -165,43 +180,57 @@ def _make_monitor(scope: str) -> BudgetMonitor:
     )
 
 
+# The per-run budget lives in a ContextVar so concurrent requests (Streamlit
+# runs each session in its own thread) each get their own and never reset one
+# another. The daily budget is shared and guarded by a lock.
+_RUN_BUDGET: contextvars.ContextVar[Optional[BudgetMonitor]] = contextvars.ContextVar(
+    "arag_run_budget", default=None
+)
+
+
 class _Budget:
-    """Charges the current run's budget (if any) and the daily budget."""
+    """Charges the current run's budget (if any) and the shared daily budget."""
 
     def __init__(self) -> None:
+        self._lock = threading.Lock()
         self.day = datetime.date.today()
         self.daily = _make_monitor("DAY")
-        self.run: Optional[BudgetMonitor] = None
 
-    def _roll_day(self) -> None:
-        today = datetime.date.today()
-        if today != self.day:
-            self.day = today
-            self.daily = _make_monitor("DAY")
+    def _daily(self) -> BudgetMonitor:
+        with self._lock:
+            today = datetime.date.today()
+            if today != self.day:
+                self.day = today
+                self.daily = _make_monitor("DAY")
+            return self.daily
 
     def start_run(self) -> None:
-        self.run = _make_monitor("RUN")
+        _RUN_BUDGET.set(_make_monitor("RUN"))
 
     def consume_api_call(self, n: int = 1) -> None:
-        self._roll_day()
-        if self.run is not None:
-            self.run.consume_api_call(n)
-        self.daily.consume_api_call(n)
+        run = _RUN_BUDGET.get()
+        if run is not None:
+            run.consume_api_call(n)
+        self._daily().consume_api_call(n)
 
     def consume_tokens(self, n: int) -> None:
-        self._roll_day()
-        if self.run is not None:
-            self.run.consume_tokens(n)
-        self.daily.consume_tokens(n)
+        run = _RUN_BUDGET.get()
+        if run is not None:
+            run.consume_tokens(n)
+        self._daily().consume_tokens(n)
 
 
 _GLOBAL_BUDGET: Optional[_Budget] = None
+_BUDGET_INIT_LOCK = threading.Lock()
 
 
 def get_global_budget() -> _Budget:
     global _GLOBAL_BUDGET
     if _GLOBAL_BUDGET is None:
-        _GLOBAL_BUDGET = _Budget()
+        with _BUDGET_INIT_LOCK:
+            if _GLOBAL_BUDGET is None:
+                _warn_old_vars()
+                _GLOBAL_BUDGET = _Budget()
     return _GLOBAL_BUDGET
 
 
