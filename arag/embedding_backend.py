@@ -10,14 +10,6 @@ from arag.runtime_ops import get_global_budget, get_global_rate_limiter
 
 log = logging.getLogger(__name__)
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except Exception:
-    pass
-
-
 def get_embeddings(texts: List[str], model: str = "text-embedding-3-small") -> List[List[float]]:
     try:
         from llama_index.embeddings.openai import OpenAIEmbedding

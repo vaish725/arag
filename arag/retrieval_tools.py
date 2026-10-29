@@ -7,13 +7,6 @@ import pickle
 import re
 from typing import Any, Callable, Dict, List, Optional
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except Exception:
-    pass
-
 _bm25: Optional[Any] = None
 _chunks: Optional[List[Dict[str, Any]]] = None
 _faiss_index: Optional[Any] = None
@@ -864,6 +857,9 @@ def find_award_mentions(name: str, max_results: int = 10) -> List[Dict]:
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
     try:
         load_indexes()
         print("Indexes loaded successfully. BM25 example:")

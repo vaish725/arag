@@ -1,7 +1,4 @@
-import json
-import os
 import pickle
-import shutil
 
 from rank_bm25 import BM25Okapi
 
@@ -25,6 +22,11 @@ def write_test_indexes(tmp_path):
                 "She won an Academy Award for Best Short Film."
             ),
         },
+    ]
+    # BM25Okapi gives non-positive IDF on tiny corpora, so pad with filler docs.
+    docs += [
+        {"title": f"Filler_{i}", "text": f"Unrelated filler passage number {i} about geology and rivers."}
+        for i in range(6)
     ]
 
     # Build chunks list similar to hierarchical_index_builder
@@ -56,25 +58,27 @@ def write_test_indexes(tmp_path):
 
 
 def test_agent_integration(tmp_path, monkeypatch):
-    # Write indexes to the temporary workspace and run the agent against them
+    # Point the retrieval layer at a tiny temporary index instead of copying
+    # files into the repo root, and run from tmp_path so no real data/ is seen.
+    import arag.retrieval_tools as rt
+
     bm25_path, chunks_path = write_test_indexes(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    for name in ("_bm25", "_chunks", "_faiss_index", "_sentence_faiss_index", "_sentences"):
+        monkeypatch.setattr(rt, name, None)
+    rt.load_indexes(
+        bm25_path=bm25_path,
+        chunks_path=chunks_path,
+        faiss_path=str(tmp_path / "none.bin"),
+        sentence_faiss_path=str(tmp_path / "none2.bin"),
+        sentences_path=str(tmp_path / "none3.pkl"),
+    )
 
-    # Copy the files to the repository root where retrieval_tools expects
-    # them
-    shutil.copy(bm25_path, os.path.join(os.getcwd(), "bm25_index.pkl"))
-    shutil.copy(chunks_path, os.path.join(os.getcwd(), "chunks.pkl"))
-
-    try:
-        res = run_agent(
-            "Who directed Test Film and did they win any Academy Awards?",
-            max_steps=6,
-            max_tokens=2000,
-        )
-        # Ensure the agent found the director and that award detection can see
-        # the local person page
-        assert "Test Film" in json.dumps(res) or "Jane Doe" in json.dumps(res)
-    finally:
-        # cleanup
-        for fname in ("bm25_index.pkl", "chunks.pkl"):
-            if os.path.exists(fname):
-                os.remove(fname)
+    res = run_agent(
+        "Who directed Test Film and did they win any Academy Awards?",
+        max_steps=6,
+        max_tokens=2000,
+        allow_fallback=False,
+        enable_director_flow=True,
+    )
+    assert "Jane Doe" in res["answer"]

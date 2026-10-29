@@ -450,7 +450,7 @@ def run_agent(
                             llm_out = llm_backend.synthesize_answer(
                                 q, contexts, max_tokens=max_tokens, allow_fallback=True
                             )
-                            llm_ans = llm_out[0] if isinstance(llm_out, (tuple, list)) else llm_out
+                            llm_ans = llm_out.get("answer") if isinstance(llm_out, dict) else (llm_out[0] if isinstance(llm_out, (tuple, list)) else llm_out)
                             if llm_ans:
                                 answer = str(llm_ans)
                     except Exception as e:
@@ -512,6 +512,10 @@ def run_agent(
                         citations = [int(c) for c in out[1] if isinstance(c, int)]
                     if len(out) >= 3:
                         used_fallback = bool(out[2])
+                elif isinstance(out, dict):
+                    ans = out.get("answer") or ""
+                    citations = [c for c in out.get("citations", []) if isinstance(c, int)]
+                    used_fallback = bool(out.get("used_fallback"))
                 elif isinstance(out, str):
                     ans = out
                 answer = ans or ""

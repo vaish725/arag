@@ -46,7 +46,7 @@ def test_agent_with_mocked_llm(monkeypatch):
     # Mock LLM backend to assert it is called and to return a predictable answer
     monkeypatch.setattr(llm_backend, "llm_available", lambda: True)
     monkeypatch.setattr(
-        llm_backend, "synthesize_answer", lambda q, ctxs, **kw: "SYNTHESIZED BY LLM"
+        llm_backend, "synthesize_answer", lambda q, ctxs, **kw: {"answer": "SYNTHESIZED BY LLM", "citations": [], "used_fallback": False}
     )
 
     res = agent_loop.run_agent(

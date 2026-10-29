@@ -8,6 +8,9 @@ from __future__ import annotations
 import os
 
 import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()  # local .env; arag modules no longer load it at import time
 
 # Bridge Streamlit Cloud secrets into the process environment, since the
 # arag backends read credentials via os.environ (populated from .env locally).

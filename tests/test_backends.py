@@ -129,51 +129,64 @@ def test_synthesize_answer_uses_openai(monkeypatch):
     importlib.reload(llm_backend)
 
     out = llm_backend.synthesize_answer("q", ["ctx1", "ctx2"])
-    assert isinstance(out, str)
-    assert "fake answer" in out
+    assert out == {"answer": "fake answer", "citations": [], "used_fallback": False}
 
 
-def test_synthesize_answer_uses_anthropic(monkeypatch):
-    # Remove OpenAI and mock anthropic
+def test_synthesize_answer_uses_anthropic_messages_api(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "akey")
+    seen = {}
 
-    class FakeAnthropicClient:
-        def __init__(self, api_key=None):
-            self.api_key = api_key
+    class FakeMessages:
+        @staticmethod
+        def create(model=None, max_tokens=None, system=None, messages=None):
+            seen.update(model=model, max_tokens=max_tokens, system=system)
+            block = SimpleNamespace(type="text", text='{"answer": "anthropic answer", "citations": [1]}')
+            return SimpleNamespace(content=[block])
 
-        class completions:
-            @staticmethod
-            def create(model=None, prompt=None, max_tokens_to_sample=None):
-                return {"completion": "anthropic answer"}
-
-    fake_anth = SimpleNamespace(
-        Client=lambda api_key=None: FakeAnthropicClient(api_key)
-    )
+    fake_anth = SimpleNamespace(Anthropic=lambda api_key=None: SimpleNamespace(messages=FakeMessages))
     monkeypatch.setitem(sys.modules, "anthropic", fake_anth)
 
     import arag.llm_backend as llm_backend
 
     importlib.reload(llm_backend)
 
-    # Accept either a successful string return or a RuntimeError if the
-    # backend wasn't actually used
-    try:
-        out = llm_backend.synthesize_answer("q2", ["ctx"])
-        assert isinstance(out, str)
-    except RuntimeError:
-        pytest.skip("Anthropic backend not usable in this environment")
+    out = llm_backend.synthesize_answer("q2", ["ctx"])
+    assert out["answer"] == "anthropic answer"
+    assert out["citations"] == [1]
+    assert seen["model"] == "claude-sonnet-5-5"
+    assert "ONLY the provided contexts" in seen["system"]
+
+
+@pytest.mark.parametrize(
+    "reply, answer, citations",
+    [
+        ('{"answer": "A", "citations": [1, 2]}', "A", [1, 2]),
+        ('```json\n{"answer": "B", "citations": [3]}\n```', "B", [3]),
+        ("plain text reply", "plain text reply", []),
+    ],
+)
+def test_parse_reply(reply, answer, citations):
+    import arag.llm_backend as llm_backend
+
+    out = llm_backend._parse_reply(reply, allow_fallback=False)
+    assert out["answer"] == answer
+    assert out["citations"] == citations
+
+
+def test_parse_reply_flags_external_knowledge():
+    import arag.llm_backend as llm_backend
+
+    out = llm_backend._parse_reply(
+        '{"answer": "X. Note: this answer uses external knowledge outside the provided contexts.", "citations": []}',
+        allow_fallback=True,
+    )
+    assert out["used_fallback"] is True
 
 
 def test_synthesize_answer_no_backend_raises(monkeypatch):
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     import arag.llm_backend as llm_backend
 
     importlib.reload(llm_backend)
-    try:
-        out = llm_backend.synthesize_answer("q", [])
-        assert isinstance(out, str)
-    except RuntimeError:
-        # Accept runtime error as valid behavior when no backend is configured
-        pass
+    with pytest.raises(RuntimeError, match="No LLM backend configured"):
+        llm_backend.synthesize_answer("q", [])

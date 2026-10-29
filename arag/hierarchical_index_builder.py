@@ -7,14 +7,6 @@ import os
 import pickle
 from typing import Dict, List, Tuple
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except Exception:
-    pass
-
-
 def load_hotpot_corpus(max_examples: int = 1000) -> List[Dict[str, str]]:
     try:
         from datasets import load_dataset
@@ -312,4 +304,7 @@ def main():
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
     main()
