@@ -18,3 +18,7 @@ data/*.embcache.pkl
 
 ARAG_IMPLEMENTATION.MD
 
+
+# Local investigation notes (never push)
+PROJECT_DEEP_DIVE_part1.md
+PROJECT_DEEP_DIVE_part2.md

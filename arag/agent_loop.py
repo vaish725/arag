@@ -190,7 +190,7 @@ def run_agent(
             # initialize local director vars used below
             director = None
             director_citation = None
-            if contexts and not allow_fallback:
+            if contexts:
                 retrieved = retrieval.get("retrieved_texts", [])
                 # Quick deterministic check: if we've promoted a film chunk
                 # to the front (contexts[0]) try extracting the director from
@@ -439,6 +439,22 @@ def run_agent(
                 cite_str = f" Citations: {final_citations}." if final_citations else ""
                 answer = " ".join(parts) + cite_str
                 local_citations = final_citations
+                # The evidence-only template is always built first. Only when it
+                # could not find the director and the caller allows fallback do
+                # we hand the contexts to the LLM instead.
+                if not director and allow_fallback:
+                    try:
+                        import arag.llm_backend as llm_backend
+
+                        if llm_backend.llm_available():
+                            llm_out = llm_backend.synthesize_answer(
+                                q, contexts, max_tokens=max_tokens, allow_fallback=True
+                            )
+                            llm_ans = llm_out[0] if isinstance(llm_out, (tuple, list)) else llm_out
+                            if llm_ans:
+                                answer = str(llm_ans)
+                    except Exception as e:
+                        logging.getLogger(__name__).warning("LLM fallback failed: %s", e)
                 out = {
                     "answer": answer,
                     "tool_trace": retrieval.get("tool_trace", []),
@@ -1085,7 +1101,6 @@ def detect_award_evidence(
     except Exception:
         pass
 
-    return evidence
     return evidence
 
 
@@ -1757,9 +1772,9 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
     # If we didn't find explicit awards pages, try a heuristic scan across
     # chunks for sentences that mention awards and the person's last name.
     if not retrieved_texts:
-        try:
-            from .retrieval_tools import find_award_mentions
+        from .retrieval_tools import find_award_mentions
 
+        try:
             fallback_hits = find_award_mentions(person, max_results=6)
             for fh in fallback_hits:
                 retrieved_texts.append(
@@ -1785,6 +1800,10 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
 if __name__ == "__main__":
     import argparse
 
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
     parser = argparse.ArgumentParser(
         description="Run the lightweight A-RAG agent (heuristic policy)"
     )
@@ -1792,7 +1811,7 @@ if __name__ == "__main__":
         "--question", type=str, default="Who directed Titanic?", help="Question to ask"
     )
     parser.add_argument("--max_steps", type=int, default=10)
-    parser.add_argument("--max_tokens", type=int, default=4000)
+    parser.add_argument("--max_tokens", type=int, default=2000)
     parser.add_argument(
         "--allow-fallback",
         dest="allow_fallback",
@@ -1826,5 +1845,6 @@ if __name__ == "__main__":
         max_steps=args.max_steps,
         max_tokens=args.max_tokens,
         allow_fallback=args.allow_fallback,
+        enable_director_flow=args.enable_director_flow,
     )
     print(json.dumps(result, indent=2))

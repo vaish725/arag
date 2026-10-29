@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import pickle
+import re
 from typing import Any, Callable, Dict, List, Optional
 
 try:
@@ -116,6 +117,17 @@ def keyword_search(query: str, k: int = 5) -> List[Dict]:
     return results
 
 
+def _extract_title(q: str) -> Optional[str]:
+    """Pull a probable work title out of a query (e.g. a quoted title)."""
+    m = re.search(r"who directed\s+[\"“”']?(.+?)[\"“”']?\s+(and|,|\?|$)", q, flags=re.I)
+    if m:
+        return m.group(1).strip()
+    m2 = re.search(r"[\"“”'](.+?)[\"“”']", q)
+    if m2:
+        return m2.group(1).strip()
+    return None
+
+
 def semantic_search(query: str, k: int = 5) -> List[Dict]:
     global _faiss_index, _chunks, _sentence_faiss_index, _sentences
     if _chunks is None:
@@ -188,19 +200,10 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
     # paper's emphasis on offline index construction.
     if _sentence_faiss_index is not None and _sentences is not None:
         # Try to extract a probable title from the query (e.g., "La La Land")
-        def _extract_title(q: str) -> Optional[str]:
-            import re
-
-            m = re.search(r"who directed\s+[\"“”']?(.+?)[\"“”']?\s+(and|,|\?|$)", q, flags=re.I)
-            if m:
-                return m.group(1).strip()
-            m2 = re.search(r"[\"“”'](.+?)[\"“”']", q)
-            if m2:
-                return m2.group(1).strip()
-            return None
 
         title_hint = _extract_title(query) or _extract_title(expanded_query)
         title_norm = title_hint.replace(" ", "_").lower() if title_hint else None
+        out_sent: List[Dict[str, Any]] = []
 
         # If we have a title hint, quickly check whether we already have sentence
         # records for that title and return them as high-confidence evidence.
@@ -319,7 +322,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
         except Exception as e:
             raise RuntimeError(f"Sentence FAISS search failed: {e}")
 
-        out_sent: List[Dict[str, Any]] = []
+        out_sent = []
         for col_idx, idx in enumerate(indices[0]):
             if idx < 0 or idx >= len(_sentences):
                 continue
@@ -332,16 +335,6 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
                 "bm25_score": 0.0,
             })
         # Title extraction heuristic: try to pull a probable title from the query
-        def _extract_title(q: str) -> Optional[str]:
-            import re
-
-            m = re.search(r"who directed\s+[\"“”']?(.+?)[\"“”']?\s+(and|,|\?|$)", q, flags=re.I)
-            if m:
-                return m.group(1).strip()
-            m2 = re.search(r"[\"“”'](.+?)[\"“”']", q)
-            if m2:
-                return m2.group(1).strip()
-            return None
 
         title_hint = _extract_title(query) or _extract_title(expanded_query)
         title_norm = title_hint.replace(" ", "_").lower() if title_hint else None
@@ -804,69 +797,70 @@ def chunk_read(chunk_id: str) -> Dict:
         "coarse": chunk.get("coarse"),
     }
 
-    def find_award_mentions(name: str, max_results: int = 10) -> List[Dict]:
-        """
-        Heuristic scan across all chunks to find sentences that mention the
-        person's last name and award-related tokens (academy, oscar, nominated).
 
-        This is a cheap fallback when structured award pages are missing from the
-        index. Returns a list of dicts with keys: chunk_id, text (sentence), score
-        (BM25 score if available), and source.
-        """
-        global _chunks, _bm25
-        if _chunks is None:
-            load_indexes()
-        if _chunks is None:
-            return []
+def find_award_mentions(name: str, max_results: int = 10) -> List[Dict]:
+    """
+    Heuristic scan across all chunks to find sentences that mention the
+    person's last name and award-related tokens (academy, oscar, nominated).
 
-        import re
+    This is a cheap fallback when structured award pages are missing from the
+    index. Returns a list of dicts with keys: chunk_id, text (sentence), score
+    (BM25 score if available), and source.
+    """
+    global _chunks, _bm25
+    if _chunks is None:
+        load_indexes()
+    if _chunks is None:
+        return []
 
-        parts = [p for p in (name or "").split() if p]
-        last_name = parts[-1].lower() if parts else None
-        award_tokens = ["academy", "oscar", "oscars", "academy award", "academy awards", "nominated", "nominated for", "won an oscar", "won an academy"]
+    import re
 
-        results: List[Dict] = []
-        for idx, c in enumerate(_chunks):
-            text = (c.get("text") or "")
-            tl = text.lower()
-            if last_name and last_name not in tl:
+    parts = [p for p in (name or "").split() if p]
+    last_name = parts[-1].lower() if parts else None
+    award_tokens = ["academy", "oscar", "oscars", "academy award", "academy awards", "nominated", "nominated for", "won an oscar", "won an academy"]
+
+    results: List[Dict] = []
+    for idx, c in enumerate(_chunks):
+        text = (c.get("text") or "")
+        tl = text.lower()
+        if last_name and last_name not in tl:
+            continue
+        # Split into sentences and search
+        sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", text) if s.strip()]
+        for s in sents:
+            sl = s.lower()
+            matched = False
+            for tkn in award_tokens:
+                if tkn in sl:
+                    matched = True
+                    break
+            if not matched:
                 continue
-            # Split into sentences and search
-            sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", text) if s.strip()]
-            for s in sents:
-                sl = s.lower()
-                matched = False
-                for tkn in award_tokens:
-                    if tkn in sl:
-                        matched = True
-                        break
-                if not matched:
-                    continue
 
-                # compute BM25 score if available
+            # compute BM25 score if available
+            bm25_score = 0.0
+            try:
+                if _bm25 is not None:
+                    bm25_score = float(_bm25.get_scores((s or "").lower().split())[idx]) if idx < len(_chunks) else 0.0
+            except Exception:
                 bm25_score = 0.0
-                try:
-                    if _bm25 is not None:
-                        bm25_score = float(_bm25.get_scores((s or "").lower().split())[idx]) if idx < len(_chunks) else 0.0
-                except Exception:
-                    bm25_score = 0.0
 
-                results.append({
-                    "chunk_id": c.get("id"),
-                    "text": s[:400],
-                    "source": c.get("coarse") or c.get("source") or "",
-                    "score": bm25_score,
-                })
-                break
-            if len(results) >= max_results:
-                break
+            results.append({
+                "chunk_id": c.get("id"),
+                "text": s[:400],
+                "source": c.get("coarse") or c.get("source") or "",
+                "score": bm25_score,
+            })
+            break
+        if len(results) >= max_results:
+            break
 
-        # sort by score desc then return
-        try:
-            results = sorted(results, key=lambda x: -float(x.get("score", 0.0)))
-        except Exception:
-            pass
-        return results
+    # sort by score desc then return
+    try:
+        results = sorted(results, key=lambda x: -float(x.get("score", 0.0)))
+    except Exception:
+        pass
+    return results
 
 
 if __name__ == "__main__":
