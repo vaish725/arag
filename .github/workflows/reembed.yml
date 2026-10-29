@@ -1,0 +1,87 @@
+name: Re-embed indexes (manual)
+
+# Rebuilds the two FAISS indexes with the local embedding model on a GitHub
+# runner (the model host is unreachable from the maintainer's machine) and
+# uploads them as ONE artifact. Nothing is committed or pushed.
+# Run: Actions tab -> "Re-embed indexes (manual)" -> Run workflow -> branch local-embeddings.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reembed:
+    runs-on: ubuntu-latest
+    # No secrets are referenced anywhere in this workflow and no API keys are
+    # set: embeddings are local, and the CLI check runs with no keys at all.
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      FASTEMBED_CACHE_PATH: ${{ github.workspace }}/.fastembed_cache
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Cache embedding model
+        uses: actions/cache@v4
+        with:
+          path: .fastembed_cache
+          key: fastembed-bge-small-en-v1.5-v1
+
+      - name: Download embedding model
+        run: |
+          mkdir -p out
+          python scripts/download_model.py 2>&1 | tee out/download_model.txt
+
+      - name: Re-embed chunks and sentences
+        run: python scripts/reembed_indexes.py --report out/reembed_report.json 2>&1 | tee out/reembed_log.txt
+
+      - name: Run the full test suite (offline)
+        env:
+          HF_HUB_OFFLINE: '1'
+          ARAG_REQUIRE_MODEL: '1'
+        run: python -m pytest -q 2>&1 | tee out/pytest.txt
+
+      - name: CLI acceptance check (no API keys)
+        run: |
+          python -m arag.agent_loop --question "Who directed Inception and did they win any Academy Awards?" > out/cli_output.txt 2> out/cli_stderr.txt
+          python - <<'PY'
+          import json
+          text = open("out/cli_output.txt").read()
+          result = json.loads(text[text.index("{"):])
+          trace = result["tool_trace"]
+          semantic = [t for t in trace if t.get("tool") == "semantic_search"]
+          print("answer:", result["answer"])
+          assert "Christopher Nolan" in result["answer"], "Nolan answer missing"
+          assert semantic, "no semantic_search call in the trace"
+          assert not any("error" in t for t in semantic), "semantic_search failed: " + str([t.get("error") for t in semantic])
+          print(f"semantic_search succeeded in {len(semantic)} call(s)")
+          PY
+
+      - name: Regression films (director, verdict, citations vs. baseline)
+        continue-on-error: true
+        run: python scripts/regression_report.py --out out/regression.json --baseline scripts/regression_baseline.json 2>&1 | tee out/regression_report.txt
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reembedded-indexes
+          if-no-files-found: error
+          path: |
+            data/faiss_index.bin
+            data/sentence_faiss_index.bin
+            data/index_meta.json
+            out/
