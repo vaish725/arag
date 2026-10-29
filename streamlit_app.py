@@ -36,33 +36,38 @@ max_tokens = st.slider("Max tokens", 100, 20000, 2000)
 MAX_QUESTIONS_PER_SESSION = int(os.environ.get("ARAG_MAX_QUESTIONS_PER_SESSION", "10"))
 asked = st.session_state.get("questions_asked", 0)
 
+# allow_fallback toggle: evidence-only mode disables LLM fallback so answers
+# come strictly from retrieved corpus snippets. In the other mode the checkbox
+# controls whether the LLM may fall back to external knowledge. It is rendered
+# outside the Run block so toggling it does not clear the results.
+if mode.startswith("evidence-only"):
+    allow_fallback = False
+    st.info("Evidence-only mode: answers are built strictly from retrieved snippets (no LLM fallback).")
+else:
+    allow_fallback = st.checkbox(
+        "Allow LLM fallback to external knowledge if corpus lacks answer", value=True
+    )
+
 if st.button("Run"):
     if asked >= MAX_QUESTIONS_PER_SESSION:
         st.error(f"Session limit reached ({MAX_QUESTIONS_PER_SESSION} questions). Reload the page to start a new session.")
         st.stop()
     st.session_state["questions_asked"] = asked + 1
-    # allow_fallback toggle: evidence-only mode disables LLM fallback so
-    # answers come strictly from retrieved corpus snippets. In the other
-    # mode the checkbox controls whether the LLM may fall back to external
-    # knowledge when the corpus doesn't contain the answer.
-    if mode.startswith("evidence-only"):
-        allow_fallback = False
-        st.info("Evidence-only mode: answers are built strictly from retrieved snippets (no LLM fallback).")
-    else:
-        allow_fallback = st.checkbox(
-            "Allow LLM fallback to external knowledge if corpus lacks answer", value=True
-        )
     with st.spinner("Running agent..."):
         # For the demo UI we enable the director/award flow so sample movie
         # queries work out-of-the-box. Programmatic callers default to
         # enable_director_flow=False unless they opt in.
-        res = run_agent(
+        st.session_state["result"] = run_agent(
             question,
             max_steps=max_steps,
             max_tokens=max_tokens,
             allow_fallback=allow_fallback,
             enable_director_flow=True,
         )
+
+# Results come from session state so they survive reruns (e.g. ticking the box).
+res = st.session_state.get("result")
+if res is not None:
     st.subheader("Answer")
     st.write(res.get("answer"))
     # If the agent returned an explicit provenance note about fallback, make it visible

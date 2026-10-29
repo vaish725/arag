@@ -1800,8 +1800,9 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                 )
                 local_token_count += approx_token_count(fh.get("text") or "")
                 local_steps += 1
-        except Exception:
-            pass
+        except Exception as e:
+            logging.getLogger(__name__).warning("find_award_mentions failed: %s", e)
+            trace.append({"tool": "find_award_mentions", "args": {"name": person}, "error": str(e)})
 
     return {
         "tool_trace": trace,
