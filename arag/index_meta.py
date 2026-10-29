@@ -37,7 +37,13 @@ def _write(data_dir: str, meta: Dict[str, Any]) -> None:
         f.write("\n")
 
 
-def record_build(data_dir: str, info: Dict[str, Any], dim: int, **counts: int) -> None:
+def record_build(
+    data_dir: str,
+    info: Dict[str, Any],
+    dim: int,
+    fingerprint: Optional[Dict[str, Any]] = None,
+    **counts: int,
+) -> None:
     """Record a finished index build (``num_chunks=`` and/or ``num_sentences=``).
 
     If the embedding model differs from the one already recorded, the counts of
@@ -58,6 +64,9 @@ def record_build(data_dir: str, info: Dict[str, Any], dim: int, **counts: int) -
         dimension=dim,
         build_date=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
     )
+    if fingerprint is not None:
+        meta["model_revision"] = fingerprint["revision"]
+        meta["model_files"] = fingerprint["files"]
     meta.update(counts)
     _write(data_dir, meta)
 
@@ -73,6 +82,7 @@ def check_compat(
     info: Dict[str, Any],
     chunk_index: Any = None,
     sentence_index: Any = None,
+    fingerprint: Optional[Dict[str, Any]] = None,
 ) -> None:
     """Raise IndexMismatchError if the loaded indexes don't fit ``info``.
 
@@ -98,6 +108,19 @@ def check_compat(
             f"Embedding mismatch: indexes were built with {built} but the configured embedding "
             f"is {configured}. Set ARAG_EMBEDDING_PROVIDER/ARAG_EMBEDDING_MODEL to match, or rebuild."
         )
+    if fingerprint is not None and meta.get("model_files"):
+        if meta.get("model_revision") != fingerprint["revision"]:
+            raise IndexMismatchError(
+                f"The embedding model revision differs: indexes were built with "
+                f"{meta.get('model_revision')} but the loaded model is {fingerprint['revision']}. Rebuild."
+            )
+        built_files, loaded_files = meta["model_files"], fingerprint["files"]
+        changed = sorted(n for n in set(built_files) | set(loaded_files) if built_files.get(n) != loaded_files.get(n))
+        if changed:
+            raise IndexMismatchError(
+                f"The embedding model files differ from the ones the indexes were built with "
+                f"(sha256 mismatch: {', '.join(changed)}). Re-download the model or rebuild the indexes."
+            )
     for label, index, count_key in (
         ("chunk", chunk_index, "num_chunks"),
         ("sentence", sentence_index, "num_sentences"),

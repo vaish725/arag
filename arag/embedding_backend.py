@@ -75,6 +75,41 @@ def _load_local_model(model: str) -> Any:
         return _local_models[model]
 
 
+_fingerprints: Dict[str, Optional[Dict[str, Any]]] = {}
+
+
+def get_model_fingerprint() -> Optional[Dict[str, Any]]:
+    """Identify the exact local model files: {"revision", "files": {name: sha256}}.
+
+    ``revision`` is the Hugging Face commit the cached snapshot belongs to. Raises
+    if the model cannot be loaded. Returns None when the provider is not "local"
+    or the model object does not expose its files. The result is cached.
+    """
+    if get_provider() != "local":
+        return None
+    name = get_model_name("local")
+    if name not in _fingerprints:
+        import hashlib
+        from pathlib import Path
+
+        embedder = _load_local_model(name)
+        model_dir = getattr(getattr(embedder, "model", None), "_model_dir", None)
+        if model_dir is None:
+            _fingerprints[name] = None
+        else:
+            model_dir = Path(model_dir)
+            files = {}
+            for f in sorted(p for p in model_dir.rglob("*") if p.is_file()):
+                h = hashlib.sha256()
+                with open(f, "rb") as fh:
+                    for block in iter(lambda: fh.read(1 << 20), b""):
+                        h.update(block)
+                files[str(f.relative_to(model_dir))] = h.hexdigest()
+            revision = model_dir.name if model_dir.parent.name == "snapshots" else "unknown"
+            _fingerprints[name] = {"revision": revision, "files": files}
+    return _fingerprints[name]
+
+
 def warm_up() -> None:
     """Load the configured local model now (used by the Streamlit app)."""
     if get_provider() == "local":

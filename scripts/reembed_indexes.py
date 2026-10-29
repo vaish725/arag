@@ -36,7 +36,7 @@ def _sha(path: str) -> str:
     return h.hexdigest()
 
 
-def main(data_dir: str = "data") -> int:
+def main(data_dir: str = "data", report_path: str | None = None) -> int:
     import faiss
 
     from arag import hierarchical_index_builder as hib
@@ -92,9 +92,31 @@ def main(data_dir: str = "data") -> int:
             problems.append("chunk count changed")
     meta = read_meta(data_dir)
     peak_mb = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (1024 * 1024 if sys.platform == "darwin" else 1024)
+    outputs = ["faiss_index.bin", "sentence_faiss_index.bin", "index_meta.json"]
+    report = {
+        "model": f"{info['provider']}/{info['model']}",
+        "dimension": info["dim"],
+        "model_revision": (meta or {}).get("model_revision"),
+        "model_files_sha256": (meta or {}).get("model_files"),
+        "counts_before": {"chunks": n_chunks, "sentences": n_sentences},
+        "counts_after": {"chunk_index_ntotal": ci.ntotal, "sentence_index_ntotal": si.ntotal},
+        "dimensions": {"chunk_index": ci.d, "sentence_index": si.d},
+        "source_files_sha256_before": before_hash,
+        "source_files_sha256_after": {n: _sha(p) for n, p in paths.items()},
+        "output_files": {n: {"bytes": os.path.getsize(os.path.join(data_dir, n)), "sha256": _sha(os.path.join(data_dir, n))} for n in outputs},
+        "embedding_seconds": round(elapsed, 1),
+        "peak_memory_mb": round(peak_mb),
+        "problems": problems,
+    }
     print(f"After: chunk index {ci.ntotal} x {ci.d}, sentence index {si.ntotal} x {si.d}")
     print(f"Embedding time {elapsed:.0f}s, peak memory {peak_mb:.0f} MB")
     print(f"index_meta.json: {meta}")
+    if report_path:
+        import json
+
+        with open(report_path, "w") as f:
+            json.dump(report, f, indent=2, sort_keys=True)
+        print(f"Wrote report to {report_path}")
     if problems:
         print("VERIFICATION FAILED:\n  " + "\n  ".join(problems))
         return 1
@@ -105,4 +127,6 @@ def main(data_dir: str = "data") -> int:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data_dir", default="data")
-    raise SystemExit(main(parser.parse_args().data_dir))
+    parser.add_argument("--report", help="write a JSON report (counts, hashes, sizes, time, memory)")
+    a = parser.parse_args()
+    raise SystemExit(main(a.data_dir, a.report))

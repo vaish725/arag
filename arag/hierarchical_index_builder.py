@@ -92,7 +92,7 @@ def build_faiss(chunks: List[Dict[str, str]], out_index: str = "faiss_index.bin"
     except Exception as e:
         raise RuntimeError("Please install 'faiss-cpu' and 'numpy' to build FAISS index: pip install faiss-cpu numpy") from e
 
-    from arag.embedding_backend import get_embedding_info, get_embeddings
+    from arag.embedding_backend import get_embedding_info, get_embeddings, get_model_fingerprint
     from arag.index_meta import record_build
 
     def embed_texts(texts: List[str]) -> List[List[float]]:
@@ -119,7 +119,7 @@ def build_faiss(chunks: List[Dict[str, str]], out_index: str = "faiss_index.bin"
     if out_chunks:  # None = leave an existing chunks.pkl untouched
         with open(out_chunks, "wb") as f:
             pickle.dump(chunks, f)
-    record_build(os.path.dirname(out_index) or ".", info, dim, num_chunks=len(chunks))
+    record_build(os.path.dirname(out_index) or ".", info, dim, fingerprint=get_model_fingerprint(), num_chunks=len(chunks))
     print(f"Saved FAISS index to {out_index} and chunks to {out_chunks}")
 
 
@@ -148,7 +148,7 @@ def embed_sentence_index(sentences: List[Dict[str, str]], out_index: str) -> Non
     except Exception as e:
         raise RuntimeError("Please install 'faiss-cpu' and 'numpy' to build FAISS index: pip install faiss-cpu numpy") from e
 
-    from arag.embedding_backend import get_embedding_info, get_embeddings
+    from arag.embedding_backend import get_embedding_info, get_embeddings, get_model_fingerprint
     from arag.index_meta import record_build
 
     batch_size = 256
@@ -167,7 +167,7 @@ def embed_sentence_index(sentences: List[Dict[str, str]], out_index: str) -> Non
     index = faiss.IndexFlatIP(dim)
     index.add(embeddings_arr)
     faiss.write_index(index, out_index)
-    record_build(os.path.dirname(out_index) or ".", info, dim, num_sentences=len(sentences))
+    record_build(os.path.dirname(out_index) or ".", info, dim, fingerprint=get_model_fingerprint(), num_sentences=len(sentences))
     print(f"Saved sentence FAISS index to {out_index}")
 
 

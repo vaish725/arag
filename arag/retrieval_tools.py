@@ -39,17 +39,26 @@ _index_dir: str = DATA_DIR
 
 
 def _assert_index_matches_config() -> None:
-    """Raise IndexMismatchError if the loaded vector indexes were built with a
-    different embedding model than the one configured (no silent fallback)."""
+    """Raise IndexMismatchError if vector search can't be trusted: the indexes were
+    built with a different embedding model, or the model can't be loaded or its
+    files changed. Vector search is then off; BM25 is unaffected."""
+    if _faiss_index is None and _sentence_faiss_index is None:
+        return
     from arag import embedding_backend
     from arag.index_meta import check_compat
 
-    check_compat(
-        _index_dir,
-        embedding_backend.get_embedding_info(),
-        chunk_index=_faiss_index,
-        sentence_index=_sentence_faiss_index,
-    )
+    info = embedding_backend.get_embedding_info()
+    kwargs = dict(chunk_index=_faiss_index, sentence_index=_sentence_faiss_index)
+    check_compat(_index_dir, info, **kwargs)  # cheap checks first: provider, model, dimension, counts
+    if info["provider"] == "local":
+        try:
+            fingerprint = embedding_backend.get_model_fingerprint()
+        except Exception as e:
+            raise IndexMismatchError(
+                f"The local embedding model {info['model']} could not be loaded ({e}). "
+                f"Vector search is unavailable; run scripts/download_model.py."
+            ) from e
+        check_compat(_index_dir, info, fingerprint=fingerprint, **kwargs)  # then the model's exact files
 
 
 def load_indexes(
