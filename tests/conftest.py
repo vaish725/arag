@@ -28,4 +28,9 @@ def _no_real_api(monkeypatch):
 
     monkeypatch.setattr(socket.socket, "connect", _blocked)
     monkeypatch.setattr(socket, "create_connection", _blocked)
+    # Each test starts with a fresh spend budget (the cap is process-wide).
+    from arag import runtime_ops
+
+    runtime_ops.reset_global_budget()
     yield
+    runtime_ops.reset_global_budget()

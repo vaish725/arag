@@ -132,7 +132,7 @@ def get_global_rate_limiter() -> RateLimiter:
     return _GLOBAL_RATE_LIMITER
 
 
-DEFAULT_MAX_API_CALLS = 200
+DEFAULT_MAX_API_CALLS = 50
 DEFAULT_MAX_TOKENS = 200_000
 
 

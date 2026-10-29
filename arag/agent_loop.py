@@ -1361,7 +1361,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                             # try extracting right away
                             nm = extract_person_name_from_text(txt_try, work_hint=work)
                             if nm:
-                                name = nm
+                                early_name_guess = nm
                             found = True
                             break
                 if found:
@@ -1376,10 +1376,13 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     local_steps += 1
                     nm = extract_person_name_from_text(txtp, work_hint=work)
                     if nm:
-                        name = nm
+                        early_name_guess = nm
                     break
     except Exception:
         pass
+    # Deliberate reset: the early guess above is discarded and the director is
+    # re-derived by the scan below. Keeping the guess made the Inception award
+    # regression test answer "Unknown" (see tests/test_award_regression.py).
     name = None
     inspected = 0
 
