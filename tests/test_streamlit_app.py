@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 pytest.importorskip("streamlit")
+pytestmark = pytest.mark.needs_model
 from streamlit.testing.v1 import AppTest  # noqa: E402
 
 APP = str(Path(__file__).resolve().parents[1] / "streamlit_app.py")

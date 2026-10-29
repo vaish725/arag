@@ -52,15 +52,17 @@ def test_semantic_search_when_faiss_exists(monkeypatch, tmp_path):
 
     monkeypatch.setattr(rt, "DATA_DIR", str(tmp_path))
 
-    # The committed index holds real 1536-d OpenAI vectors; use a fixed query
-    # vector of that size so the real FAISS search runs with no network.
+    # Use a fixed query vector of the index's dimension so the real FAISS
+    # search runs with no model and no network.
     import numpy as np
 
     import arag.embedding_backend as eb
+    import arag.retrieval_tools as rt_mod
 
-    vec = np.random.default_rng(0).normal(size=1536).tolist()
-    monkeypatch.setattr(eb, "get_embedding", lambda text, model="x": vec)
-    monkeypatch.setattr(eb, "get_embeddings", lambda texts, model="x": [vec for _ in texts])
+    dim = rt_mod._sentence_faiss_index.d if rt_mod._sentence_faiss_index is not None else rt_mod._faiss_index.d
+    vec = np.random.default_rng(0).normal(size=dim).tolist()
+    monkeypatch.setattr(eb, "get_embedding", lambda text, model=None, kind="query": vec)
+    monkeypatch.setattr(eb, "get_embeddings", lambda texts, model=None, kind="passage": [vec for _ in texts])
 
     res = semantic_search("Who directed Doctor Strange?", k=3)
 

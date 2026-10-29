@@ -63,9 +63,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-dev-
 
+      # The regression tests use the real local embedding model. Download it once
+      # (cached across runs) BEFORE pytest; pytest then runs with HF_HUB_OFFLINE=1
+      # so nothing is fetched during the tests.
+      - name: Cache embedding model
+        uses: actions/cache@v4
+        with:
+          path: .fastembed_cache
+          key: fastembed-bge-small-en-v1.5-v1
+
+      - name: Download embedding model
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          FASTEMBED_CACHE_PATH: ${{ github.workspace }}/.fastembed_cache
+        run: python scripts/download_model.py
+
       - name: Run type checks and tests
         env:
           PYTHONPATH: ${{ github.workspace }}
+          FASTEMBED_CACHE_PATH: ${{ github.workspace }}/.fastembed_cache
+          HF_HUB_OFFLINE: '1'
+          ARAG_REQUIRE_MODEL: '1'
         run: |
           mypy --ignore-missing-imports . || true
           coverage run -m pytest -q

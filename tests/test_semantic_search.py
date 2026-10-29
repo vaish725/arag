@@ -61,18 +61,23 @@ def indexed(tmp_path, monkeypatch):
     import arag.hierarchical_index_builder as hib
     import arag.retrieval_tools as rt
 
-    calls = {"n": 0}
+    calls = {"n": 0, "kinds": []}
 
-    def fake_get_embeddings(texts, model="text-embedding-3-small"):
+    def fake_get_embeddings(texts, model=None, kind="passage"):
         calls["n"] += len(texts)
+        calls["kinds"].append(kind)
         return [fake_embed(t) for t in texts]
 
-    def fake_get_embedding(text, model="text-embedding-3-small"):
+    def fake_get_embedding(text, model=None, kind="query"):
         calls["n"] += 1
+        calls["kinds"].append(kind)
         return fake_embed(text)
 
     monkeypatch.setattr(eb, "get_embeddings", fake_get_embeddings)
     monkeypatch.setattr(eb, "get_embedding", fake_get_embedding)
+    monkeypatch.setattr(
+        eb, "get_embedding_info", lambda: {"provider": "fake", "model": "hashed-bow", "dim": DIM}
+    )
     # Relative paths inside retrieval_tools (sentence cache) must not touch data/.
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(rt, "DATA_DIR", str(tmp_path))
@@ -97,6 +102,7 @@ def indexed(tmp_path, monkeypatch):
     rt.load_indexes(**paths)
     assert rt._sentence_faiss_index is not None and rt._faiss_index is not None
     calls["n"] = 0  # ignore build-time embeddings
+    calls["kinds"].clear()
     return rt, calls
 
 
@@ -109,6 +115,7 @@ def test_sentence_faiss_path_returns_relevant_sentence(indexed):
     # bm25_score is 0.0 only on the sentence-FAISS branch (not the re-rank fallback)
     assert res[0]["bm25_score"] == 0.0
     assert calls["n"] >= 1, "query embedding should have been requested"
+    assert calls["kinds"] == ["query"], "a user question must use the query embedding path"
 
 
 def test_title_hint_short_circuits_without_embedding(indexed):
@@ -119,13 +126,15 @@ def test_title_hint_short_circuits_without_embedding(indexed):
 
 
 def test_bm25_dense_rerank_path(indexed, monkeypatch):
-    rt, _ = indexed
+    rt, calls = indexed
     # Disable sentence index so the BM25 -> dense re-rank branch runs.
     monkeypatch.setattr(rt, "_sentence_faiss_index", None)
     monkeypatch.setattr(rt, "_sentences", None)
     res = rt.semantic_search("crew repairs the oxygen system on the space station", k=3)
     assert res
     assert res[0]["chunk_id"].startswith("Orbital_Station")
+    # the question uses the query path, the BM25 candidate chunks the passage path
+    assert "query" in calls["kinds"] and "passage" in calls["kinds"]
 
 
 def test_chunk_level_faiss_fallback_path(indexed, monkeypatch):

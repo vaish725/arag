@@ -29,7 +29,24 @@ SENTENCE_SCORE_THRESHOLD = float(os.environ.get("SENTENCE_SCORE_THRESHOLD", 0.35
 # Title boost applied when a probable title is extracted from the query
 TITLE_BOOST = float(os.environ.get("TITLE_BOOST", 1.6))
 
-GetEmbeddingsFn = Callable[[List[str], str], List[List[float]]]
+GetEmbeddingsFn = Callable[..., List[List[float]]]
+
+
+_index_dir: str = DATA_DIR
+
+
+def _assert_index_matches_config() -> None:
+    """Raise IndexMismatchError if the loaded vector indexes were built with a
+    different embedding model than the one configured (no silent fallback)."""
+    from arag import embedding_backend
+    from arag.index_meta import check_compat
+
+    check_compat(
+        _index_dir,
+        embedding_backend.get_embedding_info(),
+        chunk_index=_faiss_index,
+        sentence_index=_sentence_faiss_index,
+    )
 
 
 def load_indexes(
@@ -45,7 +62,8 @@ def load_indexes(
     faiss_path = faiss_path or os.path.join(DATA_DIR, "faiss_index.bin")
     sentence_faiss_path = sentence_faiss_path or os.path.join(DATA_DIR, "sentence_faiss_index.bin")
     sentences_path = sentences_path or os.path.join(DATA_DIR, "sentences.pkl")
-    global _bm25, _chunks, _faiss_index
+    global _bm25, _chunks, _faiss_index, _index_dir
+    _index_dir = os.path.dirname(faiss_path) or "."
 
     if os.path.exists(bm25_path):
         try:
@@ -100,6 +118,8 @@ def load_indexes(
     # set globals from local variables
     globals().update({"_sentence_faiss_index": _sentence_faiss_index, "_sentences": _sentences})
 
+    _assert_index_matches_config()
+
 
 def keyword_search(query: str, k: int = 5) -> List[Dict]:
     global _bm25, _chunks
@@ -146,6 +166,8 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
         raise RuntimeError(
             "No FAISS index available. Build with --build_faiss or --build_sentence_faiss via hierarchical_index_builder.py."
         )
+    # Fail loudly if the indexes were built with a different embedding model.
+    _assert_index_matches_config()
     # Simple pseudo-relevance feedback expansion for award-related queries
     expanded_query = query
     try:
@@ -312,7 +334,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
         try:
             from arag.embedding_backend import get_embedding
 
-            q_vec_raw = get_embedding(expanded_query, model="text-embedding-3-small")
+            q_vec_raw = get_embedding(expanded_query, kind="query")
         except Exception as e:
             raise RuntimeError(f"Failed to obtain embeddings for semantic search: {e}")
 
@@ -436,7 +458,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
             q_vec_raw = None
             if get_embedding is not None:
                 try:
-                    q_vec_raw = get_embedding(expanded_query, model="text-embedding-3-small")
+                    q_vec_raw = get_embedding(expanded_query, kind="query")
                 except Exception:
                     q_vec_raw = None
 
@@ -444,7 +466,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
             sent_embs = None
             if get_embeddings is not None:
                 try:
-                    sent_embs = get_embeddings(texts, model="text-embedding-3-small")
+                    sent_embs = get_embeddings(texts, kind="passage")
                 except Exception:
                     sent_embs = None
 
@@ -499,7 +521,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
     try:
         from arag.embedding_backend import get_embedding
 
-        q_vec_raw = get_embedding(expanded_query, model="text-embedding-3-small")
+        q_vec_raw = get_embedding(expanded_query, kind="query")
     except Exception as e:
         raise RuntimeError(f"Failed to obtain embeddings for semantic search: {e}")
 
@@ -700,7 +722,12 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
                 return out
 
             # Load or create a simple on-disk cache for sentence embeddings to avoid repeated API calls
-            cache_path = os.path.join(DATA_DIR, "sentence_embedding_cache.pkl")
+            from arag.embedding_backend import get_embedding_info
+
+            _info = get_embedding_info()
+            _slug = re.sub(r"[^A-Za-z0-9]+", "_", f"{_info['provider']}_{_info['model']}").strip("_")
+            # one cache per embedding model: vectors from different models must never mix
+            cache_path = os.path.join(DATA_DIR, f"sentence_embedding_cache.{_slug}.pkl")
             sent_cache = {}
             try:
                 if os.path.exists(cache_path):
@@ -722,7 +749,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
                     batch_size = 32
                     for i in range(0, len(missing), batch_size):
                         batch = missing[i : i + batch_size]
-                        embs = get_embeddings(batch, model="text-embedding-3-small")
+                        embs = get_embeddings(batch, kind="passage")
                         for s, e in zip(batch, embs):
                             sent_cache[s] = e
 
@@ -736,7 +763,7 @@ def semantic_search(query: str, k: int = 5) -> List[Dict]:
                     pass
 
                 # get query embedding
-                q_emb = get_embedding(query, model="text-embedding-3-small")
+                q_emb = get_embedding(query, kind="query")
 
                 # compute cosine similarities
                 import numpy as np

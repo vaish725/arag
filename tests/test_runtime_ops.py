@@ -85,6 +85,7 @@ def test_rate_limiter_runs_dry():
 def test_embedding_backend_stops_at_cap(monkeypatch):
     import arag.embedding_backend as eb
 
+    monkeypatch.setenv("ARAG_EMBEDDING_PROVIDER", "openai")
     monkeypatch.setenv("ARAG_MAX_API_CALLS_PER_DAY", "1")
     runtime_ops.reset_global_budget()
     # First call spends the single allowed call (fails later: no backend/key).

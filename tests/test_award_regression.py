@@ -3,6 +3,8 @@ import pytest
 from arag import agent_loop
 from verdict_util import EXPECTED, parse_verdict
 
+pytestmark = pytest.mark.needs_model
+
 
 @pytest.mark.parametrize(
     "query, expected_person, expected_award",
