@@ -27,6 +27,7 @@ def test_bm25_non_empty():
     assert len(res) > 0, "BM25 returned no results for a common query"
 
 
+@pytest.mark.needs_model  # the index guard verifies the real model's files before searching
 def test_semantic_search_when_faiss_exists(monkeypatch, tmp_path):
     """Semantic search should return results when FAISS index and
     embedding backend are available.
