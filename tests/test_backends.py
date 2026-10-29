@@ -154,7 +154,7 @@ def test_synthesize_answer_uses_anthropic_messages_api(monkeypatch):
     out = llm_backend.synthesize_answer("q2", ["ctx"])
     assert out["answer"] == "anthropic answer"
     assert out["citations"] == [1]
-    assert seen["model"] == "claude-sonnet-5-5"
+    assert seen["model"] == "claude-haiku-5-5"
     assert "ONLY the provided contexts" in seen["system"]
 
 

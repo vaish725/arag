@@ -157,7 +157,7 @@ def synthesize_answer(
                 raise RuntimeError("Rate limiter timeout while attempting Anthropic call")
             budget.consume_api_call(1)
             anthropic_client: Any = anthropic.Anthropic(api_key=api_key)
-            model_name = model or os.environ.get("ANTHROPIC_MODEL") or "claude-sonnet-5-5"
+            model_name = model or os.environ.get("ANTHROPIC_MODEL") or "claude-haiku-5-5"
             res = anthropic_client.messages.create(
                 model=model_name,
                 max_tokens=max_tokens,
