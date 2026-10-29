@@ -10,6 +10,12 @@ on:
 permissions:
   contents: read
 
+# Explicit bash so pipelines use `-o pipefail`: without it a failing command piped
+# into `tee` is reported as success.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   reembed:
     runs-on: ubuntu-latest
@@ -49,6 +55,9 @@ jobs:
         run: python scripts/reembed_indexes.py --report out/reembed_report.json 2>&1 | tee out/reembed_log.txt
 
       - name: Run the full test suite (offline)
+        id: tests
+        # A failing test must not hide the artifact/debug output; the run is failed at the end.
+        continue-on-error: true
         env:
           HF_HUB_OFFLINE: '1'
           ARAG_REQUIRE_MODEL: '1'
@@ -99,6 +108,12 @@ jobs:
           HF_HUB_OFFLINE: '1'
         run: python scripts/measure_app_memory.py --mode streamlit 2>&1 | tee out/memory_streamlit.txt
 
+      - name: Experiment - bm25 vs semantic vs hybrid (RRF) on the regression films
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/prototype_hybrid.py 2>&1 | tee out/prototype_hybrid.txt
+
       - name: Upload artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -110,3 +125,9 @@ jobs:
             data/sentence_faiss_index.bin
             data/index_meta.json
             out/
+
+      - name: Fail the run if the tests failed
+        if: steps.tests.outcome == 'failure'
+        run: |
+          echo "pytest reported failures; see out/pytest.txt in the artifact"
+          exit 1
