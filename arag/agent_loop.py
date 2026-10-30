@@ -1234,31 +1234,21 @@ def _title_at_start(text: str) -> str:
     return re.sub(r"\s+", " ", text or "").strip()
 
 
-def _infer_work_title(chunk_text: str, exclude: set, sentence: str = "") -> str | None:
-    """Best guess at the work a person-page passage is about.
+def _explicit_work_title(sentence: str) -> str | None:
+    """The work named explicitly in a passage as "Title (YYYY)", else None.
 
-    1. An explicit "Title (YYYY)" inside the matched sentence ("... for Oppenheimer (2023),
-       which won him Academy Awards ...").
-    2. Otherwise the capitalised name that occurs most often (at least twice) in the chunk,
-       ignoring ``exclude``. Heuristic: returns None when nothing repeats.
+    "... signed with Universal Pictures for Oppenheimer (2023), which won him Academy Awards"
+    -> "Oppenheimer". Nothing is guessed: no "Title (YYYY)" means no title.
     """
     year = re.search(r"\((?:19|20)\d{2}\)", sentence or "")
-    if year:
-        words = []
-        for token in reversed(sentence[: year.start()].split()):
-            if not token[:1].isupper():
-                break
-            words.append(token.strip(",;:"))
-        if words:
-            return " ".join(reversed(words))
-    counts: Dict[str, int] = {}
-    for m in re.finditer(r"\b([A-Z][\w'\u2019-]+(?: [A-Z][\w'\u2019-]+){0,2})", chunk_text or ""):
-        name = re.sub(r"['\u2019]s$", "", m.group(1))
-        if name.lower() in exclude or name.lower() in {"the", "in", "it", "he", "she", "his", "her", "among", "following"}:
-            continue
-        counts[name] = counts.get(name, 0) + 1
-    repeated = [(c, n) for n, c in counts.items() if c >= 2]
-    return max(repeated)[1] if repeated else None
+    if not year:
+        return None
+    words = []
+    for token in reversed(sentence[: year.start()].split()):
+        if not token[:1].isupper():
+            break
+        words.append(token.strip(",;:"))
+    return " ".join(reversed(words)) or None
 
 
 def extract_asked_title(question: str) -> str | None:
@@ -1283,7 +1273,8 @@ def attribute_award_evidence(evidence: List[Dict[str, Any]], film: str | None, d
       A film win in other categories (e.g. technical ones) is the film's, not the director's.
     * film nomination: a nomination passage about the asked film.
     * career win: a credited win in a passage that is not about the asked film. It is
-      reported separately and never changes the verdict for this film.
+      reported separately and never changes the verdict for this film. Its work is named only
+      when the passage states it explicitly ("Title (YYYY)" or the film page's own title).
     A passage is "about the film" when it names the film or comes from the film's own page.
     With no film given, every passage counts as about the film (previous behaviour).
     Returns {"verdict", "citations", "evidence", "career_wins"}.
@@ -1329,9 +1320,9 @@ def attribute_award_evidence(evidence: List[Dict[str, Any]], film: str | None, d
             else:
                 src = (ev.get("source") or "").strip()
                 if src and not (surname and surname in src.lower()):
-                    work = src  # the passage is from another work's own page
+                    work = src  # the passage is from another work's own page: that page's title
                 else:
-                    work = _infer_work_title(ev.get("text") or "", {surname or "", film_l, (director or "").lower()}, sentence)
+                    work = _explicit_work_title(sentence)  # only an explicit "Title (YYYY)"; else None
                 key = (work or sentence).lower()
                 if key not in seen_works:
                     seen_works.add(key)
@@ -1358,13 +1349,14 @@ def attribute_award_evidence(evidence: List[Dict[str, Any]], film: str | None, d
 
 
 def career_wins_sentence(career: List[Dict[str, Any]]) -> str:
-    """"Career: won Academy Awards for Oppenheimer." (empty when there are none)."""
+    """"Career: won Academy Awards for Oppenheimer (not this film)." Names a work only when the
+    passage states it explicitly; otherwise "for another film". Empty when there are none."""
     if not career:
         return ""
-    works = [c["work"] for c in career if c.get("work")]
+    works = list(dict.fromkeys(c["work"] for c in career if c.get("work")))
     if works:
-        return "Career: won Academy Awards for " + " and ".join(dict.fromkeys(works)) + " (not this film)."
-    return "Career: won Academy Awards for other works (not this film)."
+        return "Career: won Academy Awards for " + " and ".join(works) + " (not this film)."
+    return "Career: won Academy Awards for another film (not this film)."
 
 
 def two_hop_director_award_flow(question: str) -> Dict[str, Any]:

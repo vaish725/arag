@@ -65,8 +65,28 @@ def inception_evidence():
 def test_career_win_for_another_film_is_not_a_win_for_the_film_asked():
     att = attribute_award_evidence(inception_evidence(), "Inception", "Christopher Nolan")
     assert not att["verdict"].startswith("Won")
-    assert [c["work"] for c in att["career_wins"]] == ["Oppenheimer"]
-    assert career_wins_sentence(att["career_wins"]) == "Career: won Academy Awards for Oppenheimer (not this film)."
+    assert len(att["career_wins"]) == 1
+
+
+def test_career_line_does_not_guess_a_title_the_passage_does_not_state():
+    # NOLAN_25 never writes "Oppenheimer (2023)"; Oppenheimer is only the most repeated name.
+    att = attribute_award_evidence(inception_evidence(), "Inception", "Christopher Nolan")
+    assert att["career_wins"][0]["work"] is None
+    assert career_wins_sentence(att["career_wins"]) == "Career: won Academy Awards for another film (not this film)."
+
+
+def test_most_repeated_capitalised_name_is_not_taken_as_the_film():
+    text = (
+        "Nolan met Warner Bros. executives. Warner Bros. financed the project and Warner Bros. gave "
+        "him control. Hans Zimmer and Hans Zimmer's team scored it. Among the film's numerous accolades, "
+        "Nolan won the Academy Awards for Best Director and Best Picture."
+    )
+    ev = detect_award_evidence([entry("Christopher_Nolan_30", text, "Christopher Nolan")], name_hint="Christopher Nolan")
+    att = attribute_award_evidence(ev, "Inception", "Christopher Nolan")
+    assert [c["work"] for c in att["career_wins"]] == [None]
+    sentence = career_wins_sentence(att["career_wins"])
+    assert "Warner" not in sentence and "Zimmer" not in sentence
+    assert sentence == "Career: won Academy Awards for another film (not this film)."
 
 
 def test_film_win_in_technical_categories_is_not_the_directors_win():

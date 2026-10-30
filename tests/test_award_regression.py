@@ -84,8 +84,13 @@ def test_inception_reports_the_career_win_separately():
         enable_director_flow=True,
     )
     assert parse_verdict(res["answer"]) != "won"
-    assert "Career: won Academy Awards for Oppenheimer (not this film)." in res["answer"]
-    assert [c["work"] for c in res["career_wins"]] == ["Oppenheimer"]
+    assert "Career: won Academy Awards for " in res["answer"] and "(not this film)." in res["answer"]
+    # A work is named only when a passage states it explicitly as "Title (YYYY)".
+    named = [c for c in res["career_wins"] if c["work"]]
+    assert named, "expected the explicit 'Oppenheimer (2023), which won him Academy Awards' passage"
+    for c in named:
+        assert f"{c['work']} (" in c["matched_text"], c
+    assert {c["work"] for c in named} <= {"Oppenheimer"}
 
 
 def test_godfather_win_cites_the_sentence_naming_coppola():
