@@ -9,9 +9,13 @@ pytestmark = pytest.mark.needs_model
 @pytest.mark.parametrize(
     "query, expected_person, expected_award",
     [
-        ("Who directed Inception and did they win any Academy Awards?", "Christopher Nolan", "win"),
+        # Truth: nominated for this film (Nolan's Oscars are for Oppenheimer). The corpus passage that
+        # shows "nominated" is not always retrieved, so the honest verdict is "unknown" + a career note.
+        ("Who directed Inception and did they win any Academy Awards?", "Christopher Nolan", "unknown"),
         ("Who directed Doctor Strange and did they win any Academy Awards?", "Scott Derrickson", "unknown"),
-        ("Who directed The Godfather and did they win any Academy Awards?", "Francis Ford Coppola", "nom"),
+        # The_Godfather_1: "the film won Best Picture, Best Actor, and Best Adapted Screenplay (for Puzo and
+        # Coppola)" supports a win attributed to Coppola (truth: won).
+        ("Who directed The Godfather and did they win any Academy Awards?", "Francis Ford Coppola", "win"),
         ("Who directed Titanic and did they win any Academy Awards?", "James Cameron", "win"),
         ("Who directed La La Land and did they win any Academy Awards?", "Damien Chazelle", "win"),
     ],
@@ -47,7 +51,9 @@ def test_director_flow_not_triggered_for_generic_queries():
     [
         # Edge cases: films with parentheses and multiple tokens
         ("Who directed Titanic (1997 film) and did they win any Academy Awards?", "James Cameron", "win"),
-        ("Who directed The Godfather Part II and did they win any Academy Awards?", "Francis Ford Coppola", "nom"),
+        # The corpus has no "The Godfather Part II" page; the evidence it holds is about the first film and
+        # is not attributed to the sequel (truth: won). Declining to answer is honest.
+        ("Who directed The Godfather Part II and did they win any Academy Awards?", "Francis Ford Coppola", "unknown"),
     ],
 )
 def test_award_regression_edges(query: str, expected_person: str, expected_award: str):
@@ -69,3 +75,24 @@ def test_la_la_land_win_cites_the_winning_sentence():
     assert parse_verdict(res["answer"]) == "won"
     assert ev["chunk_id"] == "Damien_Chazelle_0"
     assert "winning six including Best Director" in ev["matched_text"]
+
+
+def test_inception_reports_the_career_win_separately():
+    res = agent_loop.run_agent(
+        "Who directed Inception and did they win any Academy Awards?",
+        allow_fallback=False,
+        enable_director_flow=True,
+    )
+    assert parse_verdict(res["answer"]) != "won"
+    assert "Career: won Academy Awards for Oppenheimer (not this film)." in res["answer"]
+    assert [c["work"] for c in res["career_wins"]] == ["Oppenheimer"]
+
+
+def test_godfather_win_cites_the_sentence_naming_coppola():
+    res = agent_loop.run_agent(
+        "Who directed The Godfather and did they win any Academy Awards?",
+        allow_fallback=False,
+        enable_director_flow=True,
+    )
+    ev = res["verdict_evidence"]
+    assert ev["chunk_id"] == "The_Godfather_1" and "Coppola" in ev["matched_text"]

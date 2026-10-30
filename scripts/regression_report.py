@@ -58,6 +58,14 @@ def evidence_line(r: dict) -> str:
     return f"{ev.get('chunk_id')} [citation {ev.get('citation')}] via {ev.get('type')} pattern: \"{text}\""
 
 
+def career_line(r: dict) -> str:
+    """Career wins found for OTHER works (never counted for the film asked about)."""
+    c = r.get("career_wins") or []
+    if not c:
+        return ""
+    return "career wins (other works): " + "; ".join(f"{x.get('work') or '?'} via {x.get('chunk_id')}" for x in c)
+
+
 def run_all() -> dict:
     from arag import agent_loop
 
@@ -76,6 +84,7 @@ def run_all() -> dict:
             "verdict": verdict_of(answer),
             "citations": res.get("citations", []),
             "verdict_evidence": res.get("verdict_evidence"),
+            "career_wins": res.get("career_wins", []),
             "semantic_search_errors": [t["error"] for t in trace if t.get("tool") == "semantic_search" and t.get("error")][:1],
             "semantic_search_ok": any(t.get("tool") == "semantic_search" and "error" not in t for t in trace),
             "answer": answer,
@@ -96,6 +105,8 @@ def main() -> int:
         for film, r in results.items():
             print(f"{film:24} director={r['director']!s:22} verdict={r['verdict']:9} citations={r['citations']} semantic_ok={r['semantic_search_ok']}")
             print(f"{'':24} verdict from: {evidence_line(r)}")
+            if career_line(r):
+                print(f"{'':24} {career_line(r)}")
         return 0
 
     with open(args.baseline) as f:
@@ -129,6 +140,8 @@ def main() -> int:
             flagged.append(film)
         print(f"{film:22} | {base_s:34} | {new_s:34} | {truth:9} | {base_score:14} | {new_score:9} | {'; '.join(flags) or '-'}")
         print(f"{'':22}   verdict from: {evidence_line(r)}")
+        if career_line(r):
+            print(f"{'':22}   {career_line(r)}")
     print()
     print(f"Baseline: {tally(base_scores)}  (of {len(base_scores)})")
     print(f"New:      {tally(new_scores)}  (of {len(new_scores)})")

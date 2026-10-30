@@ -382,21 +382,11 @@ def run_agent(
                 except Exception:
                     award_evidence = []
 
-                award_verdict = "Unknown based on provided contexts."
-                award_citations = []
-                verdict_evidence = None  # the passage that produced the verdict
-                for ev in award_evidence:
-                    t = (ev.get("type") or "").lower()
-                    if t == "win":
-                        award_verdict = "Won at least one Academy Award (supported by contexts)."
-                        award_citations = ev.get("citations", [])
-                        verdict_evidence = ev
-                        break
-                    if t in ("nom", "nomination"):
-                        if award_verdict.startswith("Unknown"):
-                            award_verdict = "Nominated for Academy Awards (no win evidence in provided contexts)."
-                            award_citations = ev.get("citations", [])
-                            verdict_evidence = ev
+                attribution = attribute_award_evidence(award_evidence, extract_asked_title(q) or work_hint, director)
+                award_verdict = attribution["verdict"]
+                award_citations = attribution["citations"]
+                verdict_evidence = attribution["evidence"]  # the passage that produced the verdict
+                career_wins = attribution["career_wins"]
 
                 parts = []
                 # If director is a single token (last name only), try a simple
@@ -432,6 +422,8 @@ def run_agent(
                 else:
                     parts.append("Director: Unknown based on provided contexts.")
                 parts.append(award_verdict)
+                if career_wins_sentence(career_wins):
+                    parts.append(career_wins_sentence(career_wins))
 
                 citations = []
                 if director_citation:
@@ -479,6 +471,7 @@ def run_agent(
                         if verdict_evidence
                         else None
                     ),
+                    "career_wins": career_wins,
                     "step_count": retrieval.get("step_count", 0),
                     "token_count": retrieval.get("token_count", 0),
                     "budget_exhausted": False,
@@ -951,6 +944,8 @@ _SENTENCE_SPLIT_RE = re.compile(r"(?<=[.?!])\s+")
 # "winning six including Best Director", "won 3 ... including Best Picture": a win
 # stated by count plus "including <category>" in an Academy Award sentence.
 _WIN_INCLUDING_RE = re.compile(r"\b(?:winning|won|wins)\b[^.;:!?]{0,50}?\bincluding\b[^.;:!?]{0,25}?\bbest\b", re.IGNORECASE)
+# "the film won Best Picture, Best Actor and Best Adapted Screenplay (for Puzo and Coppola)"
+_WIN_CATEGORY_RE = re.compile(r"\b(?:winning|won)\b[^.;:!?]{0,80}?\bbest\b", re.IGNORECASE)
 _AWARD_WORD_RE = re.compile(r"academy awards?|oscars?", re.IGNORECASE)
 
 
@@ -992,11 +987,36 @@ def _sentence_at(text: str, start: int) -> str:
 
 
 def find_win_including_sentence(text: str) -> str | None:
-    """First Academy Award sentence stating wins "including <category>", else None."""
+    """First Academy Award sentence stating wins by category ("winning six including Best
+    Director", "won Best Picture, ..."), else None."""
     for sentence in _SENTENCE_SPLIT_RE.split(text or ""):
-        if _AWARD_WORD_RE.search(sentence) and _WIN_INCLUDING_RE.search(sentence):
+        if _AWARD_WORD_RE.search(sentence) and (_WIN_INCLUDING_RE.search(sentence) or _WIN_CATEGORY_RE.search(sentence)):
             return sentence.strip()
     return None
+
+
+# Generic descriptors ("Oscar winners and TV royalty", "an Academy Award winner") say nothing
+# about the director unless the director's surname is in the same sentence.
+_GENERIC_WIN_PATTERNS = {
+    r"academy award winner",
+    r"oscar winner",
+    r"winner of the academy award (for )?",
+    r"winner of an oscar",
+}
+
+
+def _first_qualifying_match(pattern: str, clean_text: str, lowered: str, last_name: str | None):
+    """First regex match of ``pattern`` whose sentence is allowed to count.
+
+    Generic descriptors only count when ``last_name`` is in the same sentence.
+    Returns (match, sentence) or (None, None).
+    """
+    for m in re.finditer(pattern, lowered):
+        sentence = _sentence_at(clean_text, m.start()) if len(clean_text) == len(lowered) else None
+        if pattern in _GENERIC_WIN_PATTERNS and last_name and not (sentence and last_name in sentence.lower()):
+            continue
+        return m, sentence
+    return None, None
 
 
 def detect_award_evidence(
@@ -1092,17 +1112,17 @@ def detect_award_evidence(
         # Look for win patterns first
         matched_text = None
         for p in patterns_win:
-            m = re.search(p, text)
+            m, sent = _first_qualifying_match(p, clean_text, text, last_name)
             if m:
                 matched_type = "win"
                 matched_pattern = p
-                matched_text = _sentence_at(clean_text, m.start()) if len(clean_text) == len(text) else None
+                matched_text = sent
                 break
         if not matched_type:
             ws = find_win_including_sentence(clean_text)
             if ws:
                 matched_type = "win"
-                matched_pattern = "won/winning N including <category>"
+                matched_pattern = "won/winning ... Best <category>"
                 matched_text = ws
         # If no win, look for nomination patterns
         if not matched_type:
@@ -1170,10 +1190,10 @@ def detect_award_evidence(
                 matched_win = False
                 scan_text = None
                 for p in patterns_win:
-                    m = re.search(p, txt_low)
+                    m, sent = _first_qualifying_match(p, clean_text, txt_low, last_name)
                     if m:
                         matched_win = True
-                        scan_text = _sentence_at(clean_text, m.start()) if len(clean_text) == len(txt_low) else None
+                        scan_text = sent
                         break
                 if not matched_win:
                     scan_text = find_win_including_sentence(clean_text)
@@ -1205,6 +1225,146 @@ def detect_award_evidence(
         pass
 
     return evidence
+
+
+_CATEGORY_RE = re.compile(r"\bbest [a-z]+(?: [a-z]+)?", re.IGNORECASE)
+
+
+def _title_at_start(text: str) -> str:
+    return re.sub(r"\s+", " ", text or "").strip()
+
+
+def _infer_work_title(chunk_text: str, exclude: set, sentence: str = "") -> str | None:
+    """Best guess at the work a person-page passage is about.
+
+    1. An explicit "Title (YYYY)" inside the matched sentence ("... for Oppenheimer (2023),
+       which won him Academy Awards ...").
+    2. Otherwise the capitalised name that occurs most often (at least twice) in the chunk,
+       ignoring ``exclude``. Heuristic: returns None when nothing repeats.
+    """
+    year = re.search(r"\((?:19|20)\d{2}\)", sentence or "")
+    if year:
+        words = []
+        for token in reversed(sentence[: year.start()].split()):
+            if not token[:1].isupper():
+                break
+            words.append(token.strip(",;:"))
+        if words:
+            return " ".join(reversed(words))
+    counts: Dict[str, int] = {}
+    for m in re.finditer(r"\b([A-Z][\w'\u2019-]+(?: [A-Z][\w'\u2019-]+){0,2})", chunk_text or ""):
+        name = re.sub(r"['\u2019]s$", "", m.group(1))
+        if name.lower() in exclude or name.lower() in {"the", "in", "it", "he", "she", "his", "her", "among", "following"}:
+            continue
+        counts[name] = counts.get(name, 0) + 1
+    repeated = [(c, n) for n, c in counts.items() if c >= 2]
+    return max(repeated)[1] if repeated else None
+
+
+def extract_asked_title(question: str) -> str | None:
+    """The work named in "Who directed X ...?", without a trailing "(1997 film)" qualifier.
+
+    Unlike normalize_title this keeps "Part II", so a sequel is not confused with the original.
+    """
+    m = re.search(r"who directed\s+(.+?)(?:\s+and\b|,|\?|$)", question or "", re.IGNORECASE) or re.search(
+        r"director of\s+(.+?)(?:\s+and\b|,|\?|$)", question or "", re.IGNORECASE
+    )
+    if not m:
+        return None
+    title = re.sub(r"\s*\([^)]*\)\s*$", "", m.group(1)).strip(" \"'\u201c\u201d")
+    return title or None
+
+
+def attribute_award_evidence(evidence: List[Dict[str, Any]], film: str | None, director: str | None) -> Dict[str, Any]:
+    """Tie award evidence to the film that was asked about.
+
+    * film win: a win passage about the asked film that is credited to the director
+      (it lists "Best Director", names the director, or lists no categories at all).
+      A film win in other categories (e.g. technical ones) is the film's, not the director's.
+    * film nomination: a nomination passage about the asked film.
+    * career win: a credited win in a passage that is not about the asked film. It is
+      reported separately and never changes the verdict for this film.
+    A passage is "about the film" when it names the film or comes from the film's own page.
+    With no film given, every passage counts as about the film (previous behaviour).
+    Returns {"verdict", "citations", "evidence", "career_wins"}.
+    """
+    surname = (director or "").split()[-1].lower() if director else None
+    film_l = (film or "").strip().lower()
+    film_id = film_l.replace(" ", "_")
+    film_name_re = re.compile(r"(?<!\w)" + re.escape(film_l) + r"(?!\w)(?!\s+part\b)", re.IGNORECASE) if film_l else None
+    page_re = re.compile(r"^" + re.escape(film_id) + r"(?:_\(.*?\))?_\d+$") if film_l else None
+
+    def about_film(ev: Dict[str, Any], sentence: str) -> bool:
+        if not film_l:
+            return True
+        if film_name_re.search(sentence):
+            return True
+        return bool(page_re.match((ev.get("chunk_id") or "").lower()))
+
+    def credited(sentence: str) -> bool:
+        low = sentence.lower()
+        if "best director" in low or (surname and surname in low):
+            return True
+        return not _CATEGORY_RE.search(sentence)  # no categories listed: cannot tell, count it
+
+    film_win = film_nom = None
+    career: List[Dict[str, Any]] = []
+    seen_works = set()
+    for ev in evidence:
+        sentence = _title_at_start(ev.get("matched_text") or ev.get("text") or "")[:400]
+        etype = (ev.get("type") or "").lower()
+        if etype == "win":
+            if not credited(sentence):
+                # The film won, but in categories that are not the director's. If the same
+                # sentence says the film was nominated in director-type categories (Picture,
+                # Director, Screenplay) the director still has a nomination for this film.
+                tail = re.split(r"nominat", sentence, maxsplit=1, flags=re.IGNORECASE)
+                if about_film(ev, sentence) and len(tail) > 1 and re.search(
+                    r"best (?:director|picture|(?:original |adapted )?(?:screenplay|writing))", tail[1], re.IGNORECASE
+                ):
+                    film_nom = film_nom or ev
+                continue
+            if about_film(ev, sentence):
+                film_win = film_win or ev
+            else:
+                src = (ev.get("source") or "").strip()
+                if src and not (surname and surname in src.lower()):
+                    work = src  # the passage is from another work's own page
+                else:
+                    work = _infer_work_title(ev.get("text") or "", {surname or "", film_l, (director or "").lower()}, sentence)
+                key = (work or sentence).lower()
+                if key not in seen_works:
+                    seen_works.add(key)
+                    career.append({
+                        "work": work,
+                        "chunk_id": ev.get("chunk_id"),
+                        "matched_text": sentence,
+                        "citation": (ev.get("citations") or [None])[0],
+                    })
+        elif etype in ("nom", "nomination") and about_film(ev, sentence):
+            film_nom = film_nom or ev
+
+    if film_win is not None:
+        verdict, used = "Won at least one Academy Award (supported by contexts).", film_win
+    elif film_nom is not None:
+        verdict, used = "Nominated for Academy Awards (no win evidence in provided contexts).", film_nom
+    else:
+        verdict, used = "Unknown based on provided contexts.", None
+    citations = list((used or {}).get("citations", []))
+    for c in career:
+        if c["citation"] and c["citation"] not in citations:
+            citations.append(c["citation"])
+    return {"verdict": verdict, "citations": citations, "evidence": used, "career_wins": career}
+
+
+def career_wins_sentence(career: List[Dict[str, Any]]) -> str:
+    """"Career: won Academy Awards for Oppenheimer." (empty when there are none)."""
+    if not career:
+        return ""
+    works = [c["work"] for c in career if c.get("work")]
+    if works:
+        return "Career: won Academy Awards for " + " and ".join(dict.fromkeys(works)) + " (not this film)."
+    return "Career: won Academy Awards for other works (not this film)."
 
 
 def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
