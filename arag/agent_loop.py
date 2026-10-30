@@ -384,16 +384,19 @@ def run_agent(
 
                 award_verdict = "Unknown based on provided contexts."
                 award_citations = []
+                verdict_evidence = None  # the passage that produced the verdict
                 for ev in award_evidence:
                     t = (ev.get("type") or "").lower()
                     if t == "win":
                         award_verdict = "Won at least one Academy Award (supported by contexts)."
                         award_citations = ev.get("citations", [])
+                        verdict_evidence = ev
                         break
                     if t in ("nom", "nomination"):
                         if award_verdict.startswith("Unknown"):
                             award_verdict = "Nominated for Academy Awards (no win evidence in provided contexts)."
                             award_citations = ev.get("citations", [])
+                            verdict_evidence = ev
 
                 parts = []
                 # If director is a single token (last name only), try a simple
@@ -465,6 +468,17 @@ def run_agent(
                     "tool_trace": retrieval.get("tool_trace", []),
                     "retrieved_texts": retrieval.get("retrieved_texts", []),
                     "citations": local_citations,
+                    "verdict_evidence": (
+                        {
+                            "chunk_id": verdict_evidence.get("chunk_id"),
+                            "type": verdict_evidence.get("type"),
+                            "pattern": verdict_evidence.get("pattern"),
+                            "matched_text": verdict_evidence.get("matched_text"),
+                            "citation": (verdict_evidence.get("citations") or [None])[0],
+                        }
+                        if verdict_evidence
+                        else None
+                    ),
                     "step_count": retrieval.get("step_count", 0),
                     "token_count": retrieval.get("token_count", 0),
                     "budget_exhausted": False,
@@ -926,6 +940,65 @@ def extract_person_name_from_text(text: str, work_hint: str | None = None) -> st
     return best.strip(" ,.")
 
 
+# Navigation / boilerplate sections of a Wikipedia plaintext chunk. Their text
+# (link titles, reference lists) is not prose and must never count as award evidence.
+_NAV_HEADINGS = {
+    "see also", "references", "external links", "notes", "further reading",
+    "bibliography", "sources", "footnotes",
+}
+_HEADING_RE = re.compile(r"={2,}\s*([^=]+?)\s*={2,}")
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.?!])\s+")
+# "winning six including Best Director", "won 3 ... including Best Picture": a win
+# stated by count plus "including <category>" in an Academy Award sentence.
+_WIN_INCLUDING_RE = re.compile(r"\b(?:winning|won|wins)\b[^.;:!?]{0,50}?\bincluding\b[^.;:!?]{0,25}?\bbest\b", re.IGNORECASE)
+_AWARD_WORD_RE = re.compile(r"academy awards?|oscars?", re.IGNORECASE)
+
+
+def strip_navigation_text(text: str) -> str:
+    """Return ``text`` without non-prose navigation text.
+
+    Removes "See also" / "References" / "External links" / "Notes" sections (a
+    heading and everything up to the next heading), "List of ..." link titles, and
+    reference boilerplate. Headings of kept sections are dropped as well.
+    """
+    if not text:
+        return ""
+    heads = list(_HEADING_RE.finditer(text))
+    pieces = [text[: heads[0].start()]] if heads else [text]
+    for i, h in enumerate(heads):
+        end = heads[i + 1].start() if i + 1 < len(heads) else len(text)
+        if h.group(1).strip().lower() not in _NAV_HEADINGS:
+            pieces.append(text[h.end():end])
+    kept = []
+    for sentence in _SENTENCE_SPLIT_RE.split(" ".join(pieces)):
+        s = sentence.strip()
+        if not s or re.match(r"(?:lists?\s+of)\b", s, re.IGNORECASE):
+            continue
+        if re.search(r"archived from the original|\bretrieved (?:on )?\w+ \d{1,2}, \d{4}", s, re.IGNORECASE):
+            continue
+        kept.append(s)
+    return " ".join(kept)
+
+
+def _sentence_at(text: str, start: int) -> str:
+    """The sentence of ``text`` containing character offset ``start``."""
+    pos = 0
+    for sentence in _SENTENCE_SPLIT_RE.split(text):
+        idx = text.find(sentence, pos)
+        if idx <= start < idx + len(sentence) + 1:
+            return sentence.strip()
+        pos = idx + len(sentence)
+    return text[:200].strip()
+
+
+def find_win_including_sentence(text: str) -> str | None:
+    """First Academy Award sentence stating wins "including <category>", else None."""
+    for sentence in _SENTENCE_SPLIT_RE.split(text or ""):
+        if _AWARD_WORD_RE.search(sentence) and _WIN_INCLUDING_RE.search(sentence):
+            return sentence.strip()
+    return None
+
+
 def detect_award_evidence(
     entries: List[Dict[str, str]], name_hint: str | None = None
 ) -> List[Dict[str, Any]]:
@@ -1001,7 +1074,8 @@ def detect_award_evidence(
 
     for idx, e in enumerate(entries):
         raw_text = e.get("text") or ""
-        text = raw_text.lower()
+        clean_text = strip_navigation_text(raw_text)  # no See also / List of / references
+        text = clean_text.lower()
         cid = (e.get("chunk_id") or "").lower()
         src = (e.get("source") or "").lower()
 
@@ -1016,17 +1090,28 @@ def detect_award_evidence(
         matched_type = None
         matched_pattern = None
         # Look for win patterns first
+        matched_text = None
         for p in patterns_win:
-            if re.search(p, text):
+            m = re.search(p, text)
+            if m:
                 matched_type = "win"
                 matched_pattern = p
+                matched_text = _sentence_at(clean_text, m.start()) if len(clean_text) == len(text) else None
                 break
+        if not matched_type:
+            ws = find_win_including_sentence(clean_text)
+            if ws:
+                matched_type = "win"
+                matched_pattern = "won/winning N including <category>"
+                matched_text = ws
         # If no win, look for nomination patterns
         if not matched_type:
             for p in patterns_nom:
-                if re.search(p, text):
+                m = re.search(p, text)
+                if m:
                     matched_type = "nom"
                     matched_pattern = p
+                    matched_text = _sentence_at(clean_text, m.start()) if len(clean_text) == len(text) else None
                     break
 
         if matched_type:
@@ -1045,6 +1130,7 @@ def detect_award_evidence(
                         "text": raw_text,
                         "type": matched_type,
                         "pattern": matched_pattern,
+                        "matched_text": matched_text,
                         "priority": priority,
                         "citations": [idx + 1],
                     }
@@ -1078,13 +1164,20 @@ def detect_award_evidence(
                 if not is_person_like:
                     continue
                 raw_text = e.get("text") or ""
-                txt_low = raw_text.lower()
+                clean_text = strip_navigation_text(raw_text)
+                txt_low = clean_text.lower()
                 # look for win patterns first
                 matched_win = False
+                scan_text = None
                 for p in patterns_win:
-                    if re.search(p, txt_low):
+                    m = re.search(p, txt_low)
+                    if m:
                         matched_win = True
+                        scan_text = _sentence_at(clean_text, m.start()) if len(clean_text) == len(txt_low) else None
                         break
+                if not matched_win:
+                    scan_text = find_win_including_sentence(clean_text)
+                    matched_win = scan_text is not None
                 if matched_win:
                     # If a win is found on a person page, prefer it and
                     # insert as highest-priority evidence (if not already present)
@@ -1105,6 +1198,7 @@ def detect_award_evidence(
                             "text": raw_text,
                             "type": "win",
                             "pattern": "person_page_fulltext_win_scan",
+                            "matched_text": scan_text,
                             "citations": [idx + 1],
                         })
     except Exception:

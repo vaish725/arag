@@ -1,0 +1,116 @@
+{
+  "Doctor Strange": {
+    "answer": "Director: Scott Derrickson. Unknown based on provided contexts. Citations: [1].",
+    "citations": [
+      1
+    ],
+    "director": "Scott Derrickson",
+    "expected_truth": {
+      "note": "No Oscar win",
+      "verdict": "no_win"
+    },
+    "semantic_search_errors": [
+      "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
+    ],
+    "semantic_search_ok": false,
+    "verdict": "unknown"
+  },
+  "Inception": {
+    "answer": "Director: Christopher Nolan. Won at least one Academy Award (supported by contexts). Citations: [1, 7].",
+    "citations": [
+      1,
+      7
+    ],
+    "director": "Christopher Nolan",
+    "expected_truth": {
+      "note": "No win for this film (nominated, Original Screenplay); Nolan's career Oscar wins are for Oppenheimer",
+      "verdict": "nominated"
+    },
+    "semantic_search_errors": [
+      "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
+    ],
+    "semantic_search_ok": false,
+    "verdict": "won"
+  },
+  "La La Land": {
+    "answer": "Director: Damien Chazelle. Won at least one Academy Award (supported by contexts). Citations: [1, 7].",
+    "citations": [
+      1,
+      7
+    ],
+    "director": "Damien Chazelle",
+    "expected_truth": {
+      "note": "Won (Best Director)",
+      "verdict": "won"
+    },
+    "semantic_search_errors": [
+      "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
+    ],
+    "semantic_search_ok": false,
+    "verdict": "won"
+  },
+  "The Godfather": {
+    "answer": "Director: Francis Ford Coppola. Nominated for Academy Awards (no win evidence in provided contexts). Citations: [1].",
+    "citations": [
+      1
+    ],
+    "director": "Francis Ford Coppola",
+    "expected_truth": {
+      "note": "Won (Adapted Screenplay, shared with Mario Puzo)",
+      "verdict": "won"
+    },
+    "semantic_search_errors": [
+      "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
+    ],
+    "semantic_search_ok": false,
+    "verdict": "nominated"
+  },
+  "The Godfather Part II": {
+    "answer": "Director: Francis Ford Coppola. Nominated for Academy Awards (no win evidence in provided contexts). Citations: [1].",
+    "citations": [
+      1
+    ],
+    "director": "Francis Ford Coppola",
+    "expected_truth": {
+      "note": "Won (Director, Picture, Adapted Screenplay)",
+      "verdict": "won"
+    },
+    "semantic_search_errors": [
+      "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
+    ],
+    "semantic_search_ok": false,
+    "verdict": "nominated"
+  },
+  "Titanic": {
+    "answer": "Director: James Cameron. Won at least one Academy Award (supported by contexts). Citations: [1].",
+    "citations": [
+      1
+    ],
+    "director": "James Cameron",
+    "expected_truth": {
+      "note": "Assumes the 1997 film. Ambiguous: the corpus page 'Titanic' (94 chunks) is about the RMS Titanic ship; the film is the separate 'Titanic (1997 film)' page (87 chunks). There is also a 1953 film (dir. Jean Negulesco). Truth copied from 'Titanic (1997 film)'.",
+      "verdict": "won"
+    },
+    "semantic_search_errors": [
+      "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
+    ],
+    "semantic_search_ok": false,
+    "verdict": "won"
+  },
+  "Titanic (1997 film)": {
+    "answer": "Director: James Cameron. Won at least one Academy Award (supported by contexts). Citations: [1].",
+    "citations": [
+      1
+    ],
+    "director": "James Cameron",
+    "expected_truth": {
+      "note": "Won (Director, Picture, Editing)",
+      "verdict": "won"
+    },
+    "semantic_search_errors": [
+      "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
+    ],
+    "semantic_search_ok": false,
+    "verdict": "won"
+  }
+}

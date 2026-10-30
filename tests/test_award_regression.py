@@ -1,6 +1,7 @@
 import pytest
 
 from arag import agent_loop
+from verdict_util import EXPECTED, parse_verdict
 
 
 @pytest.mark.parametrize(
@@ -24,14 +25,8 @@ def test_award_regression(query: str, expected_person: str, expected_award: str)
 
     assert expected_person.lower() in answer, f"Expected person '{expected_person}' in answer: {answer}"
 
-    if expected_award == "win":
-        assert ("won" in answer) or ("win" in answer), f"Expected a win verdict in answer: {answer}"
-    elif expected_award == "nom":
-        assert "nom" in answer or "nomin" in answer, f"Expected a nomination verdict in answer: {answer}"
-    elif expected_award == "unknown":
-        assert "unknown" in answer or "no win" in answer or "no win evidence" in answer, f"Expected unknown verdict in answer: {answer}"
-    else:
-        pytest.skip("Unknown expected_award label")
+    assert expected_award in EXPECTED, f"Unknown expected_award label {expected_award!r}"
+    assert parse_verdict(answer) == EXPECTED[expected_award], f"Expected verdict {EXPECTED[expected_award]!r} in answer: {answer}"
 
 
 def test_director_flow_not_triggered_for_generic_queries():
@@ -57,7 +52,18 @@ def test_award_regression_edges(query: str, expected_person: str, expected_award
     res = agent_loop.run_agent(query, allow_fallback=False, enable_director_flow=True)
     answer = (res.get("answer") or "").lower()
     assert expected_person.lower() in answer
-    if expected_award == "win":
-        assert ("won" in answer) or ("win" in answer)
-    elif expected_award == "nom":
-        assert "nom" in answer or "nomin" in answer
+    assert parse_verdict(answer) == EXPECTED[expected_award], f"Expected verdict {EXPECTED[expected_award]!r} in answer: {answer}"
+
+
+def test_la_la_land_win_cites_the_winning_sentence():
+    """Right answer for the right reason: the verdict must come from Chazelle's own win
+    sentence, not from link text."""
+    res = agent_loop.run_agent(
+        "Who directed La La Land and did they win any Academy Awards?",
+        allow_fallback=False,
+        enable_director_flow=True,
+    )
+    ev = res["verdict_evidence"]
+    assert parse_verdict(res["answer"]) == "won"
+    assert ev["chunk_id"] == "Damien_Chazelle_0"
+    assert "winning six including Best Director" in ev["matched_text"]
