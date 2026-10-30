@@ -1,0 +1,362 @@
+{
+ "awards": {
+  "all": {
+   "bm25": {
+    "correct": 2,
+    "correct_on_positive_truth": 2,
+    "director_found": 23,
+    "no_answer": 21,
+    "positive_truth_films": 5,
+    "wrong": 3,
+    "wrong_positive_claims": 3
+   },
+   "hybrid": {
+    "correct": 2,
+    "correct_on_positive_truth": 2,
+    "director_found": 23,
+    "no_answer": 21,
+    "positive_truth_films": 5,
+    "wrong": 3,
+    "wrong_positive_claims": 3
+   },
+   "n_films": 26,
+   "semantic": {
+    "correct": 3,
+    "correct_on_positive_truth": 3,
+    "director_found": 23,
+    "no_answer": 21,
+    "positive_truth_films": 5,
+    "wrong": 2,
+    "wrong_positive_claims": 2
+   },
+   "truth_mix": {
+    "no_win": 21,
+    "nominated": 2,
+    "won": 3
+   }
+  },
+  "dev": {
+   "bm25": {
+    "correct": 1,
+    "correct_on_positive_truth": 1,
+    "director_found": 9,
+    "no_answer": 9,
+    "positive_truth_films": 2,
+    "wrong": 0,
+    "wrong_positive_claims": 0
+   },
+   "hybrid": {
+    "correct": 1,
+    "correct_on_positive_truth": 1,
+    "director_found": 9,
+    "no_answer": 9,
+    "positive_truth_films": 2,
+    "wrong": 0,
+    "wrong_positive_claims": 0
+   },
+   "n_films": 10,
+   "semantic": {
+    "correct": 1,
+    "correct_on_positive_truth": 1,
+    "director_found": 9,
+    "no_answer": 9,
+    "positive_truth_films": 2,
+    "wrong": 0,
+    "wrong_positive_claims": 0
+   },
+   "truth_mix": {
+    "no_win": 8,
+    "nominated": 1,
+    "won": 1
+   }
+  },
+  "test": {
+   "bm25": {
+    "correct": 1,
+    "correct_on_positive_truth": 1,
+    "director_found": 14,
+    "no_answer": 12,
+    "positive_truth_films": 3,
+    "wrong": 3,
+    "wrong_positive_claims": 3
+   },
+   "hybrid": {
+    "correct": 1,
+    "correct_on_positive_truth": 1,
+    "director_found": 14,
+    "no_answer": 12,
+    "positive_truth_films": 3,
+    "wrong": 3,
+    "wrong_positive_claims": 3
+   },
+   "n_films": 16,
+   "semantic": {
+    "correct": 2,
+    "correct_on_positive_truth": 2,
+    "director_found": 14,
+    "no_answer": 12,
+    "positive_truth_films": 3,
+    "wrong": 2,
+    "wrong_positive_claims": 2
+   },
+   "truth_mix": {
+    "no_win": 13,
+    "nominated": 1,
+    "won": 2
+   }
+  }
+ },
+ "pool_per_retriever": 100,
+ "retrieval": {
+  "all": {
+   "bm25": {
+    "all_gold@10": {
+     "count": 19,
+     "of": 27,
+     "wilson95": [
+      0.515,
+      0.841
+     ]
+    },
+    "all_gold@5": {
+     "count": 11,
+     "of": 27,
+     "wilson95": [
+      0.245,
+      0.593
+     ]
+    },
+    "mrr": 0.832,
+    "recall@10": 0.852,
+    "recall@5": 0.648
+   },
+   "hybrid": {
+    "all_gold@10": {
+     "count": 23,
+     "of": 27,
+     "wilson95": [
+      0.675,
+      0.941
+     ]
+    },
+    "all_gold@5": {
+     "count": 14,
+     "of": 27,
+     "wilson95": [
+      0.34,
+      0.693
+     ]
+    },
+    "mrr": 0.855,
+    "recall@10": 0.926,
+    "recall@5": 0.759
+   },
+   "n_questions": 27,
+   "paired_recall@10": {
+    "hybrid_vs_bm25": {
+     "better": 4,
+     "tied": 23,
+     "worse": 0
+    },
+    "hybrid_vs_semantic": {
+     "better": 2,
+     "tied": 24,
+     "worse": 1
+    },
+    "semantic_vs_bm25": {
+     "better": 5,
+     "tied": 20,
+     "worse": 2
+    }
+   },
+   "semantic": {
+    "all_gold@10": {
+     "count": 23,
+     "of": 27,
+     "wilson95": [
+      0.675,
+      0.941
+     ]
+    },
+    "all_gold@5": {
+     "count": 19,
+     "of": 27,
+     "wilson95": [
+      0.515,
+      0.841
+     ]
+    },
+    "mrr": 0.873,
+    "recall@10": 0.907,
+    "recall@5": 0.833
+   }
+  },
+  "dev": {
+   "bm25": {
+    "all_gold@10": {
+     "count": 6,
+     "of": 11,
+     "wilson95": [
+      0.28,
+      0.787
+     ]
+    },
+    "all_gold@5": {
+     "count": 3,
+     "of": 11,
+     "wilson95": [
+      0.097,
+      0.566
+     ]
+    },
+    "mrr": 0.775,
+    "recall@10": 0.773,
+    "recall@5": 0.545
+   },
+   "hybrid": {
+    "all_gold@10": {
+     "count": 7,
+     "of": 11,
+     "wilson95": [
+      0.354,
+      0.848
+     ]
+    },
+    "all_gold@5": {
+     "count": 4,
+     "of": 11,
+     "wilson95": [
+      0.152,
+      0.646
+     ]
+    },
+    "mrr": 0.773,
+    "recall@10": 0.818,
+    "recall@5": 0.682
+   },
+   "n_questions": 11,
+   "paired_recall@10": {
+    "hybrid_vs_bm25": {
+     "better": 1,
+     "tied": 10,
+     "worse": 0
+    },
+    "hybrid_vs_semantic": {
+     "better": 2,
+     "tied": 8,
+     "worse": 1
+    },
+    "semantic_vs_bm25": {
+     "better": 2,
+     "tied": 7,
+     "worse": 2
+    }
+   },
+   "semantic": {
+    "all_gold@10": {
+     "count": 7,
+     "of": 11,
+     "wilson95": [
+      0.354,
+      0.848
+     ]
+    },
+    "all_gold@5": {
+     "count": 7,
+     "of": 11,
+     "wilson95": [
+      0.354,
+      0.848
+     ]
+    },
+    "mrr": 0.803,
+    "recall@10": 0.773,
+    "recall@5": 0.773
+   }
+  },
+  "test": {
+   "bm25": {
+    "all_gold@10": {
+     "count": 13,
+     "of": 16,
+     "wilson95": [
+      0.57,
+      0.934
+     ]
+    },
+    "all_gold@5": {
+     "count": 8,
+     "of": 16,
+     "wilson95": [
+      0.28,
+      0.72
+     ]
+    },
+    "mrr": 0.872,
+    "recall@10": 0.906,
+    "recall@5": 0.719
+   },
+   "hybrid": {
+    "all_gold@10": {
+     "count": 16,
+     "of": 16,
+     "wilson95": [
+      0.806,
+      1.0
+     ]
+    },
+    "all_gold@5": {
+     "count": 10,
+     "of": 16,
+     "wilson95": [
+      0.386,
+      0.815
+     ]
+    },
+    "mrr": 0.911,
+    "recall@10": 1.0,
+    "recall@5": 0.812
+   },
+   "n_questions": 16,
+   "paired_recall@10": {
+    "hybrid_vs_bm25": {
+     "better": 3,
+     "tied": 13,
+     "worse": 0
+    },
+    "hybrid_vs_semantic": {
+     "better": 0,
+     "tied": 16,
+     "worse": 0
+    },
+    "semantic_vs_bm25": {
+     "better": 3,
+     "tied": 13,
+     "worse": 0
+    }
+   },
+   "semantic": {
+    "all_gold@10": {
+     "count": 16,
+     "of": 16,
+     "wilson95": [
+      0.806,
+      1.0
+     ]
+    },
+    "all_gold@5": {
+     "count": 12,
+     "of": 16,
+     "wilson95": [
+      0.505,
+      0.898
+     ]
+    },
+    "mrr": 0.922,
+    "recall@10": 1.0,
+    "recall@5": 0.875
+   }
+  }
+ },
+ "seed": 20261030
+}

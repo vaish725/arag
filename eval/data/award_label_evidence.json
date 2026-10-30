@@ -1,0 +1,333 @@
+{
+ "checked_on": "2026-10-30",
+ "note": "Corroboration from each film's Wikipedia article (pinned revision). Absence of a mention is not proof of absence of a nomination; the Academy database was not queried. Labels remain owner_verified=false.",
+ "films": [
+  {
+   "film": "The Godfather",
+   "article_url": "https://en.wikipedia.org/wiki/The_Godfather",
+   "revision_id": 1381444303,
+   "label": "won",
+   "director": "Francis Ford Coppola",
+   "academy_award_passages": 2,
+   "passages_naming_the_director": 1,
+   "examples": [
+    "The Godfather Family: A Look Inside was a 73-minute documentary released in 1991. Directed by Jeff Warner, the film featured some behind-the-scenes content from all three films, interviews with the actors, and screen tests. The Godfather DVD Collection was released ..."
+   ],
+   "status": "consistent (truth sourced in scripts/regression_baseline.json)"
+  },
+  {
+   "film": "Titanic (1997 film)",
+   "article_url": "https://en.wikipedia.org/wiki/Titanic_(1997_film)",
+   "revision_id": 1379226159,
+   "label": "won",
+   "director": "James Cameron",
+   "academy_award_passages": 3,
+   "passages_naming_the_director": 1,
+   "examples": [
+    "It's hard to forget the director on the stage of the Shrine Auditorium in LA, exultant, pumping a golden Oscar statuette into the air and shouting: \"I'm the king of the world!\" As everyone knew, that was the most famous ..."
+   ],
+   "status": "consistent (truth sourced in scripts/regression_baseline.json)"
+  },
+  {
+   "film": "La La Land",
+   "article_url": "https://en.wikipedia.org/wiki/La_La_Land",
+   "revision_id": 1381676638,
+   "label": "won",
+   "director": "Damien Chazelle",
+   "academy_award_passages": 4,
+   "passages_naming_the_director": 1,
+   "examples": [
+    "Chazelle later wrote Whiplash , which was an easier concept to sell and a less risky investment. After Whiplash was well received by critics upon its premiere at the 2014 Sundance Film Festival in January, Chazelle continued his efforts to ..."
+   ],
+   "status": "consistent (truth sourced in scripts/regression_baseline.json)"
+  },
+  {
+   "film": "Inception",
+   "article_url": "https://en.wikipedia.org/wiki/Inception",
+   "revision_id": 1381197035,
+   "label": "nominated",
+   "director": "Christopher Nolan",
+   "academy_award_passages": 1,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "The film won many awards in technical categories, such as Academy Awards for Best Cinematography , Best Sound Editing , Best Sound Mixing , and Best Visual Effects , and the British Academy Film Awards for Best Production Design , ..."
+   ],
+   "status": "consistent (truth sourced in scripts/regression_baseline.json)"
+  },
+  {
+   "film": "About a Boy (film)",
+   "article_url": "https://en.wikipedia.org/wiki/About_a_Boy_(film)",
+   "revision_id": 1378627602,
+   "label": "nominated",
+   "director": "Chris Weitz and Paul Weitz",
+   "academy_award_passages": 2,
+   "passages_naming_the_director": 1,
+   "examples": [
+    "Academy Awards Best Adapted Screenplay Chris Weitz , Paul Weitz and Peter Hedges Nominated"
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "Doctor Strange (2016 film)",
+   "article_url": "https://en.wikipedia.org/wiki/Doctor_Strange_(2016_film)",
+   "revision_id": 1381743686,
+   "label": "no_win",
+   "director": "Scott Derrickson",
+   "academy_award_passages": 2,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "Doctor Strange had its world premiere in Hong Kong on October 13, 2016, and was released in the United States on November 4, as part of Phase Three of the MCU. It received positive reviews and grossed $677.8 million worldwide. ...",
+    "Academy Awards Best Visual Effects Stephane Ceretti , Richard Bluff , Vincent Cirelli and Paul Corbould Nominated"
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "Ed Wood (film)",
+   "article_url": "https://en.wikipedia.org/wiki/Ed_Wood_(film)",
+   "revision_id": 1381655095,
+   "label": "no_win",
+   "director": "Tim Burton",
+   "academy_award_passages": 2,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "Ed Wood was nominated for three Golden Globes : Best Musical or Comedy , Johnny Depp for Best Actor in a Musical or Comedy and Martin Landau for Best Supporting Actor . Landau won in his category, while Depp lost ...",
+    "Academy Awards March 27, 1995 Best Supporting Actor Martin Landau Won"
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "True Lies",
+   "article_url": "https://en.wikipedia.org/wiki/True_Lies",
+   "revision_id": 1373644902,
+   "label": "no_win",
+   "director": "James Cameron",
+   "academy_award_passages": 2,
+   "passages_naming_the_director": 1,
+   "examples": [
+    "True Lies received mostly positive reviews from critics, and ultimately grossed $378 million worldwide at the box office, becoming the third-highest-grossing film of 1994 . For her performance, Curtis won the Golden Globe Award for Best Actress – Motion Picture ..."
+   ],
+   "status": "consistent (manual reading of the passages)",
+   "manual_review": "Cameron won the Saturn Award for Best Director; the film was nominated at the Academy Awards for Best Visual Effects only."
+  },
+  {
+   "film": "Total Recall (1990 film)",
+   "article_url": "https://en.wikipedia.org/wiki/Total_Recall_(1990_film)",
+   "revision_id": 1382068852,
+   "label": "no_win",
+   "director": "Paul Verhoeven",
+   "academy_award_passages": 1,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "Total Recall was anticipated to be one of the year's most successful films. On its release, the film earned approximately $261.4 million worldwide, making it the fifth-highest-grossing film of the year . Its critical reception was mixed, with reviewers praising ..."
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "Innerspace",
+   "article_url": "https://en.wikipedia.org/wiki/Innerspace",
+   "revision_id": 1373944940,
+   "label": "no_win",
+   "director": "Joe Dante",
+   "academy_award_passages": 2,
+   "passages_naming_the_director": 1,
+   "examples": [
+    "Innerspace was released by Warner Bros. in the United States on July 1, 1987. The film received positive reviews from critics, grossed an estimated $95 million worldwide, and won an Academy Award for Best Visual Effects , the only film ..."
+   ],
+   "status": "consistent (manual reading of the passages)",
+   "manual_review": "The film won the Academy Award for Best Visual Effects, 'the only film directed by Dante to do so': the film's win, not the director's."
+  },
+  {
+   "film": "Romeo + Juliet",
+   "article_url": "https://en.wikipedia.org/wiki/Romeo_%2B_Juliet",
+   "revision_id": 1376460508,
+   "label": "no_win",
+   "director": "Baz Luhrmann",
+   "academy_award_passages": 4,
+   "passages_naming_the_director": 3,
+   "examples": [
+    "The film was released on November 1, 1996, by 20th Century Fox . It was met with generally positive reviews from critics and grossed over $147 million against its $14.5 million budget. At the 47th Berlin International Film Festival in ...",
+    "Romeo + Juliet competed for the Golden Bear at the 47th Berlin International Film Festival , winning the Alfred Bauer Prize for Luhrmann and the Silver Bear for Best Actor for DiCaprio. It received seven nominations at the 51st British ...",
+    "Retrospective reviews are generally positive. While discussing Luhrmann's adaptation there are comments that include \"... the most consistent source of delight in Luhrmann's movie: the way he sticks so close to Shakespeare yet manages to update the Bard's play so ..."
+   ],
+   "status": "consistent (manual reading of the passages)",
+   "manual_review": "At the 69th Academy Awards Catherine Martin and Brigitte Broch were nominated for Best Art Direction; Luhrmann's honours are the Berlin Alfred Bauer Prize and BAFTA."
+  },
+  {
+   "film": "A World Apart (film)",
+   "article_url": "https://en.wikipedia.org/wiki/A_World_Apart_(film)",
+   "revision_id": 1365606046,
+   "label": "no_win",
+   "director": "Chris Menges",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "Gone in 60 Seconds (2000 film)",
+   "article_url": "https://en.wikipedia.org/wiki/Gone_in_60_Seconds_(2000_film)",
+   "revision_id": 1368282708,
+   "label": "no_win",
+   "director": "Dominic Sena",
+   "academy_award_passages": 1,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "On Rotten Tomatoes , 25% out of 138 reviews were positive, with an average rating of 4.40/10. The website's critical consensus reads: \"Even though Oscar-bearers Nicolas Cage, Angelina Jolie, and Robert Duvall came aboard for this project, the quality of ..."
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "The Family Man",
+   "article_url": "https://en.wikipedia.org/wiki/The_Family_Man",
+   "revision_id": 1377389979,
+   "label": "no_win",
+   "director": "Brett Ratner",
+   "academy_award_passages": 1,
+   "passages_naming_the_director": 1,
+   "examples": [
+    "Principal photography began on November 19, 1999, in Teaneck, New Jersey and Sleepy Hollow, New York , where fall foliage was still in evidence. Academy Award -winning special effects supervisor John Richardson , and his team had to transform the ..."
+   ],
+   "status": "consistent (manual reading of the passages)",
+   "manual_review": "Oscar mentions are of an Academy Award-winning effects supervisor and a nominated cinematographer, not the director."
+  },
+  {
+   "film": "City of Angels (film)",
+   "article_url": "https://en.wikipedia.org/wiki/City_of_Angels_(film)",
+   "revision_id": 1382466596,
+   "label": "no_win",
+   "director": "Brad Silberling",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "End of Days (film)",
+   "article_url": "https://en.wikipedia.org/wiki/End_of_Days_(film)",
+   "revision_id": 1377355152,
+   "label": "no_win",
+   "director": "Peter Hyams",
+   "academy_award_passages": 1,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "However, there were a few mixed reviews. Mick LaSalle of the San Francisco Chronicle stated that \"there are moments in End of Days when Schwarzenegger seems to be gunning for an Oscar\", but \"those moments play like comic relief\". James ..."
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "Last Action Hero",
+   "article_url": "https://en.wikipedia.org/wiki/Last_Action_Hero",
+   "revision_id": 1381781116,
+   "label": "no_win",
+   "director": "John McTiernan",
+   "academy_award_passages": 1,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "F. Murray Abraham as John Practice, Jack's friend, revealed to be a traitor. Danny says not to trust him, saying he killed Mozart, referring to Abraham's Academy Award winning role as Antonio Salieri in Amadeus ."
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "Hackers (film)",
+   "article_url": "https://en.wikipedia.org/wiki/Hackers_(film)",
+   "revision_id": 1380592004,
+   "label": "no_win",
+   "director": "Iain Softley",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "Sex and the City (film)",
+   "article_url": "https://en.wikipedia.org/wiki/Sex_and_the_City_(film)",
+   "revision_id": 1373375465,
+   "label": "no_win",
+   "director": "Michael Patrick King",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "The Exorcism of Emily Rose",
+   "article_url": "https://en.wikipedia.org/wiki/The_Exorcism_of_Emily_Rose",
+   "revision_id": 1377390057,
+   "label": "no_win",
+   "director": "Scott Derrickson",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "Sinister (film)",
+   "article_url": "https://en.wikipedia.org/wiki/Sinister_(film)",
+   "revision_id": 1379972490,
+   "label": "no_win",
+   "director": "Scott Derrickson",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "Deliver Us from Evil (2014 film)",
+   "article_url": "https://en.wikipedia.org/wiki/Deliver_Us_from_Evil_(2014_film)",
+   "revision_id": 1375957162,
+   "label": "no_win",
+   "director": "Scott Derrickson",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "Hellraiser: Inferno",
+   "article_url": "https://en.wikipedia.org/wiki/Hellraiser%3A_Inferno",
+   "revision_id": 1382210810,
+   "label": "no_win",
+   "director": "Scott Derrickson",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "Silent Light",
+   "article_url": "https://en.wikipedia.org/wiki/Silent_Light",
+   "revision_id": 1378451274,
+   "label": "no_win",
+   "director": "Carlos Reygadas",
+   "academy_award_passages": 2,
+   "passages_naming_the_director": 0,
+   "examples": [
+    "List of submissions to the 80th Academy Awards for Best Foreign Language Film",
+    "List of Mexican submissions for the Academy Award for Best Foreign Language Film"
+   ],
+   "status": "consistent"
+  },
+  {
+   "film": "Season of the Witch (2011 film)",
+   "article_url": "https://en.wikipedia.org/wiki/Season_of_the_Witch_(2011_film)",
+   "revision_id": 1371623764,
+   "label": "no_win",
+   "director": "Dominic Sena",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  },
+  {
+   "film": "Drive Angry",
+   "article_url": "https://en.wikipedia.org/wiki/Drive_Angry",
+   "revision_id": 1378535038,
+   "label": "no_win",
+   "director": "Patrick Lussier",
+   "academy_award_passages": 0,
+   "passages_naming_the_director": 0,
+   "examples": [],
+   "status": "consistent"
+  }
+ ]
+}

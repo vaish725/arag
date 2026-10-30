@@ -1,0 +1,5 @@
+# Only needed to rebuild eval/data/hotpot_subset.json and the chart; run_eval.py needs just the repo's requirements.
+datasets
+matplotlib
+beautifulsoup4   # eval/verify_award_labels.py and scripts/verify_regression_truth.py (parse Wikipedia HTML)
+requests
