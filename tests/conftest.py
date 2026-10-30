@@ -38,6 +38,9 @@ def _no_real_api(monkeypatch):
     from arag import runtime_ops
 
     runtime_ops.reset_global_budget()
+    from arag import health
+
+    monkeypatch.setattr(health, "_last_logged", None)  # each test sees its own startup health line
     yield
     runtime_ops.reset_global_budget()
 

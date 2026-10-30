@@ -7,12 +7,14 @@ import os
 import pickle
 import re
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from arag.index_meta import IndexMismatchError
 
 # Index files live in <repo>/data unless ARAG_DATA_DIR points elsewhere, so the
 # code works from any working directory.
+_log = logging.getLogger(__name__)
+
 DATA_DIR = os.environ.get("ARAG_DATA_DIR") or str(Path(__file__).resolve().parents[1] / "data")
 
 _bm25: Optional[Any] = None
@@ -61,6 +63,30 @@ def _assert_index_matches_config() -> None:
         check_compat(_index_dir, info, fingerprint=fingerprint, **kwargs)  # then the model's exact files
 
 
+def vector_search_status() -> Tuple[bool, str]:
+    """(enabled, reason): can vector ("meaning") search be trusted right now?
+
+    reason is "" when enabled, otherwise a short sentence (model missing or failed to download,
+    index/model mismatch, no vector index, indexes not built).
+    """
+    from arag.health import short_reason
+
+    try:
+        if _chunks is None:
+            load_indexes()
+    except FileNotFoundError:
+        return False, "index files not found; build the indexes first"
+    except Exception as e:
+        return False, "indexes failed to load: " + short_reason(str(e), 110)
+    if _faiss_index is None and _sentence_faiss_index is None:
+        return False, "no vector index files were found next to the keyword index"
+    try:
+        _assert_index_matches_config()
+    except IndexMismatchError as e:
+        return False, short_reason(str(e))
+    return True, ""
+
+
 def load_indexes(
     bm25_path: Optional[str] = None,
     chunks_path: Optional[str] = None,
@@ -84,13 +110,13 @@ def load_indexes(
             if os.path.exists(chunks_path):
                 with open(chunks_path, "rb") as f:
                     _chunks = pickle.load(f)
-            print(f"Loaded BM25 index from {bm25_path} with {len(_chunks)} chunks")
+            _log.info(f"Loaded BM25 index from {bm25_path} with {len(_chunks)} chunks")
         except Exception as e:
             raise RuntimeError(f"Failed to load BM25 index: {e}")
     elif os.path.exists(chunks_path):
         with open(chunks_path, "rb") as f:
             _chunks = pickle.load(f)
-        print(f"Loaded chunks metadata from {chunks_path} (no BM25 index found)")
+        _log.info(f"Loaded chunks metadata from {chunks_path} (no BM25 index found)")
     else:
         raise FileNotFoundError(
             "No index files found. Run hierarchical_index_builder.py to build indexes first."
@@ -101,9 +127,9 @@ def load_indexes(
             import faiss
 
             _faiss_index = faiss.read_index(faiss_path)
-            print(f"Loaded FAISS index from {faiss_path}")
+            _log.info(f"Loaded FAISS index from {faiss_path}")
         except Exception as e:
-            print(
+            _log.warning(
                 f"FAISS index found but failed to load: {e}. Semantic search will be unavailable."
             )
             _faiss_index = None
@@ -118,9 +144,9 @@ def load_indexes(
             _sentence_faiss_index = faiss.read_index(sentence_faiss_path)
             with open(sentences_path, "rb") as f:
                 _sentences = pickle.load(f)
-            print(f"Loaded sentence FAISS index from {sentence_faiss_path} with {len(_sentences)} sentences")
+            _log.info(f"Loaded sentence FAISS index from {sentence_faiss_path} with {len(_sentences)} sentences")
         except Exception as e:
-            print(f"Sentence FAISS found but failed to load: {e}. Sentence search disabled.")
+            _log.warning(f"Sentence FAISS found but failed to load: {e}. Sentence search disabled.")
             _sentence_faiss_index = None
             _sentences = None
     else:
@@ -136,6 +162,10 @@ def load_indexes(
         _assert_index_matches_config()
     except IndexMismatchError as e:
         logging.getLogger(__name__).error("Vector search disabled: %s", e)
+
+    from arag.health import log_health
+
+    log_health()  # one line: provider, model, revision, dims, counts, vector search ON/OFF
 
 
 def keyword_search(query: str, k: int = 5) -> List[Dict]:
