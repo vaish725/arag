@@ -19,8 +19,14 @@ as "Who directed X and did they win any Academy Awards?" in evidence-only mode. 
 outcome *for that film*: `won` / `nominated` / `no_win`. Each answer is scored **correct** (verdict equals
 truth), **wrong** (a different positive claim) or **no answer** ("unknown"; absence of evidence cannot prove a
 negative, so this is never counted as wrong). Per-film rows with the verdict passage are in
-`eval/results/awards_results.json`. **The labels were written by the assistant from the corpus and general
-knowledge (see `basis`), not by the owner: `owner_verified` is false for every row and they need a check.**
+`eval/results/awards_results.json`. **Labels.** They were written by the assistant from the corpus and general knowledge (`basis` in the file),
+then **corroborated against each film's Wikipedia article** (revision ids pinned in
+`eval/data/award_label_evidence.json`; re-run `python eval/verify_award_labels.py`). Result: 26 of 26
+consistent, 22 automatically and 4 (True Lies, Innerspace, Romeo + Juliet, The Family Man) after reading the
+passages by hand; the reasons are recorded in the file. The five films shared with
+`scripts/regression_baseline.json` use the truth sourced there. Limits: an article that does not mention a
+nomination cannot prove there was none, and the Academy Awards database was not queried. `owner_verified` stays
+false for every row until the owner checks them.
 
 **Split.** Seed `20261030`, 40% dev / 60% test (`eval/data/splits.json`, committed, generated once by
 `eval/build_splits.py`). Retrieval: ids sorted, shuffled, first 40% = dev. Awards: stratified by truth class.
@@ -46,8 +52,8 @@ Paired on recall@10 (test): semantic beats BM25 on 3 questions, loses on 0; hybr
 | Semantic | 2 | 2 | 12 | 14/16 |
 | Hybrid (RRF) | 1 | 3 | 12 | 14/16 |
 
-Dev split for transparency (not tuned on): retrieval recall@5/@10 is BM25 0.55/0.77, semantic 0.77/0.77,
-hybrid 0.68/0.82 (n=11); awards are 1 correct, 0 wrong, 9 no answer for all three (n=10).
+Only test-split numbers are reported here; per-question and per-film rows for both splits are in
+`eval/results/*.json`. These are small-sample results on a held-out split, not a general accuracy claim.
 
 ## What the numbers say
 
@@ -58,7 +64,8 @@ hybrid 0.68/0.82 (n=11); awards are 1 correct, 0 wrong, 9 no answer for all thre
   passage, per `verdict_passage`); About a Boy (nominated) has no Oscar passage in its corpus page.
 - **The two wrong claims are verdict-logic faults this set exposes** (no code changed here):
   1. *Innerspace*: "...and won an Oscar, the only f..." is the **film's** win (visual effects), counted as the
-     director's because no category is listed. Truth: Joe Dante did not win.
+     director's because no category is listed. Truth: Joe Dante did not win; the article says the film "won an
+     Academy Award for Best Visual Effects, the only film directed by Dante to do so".
   2. *Silent Light*: "The film was nominated for Best Foreign Film at the 24th **Independent Spirit Awards**"
      matches the generic `was nominated` pattern, so a non-Oscar nomination is reported as an Oscar nomination.
 - Director detection misses 3 of 26 films (Ed Wood, Romeo + Juliet, Last Action Hero).
