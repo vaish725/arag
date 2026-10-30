@@ -5,6 +5,7 @@ Run: streamlit run streamlit_app.py
 
 from __future__ import annotations
 
+import logging
 import os
 
 import streamlit as st
@@ -14,7 +15,7 @@ load_dotenv()  # local .env; arag modules no longer load it at import time
 
 # Bridge Streamlit Cloud secrets into the process environment, since the
 # arag backends read credentials via os.environ (populated from .env locally).
-for _key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
+for _key in ("ANTHROPIC_API_KEY",):  # the only key the system uses (optional, for LLM answers)
     try:
         if _key in st.secrets and not os.environ.get(_key):
             os.environ[_key] = st.secrets[_key]
@@ -24,29 +25,60 @@ for _key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
 from arag.agent_loop import run_agent
 
 
-@st.cache_resource(show_spinner="Loading embedding model...")
-def _load_embedding_model() -> bool:
-    """Load the local embedding model once per server process."""
+# Make the startup health line ("arag.health") visible in the server log.
+_arag_log = logging.getLogger("arag")
+if not _arag_log.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
+    _arag_log.addHandler(_handler)
+    _arag_log.setLevel(logging.INFO)
+
+
+@st.cache_resource(show_spinner="Loading embedding model and indexes...")
+def _startup() -> bool:
+    """Once per server process: load the local model and the indexes (logs the health line).
+
+    Failures are not raised: they put the app in keyword-only mode, which is shown in a banner.
+    """
+    from arag import retrieval_tools
     from arag.embedding_backend import warm_up
 
-    warm_up()
+    try:
+        warm_up()
+    except Exception:
+        pass  # surfaced through vector_search_status() below
+    try:
+        retrieval_tools.load_indexes()
+    except Exception:
+        pass
     return True
 
 
-try:
-    _load_embedding_model()
-except Exception as _e:  # keep the app usable: keyword search still works
-    st.warning(f"Embedding model could not be loaded; semantic search is unavailable. ({_e})")
+_startup()
+
+from arag.health import degraded_line  # noqa: E402
+from arag.retrieval_tools import vector_search_status  # noqa: E402
 
 st.title("A-RAG Demo")
+_vs_enabled, _vs_reason = vector_search_status()
+_top_banner = st.empty()
+if not _vs_enabled and st.session_state.get("result") is None:
+    # Before the first answer: say so up front. Once an answer is shown, the banner sits above it.
+    _top_banner.warning(degraded_line(_vs_reason))
 
 mode = st.selectbox("Mode", ["evidence-only (no LLM)", "semantic + BM25 + optional LLM fallback"])
 question = st.text_input(
     "Question", "",
     placeholder="Ask something like: Who directed Inception and did they win any Academy Awards?",
 )
-max_steps = st.slider("Max steps", 1, 20, 6)
-max_tokens = st.slider("Max tokens", 100, 20000, 2000)
+max_steps = st.slider(
+    "Max steps (tool calls)", 1, 200, 100,
+    help="Most retrieval tool calls for one question. When it is reached the run stops using tools and says so.",
+)
+max_tokens = st.slider(
+    "Max tokens", 100, 20000, 2000,
+    help="Caps the length of an LLM-written answer. Only used when the LLM is called (needs ANTHROPIC_API_KEY).",
+)
 
 MAX_QUESTIONS_PER_SESSION = int(os.environ.get("ARAG_MAX_QUESTIONS_PER_SESSION", "10"))
 asked = st.session_state.get("questions_asked", 0)
@@ -83,6 +115,12 @@ if st.button("Run"):
 # Results come from session state so they survive reruns (e.g. ticking the box).
 res = st.session_state.get("result")
 if res is not None:
+    _top_banner.empty()  # the banner moves down, directly above the answer
+    _vs = res.get("vector_search") or {"enabled": True, "reason": ""}
+    if not _vs["enabled"]:
+        st.warning(degraded_line(_vs["reason"]))  # never show a keyword-only answer without saying so
+    if res.get("budget_exhausted"):
+        st.warning(f"Step budget exhausted after {res.get('tool_calls')} tool calls: the answer may be incomplete. Raise Max steps to allow more.")
     st.subheader("Answer")
     st.write(res.get("answer"))
     # If the agent returned an explicit provenance note about fallback, make it visible

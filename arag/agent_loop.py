@@ -6,6 +6,8 @@ relative imports for package internal modules.
 
 from __future__ import annotations
 
+import contextvars
+import functools
 import json
 import logging
 import re
@@ -29,6 +31,48 @@ except Exception:
     chunk_read = None
     keyword_search = None
     semantic_search = None
+
+
+# --- Step budget: max_steps = the number of retrieval tool calls (keyword_search, semantic_search,
+# chunk_read) one run_agent() call may make. The three tools are wrapped once; the budget lives in a
+# ContextVar so concurrent runs (Streamlit sessions run in threads) never share a counter. Once the
+# budget is spent the tools return nothing, the recipe finishes with what it has, and the result
+# carries budget_exhausted=True.
+DEFAULT_MAX_STEPS = 100  # generous: the longest recipe path in the regression set uses 40 calls (plain 'Titanic')
+
+
+class _StepBudget:
+    def __init__(self, limit: Optional[int]):
+        self.limit = limit
+        self.used = 0
+        self.exhausted = False
+
+
+_STEP_BUDGET: "contextvars.ContextVar[Optional[_StepBudget]]" = contextvars.ContextVar("arag_step_budget", default=None)
+
+
+def _counted(fn: Optional[Callable[..., Any]], empty: Callable[[], Any]) -> Optional[Callable[..., Any]]:
+    if fn is None:
+        return None
+
+    @functools.wraps(fn)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        budget = _STEP_BUDGET.get()
+        if budget is not None and budget.limit is not None:
+            if budget.used >= budget.limit:
+                budget.exhausted = True
+                return empty()
+            budget.used += 1
+        elif budget is not None:
+            budget.used += 1
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
+chunk_read = _counted(chunk_read, dict)  # type: ignore[assignment]
+keyword_search = _counted(keyword_search, list)  # type: ignore[assignment]
+semantic_search = _counted(semantic_search, list)  # type: ignore[assignment]
 
 
 def approx_token_count(text: str) -> int:
@@ -82,10 +126,40 @@ def _call_chunk_read(chunk_id: Optional[str]) -> Dict[str, Any]:
 
 def run_agent(
     question: str,
-    max_steps: int = 10,
+    max_steps: Optional[int] = DEFAULT_MAX_STEPS,
     max_tokens: int = 2000,
     allow_fallback: bool = True,
     enable_director_flow: bool = False,
+) -> Dict[str, Any]:
+    """Run one question.
+
+    max_steps  : most retrieval tool calls this run may make (None = unlimited). When it is hit the
+                 result has budget_exhausted=True and the answer is built from what was gathered.
+    max_tokens : cap on the LLM answer length; only used when the LLM is called.
+    The result also carries ``tool_calls`` (tool calls made) and ``vector_search``
+    ({"enabled", "reason"}): vector search off or failing is never silent.
+    """
+    from arag.health import runtime_status
+    from arag.retrieval_tools import vector_search_status
+
+    budget = _StepBudget(max_steps)
+    token = _STEP_BUDGET.set(budget)
+    try:
+        result = _run_agent(question, max_steps, max_tokens, allow_fallback, enable_director_flow)
+    finally:
+        _STEP_BUDGET.reset(token)
+    result["budget_exhausted"] = budget.exhausted
+    result["tool_calls"] = budget.used
+    result["vector_search"] = runtime_status(result.get("tool_trace"), vector_search_status())
+    return result
+
+
+def _run_agent(
+    question: str,
+    max_steps: Optional[int],
+    max_tokens: int,
+    allow_fallback: bool,
+    enable_director_flow: bool,
 ) -> Dict[str, Any]:
     from arag.runtime_ops import start_run
 
@@ -2058,52 +2132,49 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
     }
 
 
-if __name__ == "__main__":
+def build_parser() -> "argparse.ArgumentParser":
     import argparse
 
-    from dotenv import load_dotenv
-
-    from arag.runtime_ops import setup_logging
-
-    load_dotenv()
-    setup_logging()
-
     parser = argparse.ArgumentParser(
-        description="Run the lightweight A-RAG agent (heuristic policy)"
+        description="Run the A-RAG evidence-only two-hop baseline (deterministic recipe, not an LLM agent)"
+    )
+    parser.add_argument("--question", type=str, default="Who directed Titanic?", help="Question to ask")
+    parser.add_argument(
+        "--max_steps", type=int, default=DEFAULT_MAX_STEPS,
+        help="Most retrieval tool calls for this question; the run stops using tools after that and reports budget_exhausted",
+    )
+    parser.add_argument("--max_tokens", type=int, default=2000, help="Cap on the LLM answer length (only used when the LLM is called)")
+    parser.add_argument(
+        "--allow-fallback", dest="allow_fallback", action="store_true",
+        help="Allow the LLM to answer from external knowledge when the corpus has no answer (needs ANTHROPIC_API_KEY)",
     )
     parser.add_argument(
-        "--question", type=str, default="Who directed Titanic?", help="Question to ask"
-    )
-    parser.add_argument("--max_steps", type=int, default=10)
-    parser.add_argument("--max_tokens", type=int, default=2000)
-    parser.add_argument(
-        "--allow-fallback",
-        dest="allow_fallback",
-        action="store_true",
-        help="Allow LLM to fallback to external knowledge when contexts are empty",
+        "--no-allow-fallback", dest="allow_fallback", action="store_false",
+        help="Do not allow LLM fallback (answer strictly from the corpus)",
     )
     parser.add_argument(
-        "--no-allow-fallback",
-        dest="allow_fallback",
-        action="store_false",
-        help="Do not allow LLM fallback (answer strictly from contexts)",
+        "--enable-director-flow", dest="enable_director_flow", action="store_true",
+        help="Use the director->award two-hop flow for director questions (default ON in the CLI)",
     )
     parser.add_argument(
-        "--enable-director-flow",
-        dest="enable_director_flow",
-        action="store_true",
-        help="Enable specialized director->award two-hop flow for demo (default ON in CLI)",
+        "--no-enable-director-flow", dest="enable_director_flow", action="store_false",
+        help="Disable the director->award two-hop flow",
     )
-    parser.add_argument(
-        "--no-enable-director-flow",
-        dest="enable_director_flow",
-        action="store_false",
-        help="Disable specialized director->award two-hop flow",
-    )
-    parser.set_defaults(allow_fallback=True)
-    parser.set_defaults(enable_director_flow=True)
-    args = parser.parse_args()
+    parser.set_defaults(allow_fallback=True, enable_director_flow=True)
+    return parser
 
+
+def main(argv: Optional[List[str]] = None) -> int:
+    """CLI entry. When vector search is off, the degraded line goes to stderr BEFORE the answer."""
+    import sys
+
+    from arag.health import degraded_line
+    from arag.retrieval_tools import vector_search_status
+
+    args = build_parser().parse_args(argv)
+    enabled, reason = vector_search_status()  # loads the indexes, which logs the health line
+    if not enabled:
+        print(degraded_line(reason), file=sys.stderr, flush=True)
     result = run_agent(
         args.question,
         max_steps=args.max_steps,
@@ -2111,4 +2182,18 @@ if __name__ == "__main__":
         allow_fallback=args.allow_fallback,
         enable_director_flow=args.enable_director_flow,
     )
+    vs = result["vector_search"]
+    if not vs["enabled"] and enabled:  # it failed during this run, not at startup
+        print(degraded_line(vs["reason"]), file=sys.stderr, flush=True)
     print(json.dumps(result, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    from arag.runtime_ops import setup_logging
+
+    load_dotenv()
+    setup_logging()
+    raise SystemExit(main())
