@@ -1,0 +1,3 @@
+# Only needed to rebuild eval/data/hotpot_subset.json and the chart; run_eval.py needs just the repo's requirements.
+datasets
+matplotlib

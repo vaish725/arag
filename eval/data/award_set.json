@@ -1,0 +1,213 @@
+{
+ "description": "Hand-checked director->Oscar outcome for films whose pages are in the corpus. truth = the director's Academy Award outcome FOR THIS FILM: won / nominated / no_win. Labels were written from the corpus and general knowledge (basis field) and are for the owner to verify.",
+ "films": [
+  {
+   "film": "The Godfather",
+   "director": "Francis Ford Coppola",
+   "truth": "won",
+   "basis": "Won Adapted Screenplay (with Mario Puzo). Corpus: The_Godfather_1 names Coppola for Adapted Screenplay.",
+   "basis_source": "corpus",
+   "owner_verified": false
+  },
+  {
+   "film": "Titanic (1997 film)",
+   "director": "James Cameron",
+   "truth": "won",
+   "basis": "Won Director, Picture, Film Editing. Corpus: James_Cameron_0, Titanic_(1997_film)_1.",
+   "basis_source": "corpus",
+   "owner_verified": false
+  },
+  {
+   "film": "La La Land",
+   "director": "Damien Chazelle",
+   "truth": "won",
+   "basis": "Won Best Director. Corpus: Damien_Chazelle_0.",
+   "basis_source": "corpus",
+   "owner_verified": false
+  },
+  {
+   "film": "Inception",
+   "director": "Christopher Nolan",
+   "truth": "nominated",
+   "basis": "Nominated for this film (Best Picture as producer, Original Screenplay); did not win. Nolan's Oscars are for Oppenheimer.",
+   "basis_source": "corpus+knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "About a Boy (film)",
+   "director": "Chris Weitz and Paul Weitz",
+   "truth": "nominated",
+   "basis": "Weitz brothers nominated for Best Adapted Screenplay; did not win.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Doctor Strange (2016 film)",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "Film nominated for Visual Effects; director not nominated.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Ed Wood (film)",
+   "director": "Tim Burton",
+   "truth": "no_win",
+   "basis": "Film won two Oscars (Supporting Actor, Makeup); Burton not nominated.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "True Lies",
+   "director": "James Cameron",
+   "truth": "no_win",
+   "basis": "Film nominated for Visual Effects only; Cameron not nominated. Career wins (Titanic) are for another film.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Total Recall (1990 film)",
+   "director": "Paul Verhoeven",
+   "truth": "no_win",
+   "basis": "Film got a Special Achievement Award (visual effects) and sound nominations; Verhoeven not nominated.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Innerspace",
+   "director": "Joe Dante",
+   "truth": "no_win",
+   "basis": "Film won Visual Effects; Dante not nominated.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Romeo + Juliet",
+   "director": "Baz Luhrmann",
+   "truth": "no_win",
+   "basis": "Film nominated for Art Direction only; Luhrmann not nominated.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "A World Apart (film)",
+   "director": "Chris Menges",
+   "truth": "no_win",
+   "basis": "No Oscar nominations for this film. Menges's Oscars (cinematography) are for The Killing Fields and The Mission: a career-win case.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Gone in 60 Seconds (2000 film)",
+   "director": "Dominic Sena",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "The Family Man",
+   "director": "Brett Ratner",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "City of Angels (film)",
+   "director": "Brad Silberling",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "End of Days (film)",
+   "director": "Peter Hyams",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Last Action Hero",
+   "director": "John McTiernan",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Hackers (film)",
+   "director": "Iain Softley",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Sex and the City (film)",
+   "director": "Michael Patrick King",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "The Exorcism of Emily Rose",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Sinister (film)",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Deliver Us from Evil (2014 film)",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Hellraiser: Inferno",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Silent Light",
+   "director": "Carlos Reygadas",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Season of the Witch (2011 film)",
+   "director": "Dominic Sena",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  },
+  {
+   "film": "Drive Angry",
+   "director": "Patrick Lussier",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "basis_source": "knowledge",
+   "owner_verified": false
+  }
+ ]
+}
