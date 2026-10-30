@@ -10,6 +10,12 @@ on:
 permissions:
   contents: read
 
+# Explicit bash so pipelines use `-o pipefail`: without it a failing command piped
+# into `tee` is reported as success.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   reembed:
     runs-on: ubuntu-latest
@@ -49,6 +55,9 @@ jobs:
         run: python scripts/reembed_indexes.py --report out/reembed_report.json 2>&1 | tee out/reembed_log.txt
 
       - name: Run the full test suite (offline)
+        id: tests
+        # A failing test must not hide the artifact/debug output; the run is failed at the end.
+        continue-on-error: true
         env:
           HF_HUB_OFFLINE: '1'
           ARAG_REQUIRE_MODEL: '1'
@@ -74,6 +83,37 @@ jobs:
         continue-on-error: true
         run: python scripts/regression_report.py --out out/regression.json --baseline scripts/regression_baseline.json 2>&1 | tee out/regression_report.txt
 
+      # --- Debug steps (read-only): why did a verdict move, and what does the app cost in memory? ---
+      - name: Debug - La La Land retrieval, old (BM25 fallback) vs new (local embeddings)
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/debug_retrieval.py --film "La La Land" 2>&1 | tee out/debug_la_la_land.txt
+
+      - name: Debug - model size on disk
+        continue-on-error: true
+        run: |
+          du -sh .fastembed_cache | tee out/model_size.txt
+          find .fastembed_cache -type f -exec du -h {} + | sort -h | tail -8 | tee -a out/model_size.txt
+
+      - name: Debug - memory and load time, manual phases (fresh process)
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/measure_app_memory.py --mode manual 2>&1 | tee out/memory_manual.txt
+
+      - name: Debug - memory and load time, real streamlit_app.py via AppTest (fresh process)
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/measure_app_memory.py --mode streamlit 2>&1 | tee out/memory_streamlit.txt
+
+      - name: Experiment - bm25 vs semantic vs hybrid (RRF) on the regression films
+        continue-on-error: true
+        env:
+          HF_HUB_OFFLINE: '1'
+        run: python scripts/prototype_hybrid.py 2>&1 | tee out/prototype_hybrid.txt
+
       - name: Upload artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -85,3 +125,9 @@ jobs:
             data/sentence_faiss_index.bin
             data/index_meta.json
             out/
+
+      - name: Fail the run if the tests failed
+        if: steps.tests.outcome == 'failure'
+        run: |
+          echo "pytest reported failures; see out/pytest.txt in the artifact"
+          exit 1

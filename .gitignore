@@ -23,3 +23,10 @@ ARAG_IMPLEMENTATION.MD
 PROJECT_DEEP_DIVE_part1.md
 PROJECT_DEEP_DIVE_part2.md
 logs/
+
+# Local embedding model cache and runtime embedding caches
+.fastembed_cache/
+data/sentence_embedding_cache*.pkl
+
+# Local backup of data/ taken before re-embedding
+data_backup*/

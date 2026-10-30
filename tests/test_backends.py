@@ -73,6 +73,7 @@ def make_fake_openai_module(batch_embedding):
 
 
 def test_get_embeddings_uses_llama_index(monkeypatch):
+    monkeypatch.setenv("ARAG_EMBEDDING_PROVIDER", "openai")
     # Prepare fake llama module
     fake_llama = make_fake_llama_module(return_vecs=[0.1, 0.2, 0.3])
     monkeypatch.setitem(sys.modules, "llama_index.embeddings.openai", fake_llama)
@@ -89,6 +90,7 @@ def test_get_embeddings_uses_llama_index(monkeypatch):
 
 
 def test_get_embeddings_uses_openai_fallback(monkeypatch):
+    monkeypatch.setenv("ARAG_EMBEDDING_PROVIDER", "openai")
     # Ensure llama path not present
     monkeypatch.setitem(sys.modules, "llama_index.embeddings.openai", None)
     # Prepare fake openai module
@@ -107,6 +109,7 @@ def test_get_embeddings_uses_openai_fallback(monkeypatch):
 
 
 def test_get_embeddings_no_backend_raises(monkeypatch):
+    monkeypatch.setenv("ARAG_EMBEDDING_PROVIDER", "openai")
     # Remove both possible backends
     monkeypatch.setenv("OPENAI_API_KEY", "")
     monkeypatch.setitem(sys.modules, "llama_index.embeddings.openai", None)

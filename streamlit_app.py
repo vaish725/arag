@@ -23,6 +23,21 @@ for _key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
 
 from arag.agent_loop import run_agent
 
+
+@st.cache_resource(show_spinner="Loading embedding model...")
+def _load_embedding_model() -> bool:
+    """Load the local embedding model once per server process."""
+    from arag.embedding_backend import warm_up
+
+    warm_up()
+    return True
+
+
+try:
+    _load_embedding_model()
+except Exception as _e:  # keep the app usable: keyword search still works
+    st.warning(f"Embedding model could not be loaded; semantic search is unavailable. ({_e})")
+
 st.title("A-RAG Demo")
 
 mode = st.selectbox("Mode", ["evidence-only (no LLM)", "semantic + BM25 + optional LLM fallback"])

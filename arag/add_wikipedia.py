@@ -13,15 +13,17 @@ import argparse
 import os
 import pickle
 import requests
-from typing import List, Dict
+from typing import Dict, List, Tuple
 
 
-def fetch_wikipedia_extract(title: str) -> str:
+def fetch_wikipedia_page(title: str) -> Tuple[str, int]:
+    """Return (plain-text extract, revision id) for a Wikipedia title."""
     S = requests.Session()
     URL = "https://en.wikipedia.org/w/api.php"
     params = {
         "action": "query",
-        "prop": "extracts",
+        "prop": "extracts|revisions",
+        "rvprop": "ids",
         "explaintext": "",
         "format": "json",
         "titles": title,
@@ -33,8 +35,13 @@ def fetch_wikipedia_extract(title: str) -> str:
     pages = data.get("query", {}).get("pages", {})
     for pid, page in pages.items():
         if "extract" in page:
-            return page["extract"]
+            revisions = page.get("revisions") or [{}]
+            return page["extract"], int(revisions[0].get("revid", 0))
     raise RuntimeError(f"No extract found for title: {title}")
+
+
+def fetch_wikipedia_extract(title: str) -> str:
+    return fetch_wikipedia_page(title)[0]
 
 
 def append_chunks_for_title(title: str, text: str, out_dir: str = "data", dedupe: bool = True) -> List[Dict]:

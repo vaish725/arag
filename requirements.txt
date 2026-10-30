@@ -6,6 +6,6 @@ rank_bm25==0.2.2
 prometheus_client==0.25.0
 streamlit==1.57.0
 faiss-cpu==1.14.2
-openai==1.109.1
+fastembed==0.9.1
 # For heavy optional deps (llama-index, pandas/pyarrow) see requirements-optional.txt
 anthropic>=0.40

@@ -25,8 +25,8 @@ def main(argv: List[str] | None = None) -> int:
     parser.add_argument("titles", nargs="*", help="One or more Wikipedia page titles (e.g. 'The Godfather')")
     parser.add_argument("--titles-file", type=str, help="File with one title per line")
     parser.add_argument("--out_dir", type=str, default="data", help="Output data directory (default: data)")
-    parser.add_argument("--rebuild-faiss", action="store_true", help="Also rebuild chunk-level FAISS index (requires embeddings and faiss)")
-    parser.add_argument("--rebuild-sentence-faiss", action="store_true", help="Also rebuild sentence-level FAISS index (requires embeddings and faiss)")
+    parser.add_argument("--rebuild-faiss", action="store_true", help="Also rebuild chunk-level FAISS index (local embedding model + faiss)")
+    parser.add_argument("--rebuild-sentence-faiss", action="store_true", help="Also rebuild sentence-level FAISS index (local embedding model + faiss)")
     parser.add_argument("--no-dedupe", dest="dedupe", action="store_false", help="Do not skip appending if title already present in corpus")
     parser.set_defaults(dedupe=True)
 
@@ -56,19 +56,33 @@ def main(argv: List[str] | None = None) -> int:
         print(f"Failed to import repository helper modules: {e}")
         return 3
 
+    import os
+    import pickle
+
+    def existing_sources() -> set:
+        path = os.path.join(args.out_dir, "chunks.pkl")
+        if not os.path.exists(path):
+            return set()
+        with open(path, "rb") as f:
+            return {c.get("source") for c in pickle.load(f)}
+
     all_chunks = None
+    revisions = {}  # Wikipedia revision id of each article actually appended
     for title in titles:
         print(f"Fetching '{title}' from Wikipedia...")
         try:
-            text = add_wikipedia.fetch_wikipedia_extract(title)
+            text, revid = add_wikipedia.fetch_wikipedia_page(title)
         except Exception as e:
             print(f"Failed to fetch '{title}': {e}")
             continue
+        already_present = args.dedupe and title in existing_sources()
         try:
             all_chunks = add_wikipedia.append_chunks_for_title(title, text, out_dir=args.out_dir, dedupe=args.dedupe)
         except Exception as e:
             print(f"Failed to append chunks for '{title}': {e}")
             continue
+        if not already_present:  # a skipped title's stored text is not this revision
+            revisions[title] = revid
 
     if all_chunks is None:
         print("No chunks were added; aborting index rebuild.")
@@ -100,6 +114,12 @@ def main(argv: List[str] | None = None) -> int:
         except Exception as e:
             print(f"Failed to build sentence FAISS: {e}")
             return 7
+
+    if revisions:
+        from arag.index_meta import record_wikipedia_revisions
+
+        record_wikipedia_revisions(args.out_dir, revisions)
+        print(f"Recorded Wikipedia revision ids for {len(revisions)} article(s) in index_meta.json")
 
     print("Done. Added titles and rebuilt requested indexes.")
     return 0

@@ -38,7 +38,7 @@ Prerequisites
 
 - Python 3.9+ (3.10/3.11 recommended)
 - A virtual environment (recommended)
-- OpenAI and/or Anthropic API credentials if you plan to run real LLM/embedding calls
+- An Anthropic API key, only if you want LLM-written answers (embeddings run locally and are free)
 
 Install
 
@@ -50,12 +50,20 @@ pip install -r requirements.txt
 
 Environment variables
 
-Set provider credentials (example for OpenAI):
+Embeddings use a free local model (`BAAI/bge-small-en-v1.5` via fastembed); no
+key is needed. Download it once with `PYTHONPATH=. python scripts/download_model.py`.
+The only key the system needs is for writing answers:
 
 ```bash
-export OPENAI_API_KEY="sk-..."
-# export ANTHROPIC_API_KEY="..."  # if using Anthropic
+export ANTHROPIC_API_KEY="..."
+# Optional: OpenAI embeddings instead (pip install -r requirements-optional.txt)
+# export ARAG_EMBEDDING_PROVIDER=openai OPENAI_API_KEY="sk-..."
 ```
+
+The vector indexes record the model they were built with in `data/index_meta.json`.
+If the configured model differs, vector search is disabled with an explicit error
+(keyword search keeps working). To rebuild them for the current model without
+re-downloading any corpus: `PYTHONPATH=. python scripts/reembed_indexes.py`.
 
 Build indexes (example)
 
