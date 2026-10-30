@@ -9,18 +9,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 
-FILMS = [
-    "Inception",
-    "Titanic (1997 film)",
-    "Titanic",
-    "La La Land",
-    "Doctor Strange",
-    "The Godfather",
-    "The Godfather Part II",
-]
+BASELINE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "regression_baseline.json")
+# The films come from the baseline file so the report, the tests and the baseline cannot drift apart.
+FILMS = list(json.load(open(BASELINE_PATH)))
 
 
 def verdict_of(answer: str) -> str:
@@ -114,6 +109,7 @@ def main() -> int:
     # The baseline is the previous behaviour, NOT ground truth. Differences from it
     # are flagged for review, never treated as failures; the expected_truth column
     # (hand-checked Oscar outcome of the director for that film) is shown beside both.
+    print("Development-set run (see the label below the table).")
     print(f"{'film':22} | {'baseline':34} | {'new':34} | {'truth':9} | {'baseline score':14} | {'new score':9} | flags")
     flagged = []
     base_scores, new_scores = [], []
@@ -143,6 +139,9 @@ def main() -> int:
         if career_line(r):
             print(f"{'':22}   {career_line(r)}")
     print()
+    questions_n = len(new_scores)
+    films_n = sum(1 for f in results if not base.get(f, {}).get("same_film_as"))
+    print(f"DEVELOPMENT-SET RESULTS (n={questions_n} questions, {films_n} films; the verdict rules were tuned on these, so this is NOT an accuracy estimate)")
     print(f"Baseline: {tally(base_scores)}  (of {len(base_scores)})")
     print(f"New:      {tally(new_scores)}  (of {len(new_scores)})")
     print()

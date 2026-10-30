@@ -5,9 +5,31 @@
       1
     ],
     "director": "Scott Derrickson",
+    "expected_system": {
+      "career_line": false,
+      "director": "Scott Derrickson",
+      "note": "No Oscar passage for the director in the corpus.",
+      "required_verdict_chunk": null,
+      "verdict": "unknown"
+    },
     "expected_truth": {
       "note": "No Oscar win",
-      "verdict": "no_win"
+      "sources": [
+        {
+          "quote": "The film received an Academy Award nomination for Best Visual Effects.",
+          "url": "https://en.wikipedia.org/wiki/Doctor_Strange_(2016_film)"
+        },
+        {
+          "must_not_contain": [
+            "Derrickson"
+          ],
+          "quote": "Doctor Strange – Stephane Ceretti , Richard Bluff , Vincent Cirelli and Paul Corbould",
+          "url": "https://en.wikipedia.org/wiki/89th_Academy_Awards"
+        }
+      ],
+      "verdict": "no_win",
+      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
       "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
@@ -22,9 +44,32 @@
       7
     ],
     "director": "Christopher Nolan",
+    "expected_system": {
+      "career_line": true,
+      "director": "Christopher Nolan",
+      "note": "Truth is 'nominated' but the nomination passage (Inception_1) is not retrieved, so the honest verdict is unknown plus a career line (Nolan's Oscars are for another film).",
+      "required_verdict_chunk": null,
+      "verdict": "unknown"
+    },
     "expected_truth": {
       "note": "No win for this film (nominated, Original Screenplay); Nolan's career Oscar wins are for Oppenheimer",
-      "verdict": "nominated"
+      "sources": [
+        {
+          "quote": "Inception – Emma Thomas and Christopher Nolan , producers",
+          "url": "https://en.wikipedia.org/wiki/83rd_Academy_Awards"
+        },
+        {
+          "quote": "The King's Speech – Iain Canning , Emile Sherman and Gareth Unwin , producers ‡",
+          "url": "https://en.wikipedia.org/wiki/83rd_Academy_Awards"
+        },
+        {
+          "quote": "The King's Speech – David Seidler ‡",
+          "url": "https://en.wikipedia.org/wiki/83rd_Academy_Awards"
+        }
+      ],
+      "verdict": "nominated",
+      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
       "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
@@ -39,9 +84,24 @@
       7
     ],
     "director": "Damien Chazelle",
+    "expected_system": {
+      "career_line": false,
+      "director": "Damien Chazelle",
+      "note": "Right answer for the right reason: must cite Chazelle's own 'winning six including Best Director' sentence, not link text.",
+      "required_verdict_chunk": "Damien_Chazelle_0",
+      "verdict": "won"
+    },
     "expected_truth": {
       "note": "Won (Best Director)",
-      "verdict": "won"
+      "sources": [
+        {
+          "quote": "Damien Chazelle – La La Land ‡",
+          "url": "https://en.wikipedia.org/wiki/89th_Academy_Awards"
+        }
+      ],
+      "verdict": "won",
+      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
       "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
@@ -55,9 +115,24 @@
       1
     ],
     "director": "Francis Ford Coppola",
+    "expected_system": {
+      "career_line": false,
+      "director": "Francis Ford Coppola",
+      "note": "The_Godfather_1 names Coppola for Best Adapted Screenplay.",
+      "required_verdict_chunk": "The_Godfather_1",
+      "verdict": "won"
+    },
     "expected_truth": {
       "note": "Won (Adapted Screenplay, shared with Mario Puzo)",
-      "verdict": "won"
+      "sources": [
+        {
+          "quote": "At the 45th Academy Awards, the film won Best Picture, Brando won Best Actor, and Puzo and Coppola won for Best Adapted Screenplay.",
+          "url": "https://en.wikipedia.org/wiki/The_Godfather"
+        }
+      ],
+      "verdict": "won",
+      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
       "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
@@ -71,9 +146,24 @@
       1
     ],
     "director": "Francis Ford Coppola",
+    "expected_system": {
+      "career_line": false,
+      "director": "Francis Ford Coppola",
+      "note": "The corpus has no Part II page; the first film's evidence is not attributed to the sequel.",
+      "required_verdict_chunk": null,
+      "verdict": "unknown"
+    },
     "expected_truth": {
       "note": "Won (Director, Picture, Adapted Screenplay)",
-      "verdict": "won"
+      "sources": [
+        {
+          "quote": "Its six Oscar wins also included Best Director for Coppola, Best Supporting Actor for De Niro, and Best Adapted Screenplay for Coppola and Puzo.",
+          "url": "https://en.wikipedia.org/wiki/The_Godfather_Part_II"
+        }
+      ],
+      "verdict": "won",
+      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
       "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
@@ -87,10 +177,30 @@
       1
     ],
     "director": "James Cameron",
-    "expected_truth": {
-      "note": "Assumes the 1997 film. Ambiguous: the corpus page 'Titanic' (94 chunks) is about the RMS Titanic ship; the film is the separate 'Titanic (1997 film)' page (87 chunks). There is also a 1953 film (dir. Jean Negulesco). Truth copied from 'Titanic (1997 film)'.",
+    "expected_system": {
+      "career_line": false,
+      "director": "James Cameron",
+      "note": "Same film as 'Titanic (1997 film)'; the plain title also matches the ship page.",
+      "required_verdict_chunk": null,
       "verdict": "won"
     },
+    "expected_truth": {
+      "note": "Assumes the 1997 film. Ambiguous: the corpus page 'Titanic' (94 chunks) is about the RMS Titanic ship; the film is the separate 'Titanic (1997 film)' page (87 chunks). There is also a 1953 film (dir. Jean Negulesco). Truth copied from 'Titanic (1997 film)'.",
+      "sources": [
+        {
+          "quote": "James Cameron – Titanic ‡",
+          "url": "https://en.wikipedia.org/wiki/70th_Academy_Awards"
+        },
+        {
+          "quote": "the film received fourteen nominations at the 70th Academy Awards and won eleven, including Best Picture and Best Director",
+          "url": "https://en.wikipedia.org/wiki/Titanic_(1997_film)"
+        }
+      ],
+      "verdict": "won",
+      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_on": "2026-10-30"
+    },
+    "same_film_as": "Titanic (1997 film)",
     "semantic_search_errors": [
       "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
     ],
@@ -103,9 +213,28 @@
       1
     ],
     "director": "James Cameron",
+    "expected_system": {
+      "career_line": false,
+      "director": "James Cameron",
+      "note": "Win passage varies with retrieval (James_Cameron_0 or Titanic_(1997_film)_1), so no single chunk is required.",
+      "required_verdict_chunk": null,
+      "verdict": "won"
+    },
     "expected_truth": {
       "note": "Won (Director, Picture, Editing)",
-      "verdict": "won"
+      "sources": [
+        {
+          "quote": "James Cameron – Titanic ‡",
+          "url": "https://en.wikipedia.org/wiki/70th_Academy_Awards"
+        },
+        {
+          "quote": "the film received fourteen nominations at the 70th Academy Awards and won eleven, including Best Picture and Best Director",
+          "url": "https://en.wikipedia.org/wiki/Titanic_(1997_film)"
+        }
+      ],
+      "verdict": "won",
+      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
       "No index_meta.json next to the vector indexes in '/Users/vaishnavikamdi/Documents/Projects/A-RAG/data', so their embedding model is unknown. Configured: local/BAAI/bge-small-en-v1.5 (dim 384). Rebuild the indexes."
