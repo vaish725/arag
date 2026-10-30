@@ -45,3 +45,14 @@ def test_summary_matches_the_per_row_results():
     for mode in ("bm25", "semantic", "hybrid"):
         mean = sum(r["modes"][mode]["recall@5"] for r in test_rows) / len(test_rows)
         assert abs(mean - summary[mode]["recall@5"]) < 0.001
+
+
+def test_every_award_label_has_wikipedia_evidence_and_none_is_left_unreviewed():
+    films = {f["film"] for f in load("award_set.json")["films"]}
+    evidence = load("award_label_evidence.json")["films"]
+    assert {e["film"] for e in evidence} == films
+    for e in evidence:
+        assert isinstance(e["revision_id"], int) and e["article_url"].startswith("https://en.wikipedia.org/wiki/")
+        assert e["status"].startswith("consistent"), e
+        if "manual" in e["status"]:
+            assert e["manual_review"], e
