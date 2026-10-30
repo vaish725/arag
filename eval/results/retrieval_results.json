@@ -1,0 +1,1880 @@
+{
+ "rows": [
+  {
+   "gold_chunk_ids": [
+    "Esma_Sultan_Mansion_0",
+    "Laleli_Mosque_0"
+   ],
+   "id": "5adbf0a255429947ff17385a",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Esma_Sultan_Mansion_0",
+      "Sultan_Ahmed_Mosque_0",
+      "Laleli_Mosque_0",
+      "Djama\u00e2_el_Kebir_0",
+      "Gevheri_Kad\u0131n_0",
+      "Esma_Sultan_(daughter_of_Abdul_Hamid_I)_0",
+      "Esma_Sultan_(daughter_of_Ahmed_III)_0",
+      "Esma_Sultan_(daughter_of_Abd\u00fclaziz)_0",
+      "Esma_Sultan_0",
+      "Silene_menziesii_1"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Esma_Sultan_Mansion_0",
+      "Laleli_Mosque_0",
+      "Sultan_Ahmed_Mosque_0",
+      "Esma_Sultan_(daughter_of_Ahmed_III)_0",
+      "Esma_Sultan_(daughter_of_Abdul_Hamid_I)_0",
+      "Djama\u00e2_el_Kebir_0",
+      "Gevheri_Kad\u0131n_0",
+      "Esma_Sultan_0",
+      "Esma_Sultan_(daughter_of_Abd\u00fclaziz)_0",
+      "Grantley_Adams_International_Airport_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Esma_Sultan_Mansion_0",
+      "Laleli_Mosque_0",
+      "Esma_Sultan_(daughter_of_Ahmed_III)_0",
+      "Esma_Sultan_(daughter_of_Abdul_Hamid_I)_0",
+      "Esma_Sultan_0",
+      "Esma_Sultan_(daughter_of_Abd\u00fclaziz)_0",
+      "Sultan_Ahmed_Mosque_0",
+      "Gevheri_Kad\u0131n_0",
+      "Djama\u00e2_el_Kebir_0",
+      "K\u00fc\u00e7\u00fck_H\u00fcseyin_Pasha_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Are the Laleli Mosque and Esma Sultan Mansion located in the same neighborhood?",
+   "split": "test",
+   "type": "comparison"
+  },
+  {
+   "gold_chunk_ids": [
+    "888_7th_Avenue_0",
+    "Random_House_Tower_0"
+   ],
+   "id": "5ab56e32554299637185c594",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Random_House_Tower_0",
+      "Pershing_Square_Capital_Management_0",
+      "Villard_(imprint)_0",
+      "888_7th_Avenue_0",
+      "Hounsfield_Heights/Briar_Hill,_Calgary_0",
+      "Real_estate_technology_0",
+      "South_Phoenix_0",
+      "William_H._Cook_Water_Tank_House_0",
+      "Roald_Dahl:_Collected_Stories_0",
+      "Inception_16"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Random_House_Tower_0",
+      "888_7th_Avenue_0",
+      "Pershing_Square_Capital_Management_0",
+      "Villard_(imprint)_0",
+      "Real_estate_technology_0",
+      "South_Phoenix_0",
+      "Hounsfield_Heights/Briar_Hill,_Calgary_0",
+      "Loan_modification_in_the_United_States_3",
+      "Roald_Dahl:_Collected_Stories_0",
+      "Loan_modification_in_the_United_States_6"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "888_7th_Avenue_0",
+      "Random_House_Tower_0",
+      "Pershing_Square_Capital_Management_0",
+      "Villard_(imprint)_0",
+      "Real_estate_technology_0",
+      "Loan_modification_in_the_United_States_3",
+      "Carl_B._Stokes_United_States_Courthouse_0",
+      "Robins_Center_0",
+      "Grace_Church_School_0",
+      "South_Phoenix_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Are Random House Tower and 888 7th Avenue both used for real estate?",
+   "split": "test",
+   "type": "comparison"
+  },
+  {
+   "gold_chunk_ids": [
+    "1995\u201396_Manchester_United_F.C._season_0",
+    "Alex_Ferguson_0"
+   ],
+   "id": "5ab6d09255429954757d337d",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 4,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Ernest_Mangnall_0",
+      "Joshua_Parlby_0",
+      "Sir_Matt_Busby_Sports_Complex_0",
+      "Alex_Ferguson_0",
+      "1996_FA_Charity_Shield_0",
+      "David_Beckham_Academy_0",
+      "Matt_Busby_0",
+      "David_Beckham's_Soccer_USA_0",
+      "The_Class_of_'92_0",
+      "Nick_Powell_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 2,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Ernest_Mangnall_0",
+      "Alex_Ferguson_0",
+      "David_Beckham_Academy_0",
+      "Joshua_Parlby_0",
+      "Matt_Busby_0",
+      "David_Beckham's_Soccer_USA_0",
+      "Sir_Matt_Busby_Sports_Complex_0",
+      "1996_FA_Charity_Shield_0",
+      "The_Class_of_'92_0",
+      "Nick_Powell_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 3,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Ernest_Mangnall_0",
+      "David_Beckham_Academy_0",
+      "Alex_Ferguson_0",
+      "Matt_Busby_0",
+      "David_Beckham's_Soccer_USA_0",
+      "The_Class_of_'92_0",
+      "Peter_Schmeichel_0",
+      "Nick_Powell_0",
+      "Joshua_Parlby_0",
+      "1996_FA_Charity_Shield_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "The football manager who recruited David Beckham managed Manchester United during what timeframe?",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Apple_Remote_0",
+    "Front_Row_(software)_0"
+   ],
+   "id": "5adddccd5542997dc7907069",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Apple_Remote_0",
+      "Siri_Remote_0",
+      "Universal_remote_0",
+      "Apple_Watch_0",
+      "Remote_control_0",
+      "Apple_Remote_Desktop_0",
+      "MacScan_0",
+      "Trainmaster_Command_Control_0",
+      "Front_Row_(software)_0",
+      "Trainmaster_Command_Control_1"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Apple_Remote_0",
+      "Siri_Remote_0",
+      "Universal_remote_0",
+      "Apple_Remote_Desktop_0",
+      "Remote_control_0",
+      "Apple_Watch_0",
+      "NetSupport_Manager_0",
+      "Front_Row_(software)_0",
+      "Trainmaster_Command_Control_0",
+      "MacScan_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Apple_Remote_0",
+      "Siri_Remote_0",
+      "Apple_Remote_Desktop_0",
+      "NetSupport_Manager_0",
+      "Universal_remote_0",
+      "Remote_control_0",
+      "Front_Row_(software)_0",
+      "Trainmaster_Command_Control_1",
+      "Trainmaster_Command_Control_0",
+      "Apple_Watch_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Kasper_Schmeichel_0",
+    "Peter_Schmeichel_0"
+   ],
+   "id": "5ae22b8d554299234fd0440f",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Peter_Schmeichel_0",
+      "IFFHS_World's_Best_Club_Coach_0",
+      "IFFHS_World's_Best_Goalkeeper_0",
+      "Isaak_Hassler_0",
+      "Inception_47",
+      "Gus_Williams_(musician)_0",
+      "Kasper_Hvidt_0",
+      "Inception_46",
+      "Titanic_31",
+      "The_Godfather_46"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Peter_Schmeichel_0",
+      "IFFHS_World's_Best_Club_Coach_0",
+      "IFFHS_World's_Best_Goalkeeper_0",
+      "Isaak_Hassler_0",
+      "Kasper_Hvidt_0",
+      "Kasper_Schmeichel_0",
+      "Pel\u00e9_0",
+      "Sommeren_'92_0",
+      "Gus_Williams_(musician)_0",
+      "Go\u0161tautai_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Peter_Schmeichel_0",
+      "Kasper_Schmeichel_0",
+      "IFFHS_World's_Best_Club_Coach_0",
+      "IFFHS_World's_Best_Goalkeeper_0",
+      "Pel\u00e9_0",
+      "Kasper_Hvidt_0",
+      "Isaak_Hassler_0",
+      "Sommeren_'92_0",
+      "The_Class_of_'92_0",
+      "Ernest_Mangnall_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "What was the father of Kasper Schmeichel voted to be by the IFFHS in 1992?",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Henry_J._Kaiser_0",
+    "Kaiser_Ventures_0"
+   ],
+   "id": "5a828c8355429966c78a6a50",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Henry_J._Kaiser_0",
+      "Kaiser_Ventures_0",
+      "Edgar_Kaiser_Sr._0",
+      "Edgar_Kaiser_Jr._0",
+      "Kaiser_Shipyards_0",
+      "Nutri_Ventures_\u2013_The_Quest_for_the_7_Kingdoms_0",
+      "Religious_Technology_Center_0",
+      "Oregon_and_Transcontinental_Company_0",
+      "Robert's_American_Gourmet_Food_0",
+      "Teen_Titans_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Henry_J._Kaiser_0",
+      "Edgar_Kaiser_Sr._0",
+      "Kaiser_Shipyards_0",
+      "Kaiser_Ventures_0",
+      "Edgar_Kaiser_Jr._0",
+      "Oregon_and_Transcontinental_Company_0",
+      "Eagle_Mountain_Railroad_0",
+      "Robert's_American_Gourmet_Food_0",
+      "Neafie_&amp;_Levy_0",
+      "John_Roach_&amp;_Sons_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Henry_J._Kaiser_0",
+      "Kaiser_Shipyards_0",
+      "Edgar_Kaiser_Sr._0",
+      "John_Roach_&amp;_Sons_0",
+      "Kaiser_Ventures_0",
+      "New_York_Shipbuilding_Corporation_0",
+      "Neafie_&amp;_Levy_0",
+      "Edgar_Kaiser_Jr._0",
+      "Titanic_(1997_film)_13",
+      "Schr\u00f6dinger_(company)_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Kaiser Ventures corporation was founded by an American industrialist who became known as the father of modern American shipbuilding?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Charles_Nungesser_0",
+    "L'Oiseau_Blanc_0"
+   ],
+   "id": "5ae0361155429925eb1afc2c",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 6,
+     "recall@10": 1.0,
+     "recall@5": 0.0,
+     "top10": [
+      "W._E._Johns_0",
+      "Paul_Sauvage_(aviator)_0",
+      "Gervais_Raoul_Lufbery_0",
+      "Georges_Madon_0",
+      "Wooster_and_Davis_0",
+      "Charles_Nungesser_0",
+      "L'Oiseau_Blanc_0",
+      "Fran\u00e7ois_Coli_0",
+      "L'Oiseau_bleu_(Metzinger)_0",
+      "Titanic_48"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 2,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Gervais_Raoul_Lufbery_0",
+      "L'Oiseau_Blanc_0",
+      "W._E._Johns_0",
+      "Charles_Nungesser_0",
+      "Georges_Madon_0",
+      "Fran\u00e7ois_Coli_0",
+      "Paul_Sauvage_(aviator)_0",
+      "Wooster_and_Davis_0",
+      "L'Oiseau_bleu_(Metzinger)_0",
+      "Edwin_A._Doss_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "L'Oiseau_Blanc_0",
+      "Fran\u00e7ois_Coli_0",
+      "Charles_Nungesser_0",
+      "Gervais_Raoul_Lufbery_0",
+      "Georges_Madon_0",
+      "Levasseur_PL.8_0",
+      "W._E._Johns_0",
+      "L'Oiseau_bleu_(Metzinger)_0",
+      "Wooster_and_Davis_0",
+      "Paul_Sauvage_(aviator)_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Which  French ace pilot and adventurer fly L'Oiseau Blanc",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Freakonomics_(film)_0",
+    "In_the_Realm_of_the_Hackers_0"
+   ],
+   "id": "5abc0a5d5542993f40c73c64",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "In_the_Realm_of_the_Hackers_0",
+      "Hackers_(film)_0",
+      "Psycho_Realm_0",
+      "Robin_Goldstein_0",
+      "Libocedrus_0",
+      "Freakonomics_Radio_0",
+      "Conscription_in_the_United_States_0",
+      "Symbolic_culture_0",
+      "University_of_Kansas_0",
+      "Russkiy_Toy_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "In_the_Realm_of_the_Hackers_0",
+      "Hackers_(film)_0",
+      "Freakonomics_Radio_0",
+      "Robin_Goldstein_0",
+      "Jay_Leiderman_0",
+      "Psycho_Realm_0",
+      "James_Cameron_30",
+      "Inception_1",
+      "The_Godfather_30",
+      "James_Cameron_37"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Freakonomics_(film)_0",
+      "In_the_Realm_of_the_Hackers_0",
+      "Hackers_(film)_0",
+      "Freakonomics_Radio_0",
+      "Heidi_Ewing_0",
+      "Robin_Goldstein_0",
+      "James_Cameron_42",
+      "Mathematically_Alive_0",
+      "New_Haven_Documentary_Film_Festival_0",
+      "Inception_25"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Are Freakonomics and In the Realm of the Hackers both American documentaries?",
+   "split": "dev",
+   "type": "comparison"
+  },
+  {
+   "gold_chunk_ids": [
+    "Russian_Civil_War_0",
+    "Socialist_Revolutionary_Party_0"
+   ],
+   "id": "5abf63f15542997ec76fd3ea",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Socialist_Revolutionary_Party_0",
+      "Lavr_Kornilov_0",
+      "Alexander_Kerensky_0",
+      "Kerensky\u2013Krasnov_uprising_0",
+      "Communism_in_Russia_0",
+      "Left-wing_uprisings_against_the_Bolsheviks_0",
+      "Conscription_in_the_United_States_0",
+      "Russian_Civil_War_0",
+      "Treaty_of_Addis_Ababa_0",
+      "Russian_Civil_War_1"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Socialist_Revolutionary_Party_0",
+      "Kerensky\u2013Krasnov_uprising_0",
+      "Alexander_Kerensky_0",
+      "Lavr_Kornilov_0",
+      "Russian_Civil_War_0",
+      "Communism_in_Russia_0",
+      "Left-wing_uprisings_against_the_Bolsheviks_0",
+      "Battle_of_Romanovka_0",
+      "Russian_Civil_War_1",
+      "Louise_Bryant_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Socialist_Revolutionary_Party_0",
+      "Russian_Civil_War_0",
+      "Kerensky\u2013Krasnov_uprising_0",
+      "Alexander_Kerensky_0",
+      "Battle_of_Romanovka_0",
+      "Communism_in_Russia_0",
+      "Lavr_Kornilov_0",
+      "Left-wing_uprisings_against_the_Bolsheviks_0",
+      "Russian_Civil_War_1",
+      "Second_Battle_of_Agordat_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Alexander Kerensky was defeated and destroyed by the Bolsheviks in the course of a civil war that ended when ?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Elko_Regional_Airport_0",
+    "Gerald_R._Ford_International_Airport_0"
+   ],
+   "id": "5ab51dae5542991779162d82",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Gerald_R._Ford_International_Airport_0",
+      "Grantley_Adams_International_Airport_0",
+      "Elko_Regional_Airport_0",
+      "Pensacola_International_Airport_0",
+      "John_Glenn_Columbus_International_Airport_0",
+      "Raleigh_Executive_Jetport_0",
+      "Bishop_International_Airport_0",
+      "Gerald_R._Ford_Presidential_Library_0",
+      "Gerald_R._Ford_Freeway_0",
+      "Yingkou_Lanqi_Airport_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Gerald_R._Ford_International_Airport_0",
+      "Elko_Regional_Airport_0",
+      "Bishop_International_Airport_0",
+      "Grantley_Adams_International_Airport_0",
+      "Pensacola_International_Airport_0",
+      "John_Glenn_Columbus_International_Airport_0",
+      "Gerald_R._Ford_Freeway_0",
+      "Gerald_R._Ford_Presidential_Library_0",
+      "Raleigh_Executive_Jetport_0",
+      "Gerald_Ford_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Gerald_R._Ford_International_Airport_0",
+      "Elko_Regional_Airport_0",
+      "Bishop_International_Airport_0",
+      "Gerald_Ford_0",
+      "Gerald_R._Ford_Freeway_0",
+      "Gerald_R._Ford_Presidential_Library_0",
+      "John_Glenn_Columbus_International_Airport_0",
+      "Pensacola_International_Airport_0",
+      "Pre-Commissioning_Unit_0",
+      "Grantley_Adams_International_Airport_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Are both Elko Regional Airport and Gerald R. Ford International Airport located in Michigan?",
+   "split": "test",
+   "type": "comparison"
+  },
+  {
+   "gold_chunk_ids": [
+    "Battle_of_Adwa_0",
+    "Giuseppe_Arimondi_0"
+   ],
+   "id": "5ab2d3df554299194fa9352c",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Battle_of_Adwa_0",
+      "James_Cameron_15",
+      "Giuseppe_Verdi_(film)_0",
+      "Verdi,_the_King_of_Melody_0",
+      "Teatro_Giuseppe_Verdi_0",
+      "Titanic_61",
+      "La_La_Land_6",
+      "Titanic_62",
+      "Giuseppe_Verdi_Monument_0",
+      "James_Cameron_26"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Battle_of_Adwa_0",
+      "Giuseppe_Arimondi_0",
+      "James_Cameron_15",
+      "Second_Battle_of_Agordat_0",
+      "Outline_of_Ethiopia_1",
+      "Titanic_0",
+      "Herbert_S._Lewis_0",
+      "Treaty_of_Addis_Ababa_0",
+      "Battle_of_Jupiter_Inlet_0",
+      "Dewey_Beard_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Giuseppe_Arimondi_0",
+      "Battle_of_Adwa_0",
+      "First_Italo-Ethiopian_War_0",
+      "First_Italo-Ethiopian_War_1",
+      "Outline_of_Ethiopia_0",
+      "Treaty_of_Addis_Ababa_0",
+      "Outline_of_Ethiopia_1",
+      "Second_Battle_of_Agordat_0",
+      "Ethiopia\u2013Japan_relations_0",
+      "Ephigenia_of_Ethiopia_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "The battle in which Giuseppe Arimondi lost his life secured what for Ethiopia?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Dirleton_Castle_0",
+    "Yellowcraigs_0"
+   ],
+   "id": "5a7d54165542995f4f402256",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Dirleton_Castle_0",
+      "Lothian_and_Borders_0",
+      "Dirleton_Kirk_0",
+      "Scottish_Borders_0",
+      "Yellowcraigs_0",
+      "Dirleton_0",
+      "St._Mary's_Priory_(Lothian)_0",
+      "Haddington,_East_Lothian_0",
+      "Shawnee_State_Fishing_Lake_0",
+      "Outline_of_Ethiopia_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Dirleton_Castle_0",
+      "Lothian_and_Borders_0",
+      "Dirleton_Kirk_0",
+      "Dirleton_0",
+      "Scottish_Borders_0",
+      "Yellowcraigs_0",
+      "St._Mary's_Priory_(Lothian)_0",
+      "Haddington,_East_Lothian_0",
+      "R509_road_(Ireland)_0",
+      "Tower_Hill_Memorial_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Dirleton_Castle_0",
+      "Dirleton_0",
+      "Lord_Haliburton_of_Dirleton_0",
+      "Dirleton_Kirk_0",
+      "Lothian_and_Borders_0",
+      "Yellowcraigs_0",
+      "Scottish_Borders_0",
+      "Haddington,_East_Lothian_0",
+      "St._Mary's_Priory_(Lothian)_0",
+      "Portsmouth_Naval_Memorial_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "A medieval fortress in Dirleton, East Lothian, Scotland borders on the south side of what coastal area?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "English_Electric_Canberra_0",
+    "No._2_Squadron_RAAF_0"
+   ],
+   "id": "5abbf698554299114383a0b5",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 3,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Edwin_A._Doss_0",
+      "South_West_Pacific_Area_(command)_0",
+      "English_Electric_Canberra_0",
+      "Tupolev_Tu-12_0",
+      "South_West_Pacific_theatre_of_World_War_II_0",
+      "No._12_Squadron_RAAF_0",
+      "Asiatic-Pacific_Theater_0",
+      "No._2_Squadron_RAAF_0",
+      "Savoia-Marchetti_SM.79_0",
+      "Coastwatchers_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "English_Electric_Canberra_0",
+      "No._12_Squadron_RAAF_0",
+      "South_West_Pacific_Area_(command)_0",
+      "South_West_Pacific_theatre_of_World_War_II_0",
+      "Tupolev_Tu-12_0",
+      "Edwin_A._Doss_0",
+      "No._2_Squadron_RAAF_0",
+      "Asiatic-Pacific_Theater_0",
+      "Savoia-Marchetti_SM.79_0",
+      "Livesey_Hall_War_Memorial_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 2,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "No._12_Squadron_RAAF_0",
+      "English_Electric_Canberra_0",
+      "No._2_Squadron_RAAF_0",
+      "South_West_Pacific_theatre_of_World_War_II_0",
+      "Tupolev_Tu-12_0",
+      "South_West_Pacific_Area_(command)_0",
+      "Asiatic-Pacific_Theater_0",
+      "Livesey_Hall_War_Memorial_0",
+      "Edwin_A._Doss_0",
+      "Savoia-Marchetti_SM.79_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Which British first-generation jet-powered medium bomber was used in the South West Pacific theatre of World War II?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Carrefour_0",
+    "Euromarch\u00e9_0"
+   ],
+   "id": "5ab84bf555429916710eb01f",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 9,
+     "recall@10": 0.5,
+     "recall@5": 0.0,
+     "top10": [
+      "Uno-X_0",
+      "Lewis's_0",
+      "Selver_0",
+      "SavaCentre_0",
+      "Tazweed_Center_0",
+      "Holiday_Inn_Lake_Buena_Vista_Downtown_0",
+      "John_A._Brown_(department_store)_0",
+      "David_Beckham_Academy_0",
+      "Euromarch\u00e9_0",
+      "Tesco_Extra_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 4,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Uno-X_0",
+      "SavaCentre_0",
+      "Selver_0",
+      "Euromarch\u00e9_0",
+      "Lewis's_0",
+      "Tazweed_Center_0",
+      "Carrefour_0",
+      "Tesco_Extra_0",
+      "Holiday_Inn_Lake_Buena_Vista_Downtown_0",
+      "John_A._Brown_(department_store)_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Euromarch\u00e9_0",
+      "Carrefour_0",
+      "SavaCentre_0",
+      "Tesco_Extra_0",
+      "Selver_0",
+      "Uno-X_0",
+      "Tazweed_Center_0",
+      "Lewis's_0",
+      "Holiday_Inn_Lake_Buena_Vista_Downtown_0",
+      "James_Cameron_10"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "In 1991 Euromarch\u00e9 was bought by a chain that operated how any hypermarkets at the end of 2016?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Delirium_(Ellie_Goulding_album)_0",
+    "On_My_Mind_(Ellie_Goulding_song)_0"
+   ],
+   "id": "5ab96ab755429970cfb8eacd",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 9,
+     "recall@10": 1.0,
+     "recall@5": 0.0,
+     "top10": [
+      "Army_(Ellie_Goulding_song)_0",
+      "Halcyon_(album)_0",
+      "Something_in_the_Way_You_Move_0",
+      "Delirium_World_Tour_0",
+      "Flashlight_(DJ_Fresh_song)_0",
+      "Outside_(Calvin_Harris_song)_0",
+      "Love_Me_like_You_Do_0",
+      "List_of_songs_recorded_by_Ellie_Goulding_0",
+      "Delirium_(Ellie_Goulding_album)_0",
+      "On_My_Mind_(Ellie_Goulding_song)_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 4,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Army_(Ellie_Goulding_song)_0",
+      "Something_in_the_Way_You_Move_0",
+      "Delirium_World_Tour_0",
+      "Delirium_(Ellie_Goulding_album)_0",
+      "Halcyon_(album)_0",
+      "On_My_Mind_(Ellie_Goulding_song)_0",
+      "Love_Me_like_You_Do_0",
+      "Flashlight_(DJ_Fresh_song)_0",
+      "Outside_(Calvin_Harris_song)_0",
+      "List_of_songs_recorded_by_Ellie_Goulding_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Delirium_(Ellie_Goulding_album)_0",
+      "Army_(Ellie_Goulding_song)_0",
+      "On_My_Mind_(Ellie_Goulding_song)_0",
+      "Delirium_World_Tour_0",
+      "Something_in_the_Way_You_Move_0",
+      "Love_Me_like_You_Do_0",
+      "List_of_songs_recorded_by_Ellie_Goulding_0",
+      "Outside_(Calvin_Harris_song)_0",
+      "Flashlight_(DJ_Fresh_song)_0",
+      "Halcyon_(album)_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Ellie Goulding worked with what other writers on her third studio album, Delirium?",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Tara_Strong_0",
+    "Teen_Titans_Go!_(TV_series)_0"
+   ],
+   "id": "5ae5aba0554299546bf82f17",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Teen_Titans_Go!_(TV_series)_0",
+      "List_of_Teen_Titans_Go!_episodes_0",
+      "Teen_Titans_(season_4)_0",
+      "Teen_Titans:_Trouble_in_Tokyo_0",
+      "Teen_Titans_(season_1)_0",
+      "List_of_Teen_Titans_episodes_0",
+      "Tara_Strong_filmography_0",
+      "Tara_Strong_0",
+      "Iron_Man_(TV_series)_0",
+      "Roy_Harper_(comics)_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Teen_Titans_Go!_(TV_series)_0",
+      "Teen_Titans_(season_1)_0",
+      "Teen_Titans_(season_4)_0",
+      "Teen_Titans:_Trouble_in_Tokyo_0",
+      "Teen_Titans_0",
+      "List_of_Teen_Titans_Go!_episodes_0",
+      "List_of_Teen_Titans_episodes_0",
+      "Tara_Strong_filmography_0",
+      "Tara_Strong_0",
+      "Iron_Man_(TV_series)_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Teen_Titans_Go!_(TV_series)_0",
+      "Teen_Titans_(season_1)_0",
+      "Teen_Titans_0",
+      "Teen_Titans:_Trouble_in_Tokyo_0",
+      "Teen_Titans_(season_4)_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Which of Tara Strong major voice role in animated series is an American animated television series based on the DC Comics fictional superhero team, the \"Teen Titans\"?",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Koningsdag_0",
+    "Oranjegekte_0"
+   ],
+   "id": "5ae7e1fc55429952e35ea9cc",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Oranjegekte_0",
+      "Jounen_Kw\u00e9y\u00f2l_1",
+      "Christmas_in_the_Basque_Country_0",
+      "Queen's_Day_(disambiguation)_0",
+      "White_Sunday_0",
+      "Children's_Day_(Japan)_0",
+      "Garifuna_Settlement_Day_0",
+      "Titanic_58",
+      "Armed_Forces_Day_(Poland)_0",
+      "Jounen_Kw\u00e9y\u00f2l_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Oranjegekte_0",
+      "Jounen_Kw\u00e9y\u00f2l_1",
+      "Queen's_Day_(disambiguation)_0",
+      "Christmas_in_the_Basque_Country_0",
+      "Children's_Day_(Japan)_0",
+      "Koningsdag_0",
+      "Jounen_Kw\u00e9y\u00f2l_0",
+      "Armed_Forces_Day_(Poland)_0",
+      "Garifuna_Settlement_Day_0",
+      "White_Sunday_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Oranjegekte_0",
+      "Koningsdag_0",
+      "Queen's_Day_(disambiguation)_0",
+      "Jounen_Kw\u00e9y\u00f2l_1",
+      "Jounen_Kw\u00e9y\u00f2l_0",
+      "Children's_Day_(Japan)_0",
+      "Christmas_in_the_Basque_Country_0",
+      "Armed_Forces_Day_(Poland)_0",
+      "Saint-Jean-Baptiste_Day_0",
+      "Collie_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "What color clothing do people of the Netherlands wear during Oranjegekte or to celebrate the national holiday Koningsdag? ",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "James_Gunn_0",
+    "Tromeo_and_Juliet_0"
+   ],
+   "id": "5ae37c765542992f92d822d4",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Tromeo_and_Juliet_0",
+      "Romeo_\u00d7_Juliet_0",
+      "Romeo_+_Juliet_0",
+      "The_Tragedy_of_Romeo_and_Juliet_(film)_0",
+      "List_of_Romeo_\u00d7_Juliet_episodes_0",
+      "Romeo_and_Juliet_on_screen_0",
+      "Romeo_0",
+      "A_rose_by_any_other_name_would_smell_as_sweet_0",
+      "W._E._Johns_0",
+      "Gone_in_60_Seconds_(2000_film)_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 4,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Sex_and_the_City_(film)_0",
+      "Science_Fantasy_(magazine)_0",
+      "Sinister_(film)_0",
+      "Tromeo_and_Juliet_0",
+      "Secretary_of_State_for_Constitutional_Affairs_0",
+      "Romeo_\u00d7_Juliet_0",
+      "Romeo_+_Juliet_0",
+      "Shadowshaper_0",
+      "The_Tragedy_of_Romeo_and_Juliet_(film)_0",
+      "Sultan_Ahmed_Mosque_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": null,
+     "recall@10": 0.0,
+     "recall@5": 0.0,
+     "top10": [
+      "Sinister_(film)_0",
+      "Secretary_of_State_for_Constitutional_Affairs_0",
+      "Science_Fantasy_(magazine)_0",
+      "Shadowshaper_0",
+      "Sultan_Ahmed_Mosque_0",
+      "Sex_and_the_City_(film)_0",
+      "SF9_(band)_0",
+      "Seventeen_discography_0",
+      "Snoecks_0",
+      "Suffrajett_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "What was the name of the 1996 loose adaptation of William Shakespeare's \"Romeo & Juliet\" written by James Gunn?",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Against_the_Wind_(album)_0",
+    "Bob_Seger_0"
+   ],
+   "id": "5abdf12255429976d4830a2f",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Against_the_Wind_(album)_0",
+      "Heaven_Knows_(Robert_Plant_song)_0",
+      "Stranger_in_Town_(album)_0",
+      "Ride_Out_(album)_0",
+      "Freudiana_0",
+      "Gary_Cherone_0",
+      "Mark_Britten_0",
+      "Bob_Seger_0",
+      "Hallelujah!_I'm_a_Bum_(album)_0",
+      "Anggun_discography_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Against_the_Wind_(album)_0",
+      "Stranger_in_Town_(album)_0",
+      "Ride_Out_(album)_0",
+      "Bob_Seger_0",
+      "Heaven_Knows_(Robert_Plant_song)_0",
+      "Gary_Cherone_0",
+      "Boots_(album)_0",
+      "Van_Conner_0",
+      "Suffrajett_0",
+      "Atsushi_Sakurai_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Against_the_Wind_(album)_0",
+      "Bob_Seger_0",
+      "Stranger_in_Town_(album)_0",
+      "Ride_Out_(album)_0",
+      "Suffrajett_0",
+      "Nancy_Sinatra_0",
+      "Gary_Cherone_0",
+      "Boots_(album)_0",
+      "Screaming_Trees_0",
+      "Heaven_Knows_(Robert_Plant_song)_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "The Album Against the Wind was the 11th Album of a Rock singer Robert C Seger born may 6 1945. What was the Rock singers stage name ?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Conscription_in_the_United_States_0",
+    "Rostker_v._Goldberg_0"
+   ],
+   "id": "5a88658955429938390d3f47",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Rostker_v._Goldberg_0",
+      "2010_Kiev_Victory_Day_Parade_0",
+      "Fernando_Tapias_Stahelin_0",
+      "Armed_Forces_Day_(Poland)_0",
+      "Conscription_in_the_United_States_0",
+      "Chief_of_the_Defence_Staff_(Canada)_0",
+      "September_16_military_parade_0",
+      "Armed_Forces_Covenant_0",
+      "One_Rank,_One_Pension_0",
+      "Franklin_D._Roosevelt's_record_on_civil_rights_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Rostker_v._Goldberg_0",
+      "Conscription_in_the_United_States_0",
+      "Armed_Forces_Covenant_0",
+      "Franklin_D._Roosevelt's_record_on_civil_rights_0",
+      "Chief_of_the_Defence_Staff_(Canada)_0",
+      "New_York_Society_of_Model_Engineers_1",
+      "One_Rank,_One_Pension_0",
+      "Franklin_D._Roosevelt's_record_on_civil_rights_1",
+      "Armed_Forces_Day_(Poland)_0",
+      "New_York_Society_of_Model_Engineers_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 2,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "New_York_Society_of_Model_Engineers_1",
+      "Rostker_v._Goldberg_0",
+      "Conscription_in_the_United_States_0",
+      "Franklin_D._Roosevelt's_record_on_civil_rights_0",
+      "Armed_Forces_Covenant_0",
+      "Ground_Intelligence_Officer_0",
+      "New_York_Society_of_Model_Engineers_0",
+      "Chief_of_the_Defence_Staff_(Canada)_0",
+      "One_Rank,_One_Pension_0",
+      "George_P._Taylor_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Rostker v. Goldberg held that the practice of what way of filling armed forces vacancies was consitutional?",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Handi-Snacks_0",
+    "Mondelez_International_0"
+   ],
+   "id": "5a86ebac55429960ec39b6d6",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Mondelez_International_0",
+      "Handi-Snacks_0",
+      "PepsiCo_0",
+      "Robert's_American_Gourmet_Food_0",
+      "Canyon_Creek_Food_Company_0",
+      "Snack_Foods_Limited_0",
+      "Deep-fried_peanuts_0",
+      "Rewrapped_0",
+      "Twisties_0",
+      "Snackbox_Food_Holdings_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Handi-Snacks_0",
+      "Mondelez_International_0",
+      "PepsiCo_0",
+      "Robert's_American_Gourmet_Food_0",
+      "Snack_Foods_Limited_0",
+      "Twisties_0",
+      "Snackbox_Food_Holdings_0",
+      "Tum-E_Yummies_0",
+      "Carrefour_0",
+      "Rubicon_Drinks_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Handi-Snacks_0",
+      "Mondelez_International_0",
+      "PepsiCo_0",
+      "Robert's_American_Gourmet_Food_0",
+      "Twisties_0",
+      "Snack_Foods_Limited_0",
+      "Snackbox_Food_Holdings_0",
+      "Compass_Minerals_0",
+      "List_of_soft_drinks_by_country_0",
+      "Tum-E_Yummies_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Handi-Snacks are a snack food product line sold by what American multinational confectionery, food, and beverage company that is based in Illinois?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Monica_Lewinsky_0",
+    "Their_Lives_0"
+   ],
+   "id": "5aba5d2e55429901930fa799",
+   "modes": {
+    "bm25": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Their_Lives_0",
+      "The_White_House_Doctor_0",
+      "Lewinsky_scandal_0",
+      "Sheila_Cavanagh_0",
+      "Gregory_B._Craig_0",
+      "Eric_Schultz_0",
+      "Once_Upon_a_Secret_0",
+      "Titanic_72",
+      "Mark_D._Fabiani_0",
+      "Wilford_H._Fawcett_House_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Their_Lives_0",
+      "The_White_House_Doctor_0",
+      "Lewinsky_scandal_0",
+      "Sheila_Cavanagh_0",
+      "Gregory_B._Craig_0",
+      "Eric_Schultz_0",
+      "Once_Upon_a_Secret_0",
+      "Titanic_72",
+      "Mark_D._Fabiani_0",
+      "Wilford_H._Fawcett_House_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": false,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 0.5,
+     "recall@5": 0.5,
+     "top10": [
+      "Their_Lives_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "What was the name of a woman from the book titled \"Their Lives: The Women Targeted by the Clinton Machine \" and was also a former white house intern?",
+   "split": "dev",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Garajonay_National_Park_0",
+    "Teide_National_Park_0"
+   ],
+   "id": "5a7759fc5542993569682d60",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Teide_National_Park_0",
+      "Adenocarpus_viscosus_0",
+      "Garajonay_National_Park_0",
+      "Alpine_National_Park_0",
+      "Crater_Lake_National_Park_0",
+      "North_Cascades_National_Park_0",
+      "Glacier_National_Park_Fund_0",
+      "Hermigua_0",
+      "Roque_Cinchado_0",
+      "Training_centre_for_release_of_the_Atma-energy_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Teide_National_Park_0",
+      "Adenocarpus_viscosus_0",
+      "Garajonay_National_Park_0",
+      "Hermigua_0",
+      "Alpine_National_Park_0",
+      "North_Cascades_National_Park_0",
+      "Crater_Lake_National_Park_0",
+      "Roque_Cinchado_0",
+      "Training_centre_for_release_of_the_Atma-energy_0",
+      "Glacier_National_Park_Fund_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Teide_National_Park_0",
+      "Hermigua_0",
+      "Garajonay_National_Park_0",
+      "Adenocarpus_viscosus_0",
+      "Roque_Cinchado_0",
+      "North_Cascades_National_Park_0",
+      "Alpine_National_Park_0",
+      "Crater_Lake_National_Park_0",
+      "Training_centre_for_release_of_the_Atma-energy_0",
+      "Scott's_Run_Nature_Preserve_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Where are Teide National Park and Garajonay National Park located?",
+   "split": "dev",
+   "type": "comparison"
+  },
+  {
+   "gold_chunk_ids": [
+    "Andrew_Jaspan_0",
+    "The_Conversation_(website)_0"
+   ],
+   "id": "5abfb3425542990832d3a1c0",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Andrew_Jaspan_0",
+      "Jonathan_Michael_Ansell_0",
+      "The_Conversation_(website)_0",
+      "Vatican_leaks_scandal_0",
+      "Andrew_Murray_(Guyanese_boxer)_0",
+      "Chicago_Public_Media_0",
+      "Inception_47",
+      "Brad_Parscale_0",
+      "14ymedio_0",
+      "The_Eighth_(United_States)_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 3,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Vatican_leaks_scandal_0",
+      "Chicago_Public_Media_0",
+      "Andrew_Jaspan_0",
+      "The_Conversation_(website)_0",
+      "Jonathan_Michael_Ansell_0",
+      "The_Recycler_0",
+      "Gordon_Johndroe_0",
+      "Brad_Parscale_0",
+      "Accessible_Media_0",
+      "Andrew_Murray_(Guyanese_boxer)_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 4,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Chicago_Public_Media_0",
+      "Vatican_leaks_scandal_0",
+      "State_media_0",
+      "The_Conversation_(website)_0",
+      "Accessible_Media_0",
+      "Andrew_Jaspan_0",
+      "Gordon_Johndroe_0",
+      "The_Recycler_0",
+      "Front_Row_(software)_0",
+      "990WBOB_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Andrew Jaspan was the co-founder of what not-for-profit media outlet?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "London_International_Documentary_Festival_0",
+    "London_Review_of_Books_0"
+   ],
+   "id": "5ae2b770554299495565db0f",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 2,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Chagrin_Documentary_Film_Festival_0",
+      "London_Review_of_Books_0",
+      "London_International_Documentary_Festival_0",
+      "New_Haven_Documentary_Film_Festival_0",
+      "British_Journal_of_Social_Psychology_0",
+      "Andre_Norton_Award_0",
+      "FreedomFilmFest_0",
+      "Social_Anthropology_(journal)_0",
+      "Doc_NYC_0",
+      "Docville_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "London_International_Documentary_Festival_0",
+      "London_Review_of_Books_0",
+      "Chagrin_Documentary_Film_Festival_0",
+      "Doc_NYC_0",
+      "FreedomFilmFest_0",
+      "Docville_0",
+      "British_Journal_of_Social_Psychology_0",
+      "New_Haven_Documentary_Film_Festival_0",
+      "Moments_of_Being_0",
+      "British_Journal_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "London_International_Documentary_Festival_0",
+      "Doc_NYC_0",
+      "Docville_0",
+      "London_Review_of_Books_0",
+      "FreedomFilmFest_0",
+      "La_La_Land_20",
+      "Chagrin_Documentary_Film_Festival_0",
+      "British_Journal_of_Social_Psychology_0",
+      "British_Journal_0",
+      "New_Haven_Documentary_Film_Festival_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "In what month is the annual documentary film festival, that is presented by the fortnightly published British journal of literary essays, held? ",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "McLean,_Virginia_0",
+    "Tysons_Galleria_0"
+   ],
+   "id": "5a80b3a9554299485f5986cc",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Tysons_Galleria_0",
+      "Spring_Hill_station_0",
+      "McLean_station_0",
+      "Poughkeepsie_Galleria_0",
+      "Cobb_Galleria_Centre_0",
+      "Tysons,_Virginia_0",
+      "Tysons_Corner_Center_0",
+      "West_McLean,_Virginia_0",
+      "McLean,_Virginia_0",
+      "Scott's_Run_Nature_Preserve_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Tysons_Galleria_0",
+      "Tysons,_Virginia_0",
+      "Spring_Hill_station_0",
+      "Cobb_Galleria_Centre_0",
+      "Poughkeepsie_Galleria_0",
+      "Tysons_Corner_Center_0",
+      "McLean_station_0",
+      "McLean,_Virginia_0",
+      "West_McLean,_Virginia_0",
+      "Scott's_Run_Nature_Preserve_0"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": false,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 0.5,
+     "top10": [
+      "Tysons_Galleria_0",
+      "Tysons,_Virginia_0",
+      "Tysons_Corner_Center_0",
+      "Cobb_Galleria_Centre_0",
+      "Poughkeepsie_Galleria_0",
+      "Spring_Hill_station_0",
+      "McLean_station_0",
+      "McLean,_Virginia_0",
+      "Charlotte_Hornets_0",
+      "Charlotte_Hornets_all-time_roster_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Tysons Galleria is located in what county?",
+   "split": "test",
+   "type": "bridge"
+  },
+  {
+   "gold_chunk_ids": [
+    "Kasper_Schmeichel_0",
+    "Peter_Schmeichel_0"
+   ],
+   "id": "5adfe37c554299025d62a377",
+   "modes": {
+    "bm25": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Kasper_Schmeichel_0",
+      "Peter_Schmeichel_0",
+      "Pel\u00e9_0",
+      "Kasper_Hvidt_0",
+      "Sommeren_'92_0",
+      "Yvonne_Ridley_0",
+      "The_Godfather_44",
+      "Jim_Shoulders_0",
+      "Coco_Ho_0",
+      "Bill's_Best_Friend_0"
+     ]
+    },
+    "hybrid": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Peter_Schmeichel_0",
+      "Kasper_Schmeichel_0",
+      "Pel\u00e9_0",
+      "Sommeren_'92_0",
+      "Kasper_Hvidt_0",
+      "Isaak_Hassler_0",
+      "Nick_Powell_0",
+      "Mihai_M\u0103laimare_Jr._0",
+      "1979\u201380_Wigan_Athletic_F.C._season_0",
+      "The_Godfather_2"
+     ]
+    },
+    "semantic": {
+     "all_gold@10": true,
+     "all_gold@5": true,
+     "first_gold_rank": 1,
+     "recall@10": 1.0,
+     "recall@5": 1.0,
+     "top10": [
+      "Peter_Schmeichel_0",
+      "Kasper_Schmeichel_0",
+      "Pel\u00e9_0",
+      "The_Class_of_'92_0",
+      "Sommeren_'92_0",
+      "Ernest_Mangnall_0",
+      "IFFHS_World's_Best_Club_Coach_0",
+      "Kasper_Hvidt_0",
+      "1996_FA_Charity_Shield_0",
+      "IFFHS_World's_Best_Goalkeeper_0"
+     ]
+    }
+   },
+   "n_gold_chunks": 2,
+   "question": "Kasper Peter Schmeichel is the son of a professional footballer who was voted what in 1992 and 1993?",
+   "split": "dev",
+   "type": "bridge"
+  }
+ ]
+}

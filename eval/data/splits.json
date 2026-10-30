@@ -1,0 +1,70 @@
+{
+ "seed": 20261030,
+ "dev_fraction": 0.4,
+ "note": "dev may be used for tuning; test is held out and must never be used to tune.",
+ "retrieval": {
+  "dev": [
+   "5a7759fc5542993569682d60",
+   "5a88658955429938390d3f47",
+   "5ab6d09255429954757d337d",
+   "5ab96ab755429970cfb8eacd",
+   "5aba5d2e55429901930fa799",
+   "5abc0a5d5542993f40c73c64",
+   "5adfe37c554299025d62a377",
+   "5ae0361155429925eb1afc2c",
+   "5ae22b8d554299234fd0440f",
+   "5ae37c765542992f92d822d4",
+   "5ae5aba0554299546bf82f17"
+  ],
+  "test": [
+   "5a7d54165542995f4f402256",
+   "5a80b3a9554299485f5986cc",
+   "5a828c8355429966c78a6a50",
+   "5a86ebac55429960ec39b6d6",
+   "5ab2d3df554299194fa9352c",
+   "5ab51dae5542991779162d82",
+   "5ab56e32554299637185c594",
+   "5ab84bf555429916710eb01f",
+   "5abbf698554299114383a0b5",
+   "5abdf12255429976d4830a2f",
+   "5abf63f15542997ec76fd3ea",
+   "5abfb3425542990832d3a1c0",
+   "5adbf0a255429947ff17385a",
+   "5adddccd5542997dc7907069",
+   "5ae2b770554299495565db0f",
+   "5ae7e1fc55429952e35ea9cc"
+  ]
+ },
+ "awards": {
+  "dev": [
+   "A World Apart (film)",
+   "City of Angels (film)",
+   "Doctor Strange (2016 film)",
+   "Inception",
+   "Last Action Hero",
+   "Sex and the City (film)",
+   "Sinister (film)",
+   "The Exorcism of Emily Rose",
+   "The Family Man",
+   "Titanic (1997 film)"
+  ],
+  "test": [
+   "About a Boy (film)",
+   "Deliver Us from Evil (2014 film)",
+   "Drive Angry",
+   "Ed Wood (film)",
+   "End of Days (film)",
+   "Gone in 60 Seconds (2000 film)",
+   "Hackers (film)",
+   "Hellraiser: Inferno",
+   "Innerspace",
+   "La La Land",
+   "Romeo + Juliet",
+   "Season of the Witch (2011 film)",
+   "Silent Light",
+   "The Godfather",
+   "Total Recall (1990 film)",
+   "True Lies"
+  ]
+ }
+}
