@@ -48,9 +48,10 @@ Open: [#6](https://github.com/vaish725/arag/pull/6), the evaluation (retrieval a
   retrieved sentences. The evaluation (PR #6) found two faults, now fixed in #8 (a film's win counted as the
   director's; a non-Oscar nomination counted as an Oscar one). Other faults may remain: only 26 + 7 films were
   tested.
-- **Director detection** only matches the literal "directed by". It misses "directed and produced by" (Ed Wood,
-  Last Action Hero) and "directed, co-produced, and co-written by" (Romeo + Juliet), and for Last Action Hero it
-  returned a wrong director from an unrelated passage. Not fixed yet.
+- **Director detection** now accepts "directed ... by" with up to four words in between ("directed and produced
+  by", "directed, co-produced, and co-written by"), the name stops where it ends, and the director sentence must
+  name the film or come from the film's own page. It was developed on the 26 + 7 evaluation films (all exact
+  afterwards), so how it behaves on unseen films is unknown.
 - The corpus is tiny and shaped around the demo films. Retrieval constants (boosts, thresholds, blend weights,
   top-k) are hand-picked and untuned.
 - The recipe can use many tool calls per question (up to 40 observed), including `chunk_read` probes that do
@@ -66,7 +67,6 @@ Open: [#6](https://github.com/vaish725/arag/pull/6), the evaluation (retrieval a
 ## Open work
 
 1. Merge and review the evaluation (PR #6); its award labels are agent-sourced from Wikipedia, not owner-verified.
-2. Fix director detection (the three failures above), with tests.
-3. Evaluate hybrid retrieval on a larger question set before deciding whether it ships.
-4. Chunking tails and a single BM25 tokenizer (C-19); enforce formatting and type checks in CI (C-22).
-5. The LLM tool-calling loop the paper describes (Phase 5).
+2. Evaluate hybrid retrieval on a larger question set before deciding whether it ships.
+3. Chunking tails and a single BM25 tokenizer (C-19); enforce formatting and type checks in CI (C-22).
+4. The LLM tool-calling loop the paper describes (Phase 5).

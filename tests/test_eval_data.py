@@ -140,3 +140,15 @@ def test_overall_scoring_rules():
     two = "Chris Weitz and Paul Weitz"
     assert director_status({"director_found": "Paul Weitz and Chris Weitz"}, two) == "correct"
     assert director_status({"director_found": "Chris Weitz"}, two) == "wrong"
+
+
+def test_director_fix_results_are_exact_and_leave_retrieval_and_verdicts_alone():
+    base = ROOT / "eval" / "results"
+    after_fix = json.loads((base / "after_fixes" / "awards_results.json").read_text())["rows"]
+    after_dir = json.loads((base / "after_director_fix" / "awards_results.json").read_text())["rows"]
+    assert json.loads((base / "after_fixes" / "summary.json").read_text())["retrieval"] == json.loads((base / "after_director_fix" / "summary.json").read_text())["retrieval"]
+    for r in after_dir:
+        for mode, x in r["modes"].items():
+            assert x["director_status"] == "correct", (r["film"], mode, x["director_found"])
+    verdicts = lambda rows: {(r["film"], m): x["verdict"] for r in rows for m, x in r["modes"].items()}
+    assert verdicts(after_fix) == verdicts(after_dir), "the director fix must not change any verdict"

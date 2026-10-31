@@ -85,6 +85,33 @@ def director_failures(rows_path):
     return "\n".join(lines)
 
 
+def director_fix_section(before):
+    """Before/after the director-detection fix, if its results exist. Always labelled not held out."""
+    path = ROOT / "eval/results/after_director_fix/summary.json"
+    if not path.exists():
+        return []
+    after = load("eval/results/after_director_fix/summary.json")
+    splits = load("eval/data/splits.json")["awards"]
+    where = {f: ("test" if f in splits["test"] else "dev") for f in ("Ed Wood (film)", "Romeo + Juliet", "Last Action Hero")}
+    lines = ["### After the director-detection fix: NOT held out", "",
+             "The fix was written while looking at these films ("
+             + ", ".join(f"{f.replace(' (film)', '')}: {sp} split" for f, sp in where.items())
+             + "), so every number in this section is **not held out**; it shows what the change did on films it was developed on, not how it behaves on unseen ones. "
+             f"Retrieval results are {'identical' if before['retrieval'] == after['retrieval'] else 'DIFFERENT'} before and after.", ""]
+    for scope, title in (("test", "test split (n=16)"), ("all", "all 26 films (dev + test)")):
+        b, a = before["awards"][scope], after["awards"][scope]
+        lines += [f"**Director fix, {title}** (cells: correct / wrong / no answer)", "",
+                  "| | " + " | ".join(f"{n}: before" + " | " + f"{n}: after" for _, n in MODES) + " |", "|---|" + "---|---|" * len(MODES)]
+        for label, key in (("Overall (director AND verdict, strict)", "overall"), ("Director only (wrong includes malformed)", "director"), ("Verdict only", "verdict")):
+            lines.append(f"| {label} | " + " | ".join(f"{cwn(b[m][key])} | {cwn(a[m][key])}" for m, _ in MODES) + " |")
+        lines.append("| Director strings that are the right name plus extra words | " + " | ".join(f"{b[m]['director']['malformed']} | {a[m]['director']['malformed']}" for m, _ in MODES) + " |")
+        lines.append("")
+    films = load("eval/results/after_director_fix/awards_results.json")["rows"]
+    not_exact = [f"{r['film']} ({m})" for r in films for m, _ in MODES if r["modes"][m]["director_status"] != "correct"]
+    lines += ["Director strings still not exactly right after the fix: " + (", ".join(not_exact) if not_exact else "none") + ".", ""]
+    return lines
+
+
 def render() -> str:
     before, after = load("eval/results/before_fixes/summary.json"), load("eval/results/after_fixes/summary.json")
     r = before["retrieval"]["test"]
@@ -118,6 +145,7 @@ def render() -> str:
         "Test split:", "", wrong_overall("eval/results/after_fixes/awards_results.json", "test"), "",
         "All 26 films (dev + test):", "", wrong_overall("eval/results/after_fixes/awards_results.json", "all"), "",
         "Films where some method's director string is not exactly right (output per method):", "", director_failures("eval/results/after_fixes/awards_results.json"), "",
+        *director_fix_section(after),
         f"Label sourcing check (`python eval/verify_award_labels.py`): {ok} of {len(evidence)} award rows pass; {manual} of them needed a manual reading of the passages.",
         "", END,
     ]

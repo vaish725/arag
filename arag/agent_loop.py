@@ -75,6 +75,40 @@ keyword_search = _counted(keyword_search, list)  # type: ignore[assignment]
 semantic_search = _counted(semantic_search, list)  # type: ignore[assignment]
 
 
+# "directed by", "directed and produced by", "directed, co-produced, and co-written by": the word
+# "directed", up to four words, then "by". The words may not cross sentence punctuation.
+DIRECTED_BY = r"(?:co-)?directed(?:[,\s]+[\w\-]+){0,4}?[,\s]+by\b"
+_DIRECTED_BY_PHRASE_RE = re.compile(DIRECTED_BY, re.IGNORECASE)
+# A person's name: Title-case tokens only (so it stops where the name ends: "Joe Dante and produced by ..." gives
+# "Joe Dante"), with lower-case particles ("de", "van") and co-directors joined by "and" ("Chris Weitz and Paul Weitz").
+_CAP = r"(?-i:[A-ZÀ-ÖØ-Þ][\w\-\.'’]*)"
+_NAME_PAT = (
+    r"(?:(?:brothers|sisters|siblings|the|duo|filmmakers?|directors?)\s+)?"
+    rf"({_CAP}(?:\s+(?:(?:de|del|della|der|di|da|van|von|la|le|al|bin|ibn)\s+)?{_CAP})*"
+    rf"(?:\s+and\s+{_CAP}(?:\s+{_CAP})*)?)"
+)
+
+
+def has_directed_by(text: str) -> bool:
+    """True if the text contains "directed by" or a close variant ("directed and produced by")."""
+    return bool(_DIRECTED_BY_PHRASE_RE.search(text or ""))
+
+
+def _name_after_directed_by(sentence: str) -> Optional[str]:
+    m = re.search(DIRECTED_BY + r"\s+" + _NAME_PAT, sentence, re.IGNORECASE)
+    if not m:
+        return None
+    name = " ".join(m.group(1).strip(" ,.").split())
+    return name or None
+
+
+def _is_film_page(chunk_id: Optional[str], work_hint: Optional[str]) -> bool:
+    """True if ``chunk_id`` is a chunk of the page for ``work_hint`` ("Ed_Wood_(film)_3" for "Ed Wood")."""
+    if not chunk_id or not work_hint:
+        return False
+    return bool(re.match(r"^" + re.escape(work_hint.replace(" ", "_")) + r"(?:_\(.*?\))?_\d+$", chunk_id, re.IGNORECASE))
+
+
 def approx_token_count(text: str) -> int:
     if not text:
         return 0
@@ -215,7 +249,7 @@ def _run_agent(
                         if not t:
                             continue
                         lt = t.lower()
-                        if work_hint.lower() in lt and "directed by" in lt:
+                        if work_hint.lower() in lt and has_directed_by(lt):
                             need_promote = False
                             break
                 except Exception:
@@ -249,7 +283,7 @@ def _run_agent(
                                     text_block = _safe_text(cr)
                                     # If this chunk contains an explicit 'directed by' sentence,
                                     # promote it immediately so the extractor can find the director.
-                                    if re.search(r"directed by", text_block, re.IGNORECASE) or re.search(r"written and directed by", text_block, re.IGNORECASE):
+                                    if has_directed_by(text_block):
                                         retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": cid, "source": _safe_source(cr), "text": text_block})
                                         contexts.insert(0, text_block)
                                         break
@@ -281,7 +315,7 @@ def _run_agent(
                         first_txt = (first_entry.get("text") or first_entry.get("full_context") or "")
                         first_cid = (first_entry.get("chunk_id") or "")
                         if first_txt and (work_hint.lower() in first_txt.lower() or work_hint.replace(" ", "_").lower() in first_cid.lower()):
-                            name0 = extract_person_name_from_text(first_txt, work_hint=work_hint)
+                            name0 = extract_person_name_from_text(first_txt, work_hint=work_hint, chunk_id=first_cid)
                             if name0:
                                 director = name0
                                 director_citation = 1
@@ -300,7 +334,7 @@ def _run_agent(
                             if not tb:
                                 continue
                             if work_hint.lower() in tb.lower() or work_norm.lower() in (pid or "").lower():
-                                name_direct = extract_person_name_from_text(tb, work_hint=work_hint)
+                                name_direct = extract_person_name_from_text(tb, work_hint=work_hint, chunk_id=pid)
                                 if name_direct:
                                     director = name_direct
                                     retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": pid, "source": _safe_source(cr), "text": tb})
@@ -323,7 +357,7 @@ def _run_agent(
                                 if not tb:
                                     continue
                                 if alt_work.lower() in tb.lower() or alt_norm.lower() in (pid or "").lower():
-                                    name_direct = extract_person_name_from_text(tb, work_hint=work_hint)
+                                    name_direct = extract_person_name_from_text(tb, work_hint=work_hint, chunk_id=pid)
                                     if name_direct:
                                         director = name_direct
                                         retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": pid, "source": _safe_source(cr), "text": tb})
@@ -355,7 +389,7 @@ def _run_agent(
                             tb = _safe_text(cr)
                             if not tb:
                                 continue
-                            nm = extract_person_name_from_text(tb, work_hint=work_hint)
+                            nm = extract_person_name_from_text(tb, work_hint=work_hint, chunk_id=pid)
                             if nm:
                                 director = nm
                                 retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": cid, "source": _safe_source(cr), "text": tb})
@@ -373,7 +407,7 @@ def _run_agent(
                             txt = (entry.get("text") or entry.get("full_context") or "")
                             cid = (entry.get("chunk_id") or "")
                             if work_hint.lower() in txt.lower() or work_hint.lower() in cid.lower():
-                                name = extract_person_name_from_text(txt, work_hint=work_hint)
+                                name = extract_person_name_from_text(txt, work_hint=work_hint, chunk_id=cid)
                                 if name:
                                     director = name
                                     director_citation = idx
@@ -390,7 +424,7 @@ def _run_agent(
                                     tb = _safe_text(cr)
                                     if not tb:
                                         continue
-                                    name = extract_person_name_from_text(tb, work_hint=work_hint)
+                                    name = extract_person_name_from_text(tb, work_hint=work_hint, chunk_id=cid)
                                     if name:
                                         director = name
                                         retrieval.setdefault("retrieved_texts", []).insert(0, {"chunk_id": cid, "source": _safe_source(cr), "text": tb})
@@ -759,7 +793,7 @@ def two_hop_generic(
                     work_hint = mwork.group(1).strip()
             except Exception:
                 work_hint = None
-            name = extract_person_name_from_text(text, work_hint=work_hint)
+            name = extract_person_name_from_text(text, work_hint=work_hint, chunk_id=cid)
             if name:
                 break
 
@@ -785,8 +819,8 @@ def two_hop_generic(
                     cr2 = _call_chunk_read(cid2)
                     if isinstance(cr2, dict):
                         txt2 = _safe_text(cr2) or txt2
-                if work.lower() in txt2.lower() and re.search(r"directed by", txt2, re.IGNORECASE):
-                    name = extract_person_name_from_text(txt2, work_hint=work)
+                if work.lower() in txt2.lower() and has_directed_by(txt2):
+                    name = extract_person_name_from_text(txt2, work_hint=work, chunk_id=cid2)
                     if name:
                         retrieved_texts.append({"chunk_id": cid2 or "", "source": _safe_source(cr2) if isinstance(cr2, dict) else "", "text": txt2})
                         local_token_count += approx_token_count(txt2)
@@ -928,83 +962,31 @@ def two_hop_generic(
     }
 
 
-def extract_person_name_from_text(text: str, work_hint: str | None = None) -> str | None:
-    import re
-    # If a work hint is provided, prefer explicit sentences that mention the
-    # work and one of the strong director phrases (e.g. "written and directed by").
-    if work_hint:
-        try:
-            sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", text) if s.strip()]
-            strong_phrases = [r"written and directed by", r"co-written and directed by", r"written, directed by", r"directed by"]
-            # First look for the strongest patterns in sentences that also mention the work title
-            for s in sents:
-                s_low = s.lower()
-                if work_hint.lower() in s_low:
-                    for ph in strong_phrases:
-                        if re.search(ph, s_low, re.IGNORECASE):
-                            # capture the name following the phrase
-                            m = re.search(rf"{ph}\s+([A-Z][\w\-\.'’]+(?:\s+[A-Z][\w\-\.'’]+)*)", s, re.IGNORECASE)
-                            if m:
-                                name = m.group(1).strip(" ,.")
-                                return " ".join(name.split())
-            # If none of the strong phrases matched within work-containing sentences,
-            # scan any sentence with a weaker 'directed by' but still requiring the work hint
-            for s in sents:
-                s_low = s.lower()
-                if work_hint.lower() in s_low and re.search(r"directed by", s, re.IGNORECASE):
-                    m = re.search(r"directed by\s+([A-Z][\w\-\.'’]+(?:\s+[A-Z][\w\-\.'’]+)*)", s, re.IGNORECASE)
-                    if m:
-                        name = m.group(1).strip(" ,.")
-                        return " ".join(name.split())
-        except Exception:
-            # fall through to the general approach
-            pass
+def extract_person_name_from_text(text: str, work_hint: str | None = None, chunk_id: str | None = None) -> str | None:
+    """The director named in ``text``.
 
-    # Try a few permissive regexes (case-insensitive) to capture patterns like
-    # "directed by Scott Derrickson" or "was directed by Scott Derrickson".
-    patterns = [
-        r"(?:was )?directed by\s+([A-Z][\w\-\.'’]+(?:\s+[A-Z][\w\-\.'’]+)*)",
-        r"film directed by\s+([A-Z][\w\-\.'’]+(?:\s+[A-Z][\w\-\.'’]+)*)",
-        r"directed by\s+([A-Z][\w\-\.'’]+(?:\s+[A-Z][\w\-\.'’]+)*)",
-    ]
-    matched_directed = False
-    for p in patterns:
-        m = re.search(p, text, re.IGNORECASE)
-        if m:
-            name = m.group(1).strip(" ,.")
-            # Normalize whitespace
-            name = " ".join(name.split())
-            matched_directed = True
+    With ``work_hint`` the director sentence must be about that film: it names the title, or ``chunk_id``
+    is a chunk of the film's own page. A "directed by" sentence about anything else (for example a
+    passage on another film's producer, "...Point Break (1991), directed by Kathryn Bigelow") never
+    yields a director. Without ``work_hint`` the first "directed by" sentence is used.
+    """
+    sents = [x.strip() for x in re.split(r"(?<=[.?!])\s+", text or "") if x.strip()]
+    if work_hint:
+        title_re = re.compile(r"(?<!\w)" + re.escape(work_hint) + r"(?!\w)", re.IGNORECASE)
+        on_film_page = _is_film_page(chunk_id, work_hint)
+        for sentence in sents:
+            if on_film_page or title_re.search(sentence):
+                name = _name_after_directed_by(sentence)
+                if name:
+                    return name
+        return None
+    for sentence in sents:
+        name = _name_after_directed_by(sentence)
+        if name:
             return name
-
-    # Extra safety: if a work_hint is provided, prefer extracting from any chunk
-    # identifiers or lines that contain the normalized work title. This helps when
-    # the promoted film chunk is present but generic 'directed by' matches appear
-    # elsewhere in the article.
-    if work_hint:
-        try:
-            # look for explicit "<Work> is a ... written and directed by <Name>" pattern
-            m = re.search(rf"{re.escape(work_hint)}[\w\s,\-:\'\"]{{0,80}}written and directed by\s+([A-Z][\w\-\.'’]+(?:\s+[A-Z][\w\-\.'’]+)*)", text, re.IGNORECASE)
-            if m:
-                return " ".join(m.group(1).strip(" ,.").split())
-        except Exception:
-            pass
-
-    # If a work hint was provided, be conservative: don't use the loose
-    # Titlecase fallback unless we found an explicit 'directed by' match.
-    if work_hint and not matched_directed:
-        return None
-
-    # Fallback: find the longest run of Titlecase tokens (2..4 words) which
-    # often corresponds to person names. This is more robust than str.istitle()
-    # which can fail on punctuation/quotes.
-    cand_re = re.compile(r"\b([A-Z][a-z][\w\-\.'’]+(?:\s+[A-Z][a-z][\w\-\.'’]+){0,3})\b")
-    matches = cand_re.findall(text)
-    if not matches:
-        return None
-    # Choose the longest match (most words)
-    best = max(matches, key=lambda s: len(s.split()))
-    return best.strip(" ,.")
+    # Last resort, only without a work hint: the longest run of Title-case tokens.
+    matches = re.compile(r"\b([A-Z][a-z][\w\-\.'’]+(?:\s+[A-Z][a-z][\w\-\.'’]+){0,3})\b").findall(text or "")
+    return max(matches, key=lambda m: len(m.split())).strip(" ,.") if matches else None
 
 
 # Navigation / boilerplate sections of a Wikipedia plaintext chunk. Their text
@@ -1537,7 +1519,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     local_steps += 1
                     # try extracting immediately
                     try:
-                        nm = extract_person_name_from_text(txt_top, work_hint=work)
+                        nm = extract_person_name_from_text(txt_top, work_hint=work, chunk_id=top_cid)
                         if nm:
                             early_name_guess = nm
                     except Exception:
@@ -1703,7 +1685,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                             local_token_count += approx_token_count(txt_try)
                             local_steps += 1
                             # try extracting right away
-                            nm = extract_person_name_from_text(txt_try, work_hint=work)
+                            nm = extract_person_name_from_text(txt_try, work_hint=work, chunk_id=cid)
                             if nm:
                                 early_name_guess = nm
                             found = True
@@ -1718,7 +1700,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     retrieved_texts.insert(0, {"chunk_id": pid, "source": _safe_source(crp), "text": txtp})
                     local_token_count += approx_token_count(txtp)
                     local_steps += 1
-                    nm = extract_person_name_from_text(txtp, work_hint=work)
+                    nm = extract_person_name_from_text(txtp, work_hint=work, chunk_id=pid)
                     if nm:
                         early_name_guess = nm
                     break
@@ -1757,7 +1739,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                     sents_try = [s.strip() for s in re.split(r"(?<=[.?!])\s+", txt_try) if s.strip()]
                     for s in sents_try:
                         sl = s.lower()
-                        if work.lower() in sl and ("written and directed by" in sl or "directed by" in sl):
+                        if work.lower() in sl and has_directed_by(sl):
                             retrieved_texts.append({"chunk_id": pid, "source": _safe_source(cr_try), "text": txt_try})
                             local_token_count += approx_token_count(txt_try)
                             local_steps += 1
@@ -1791,7 +1773,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                         retrieved_texts.append({"chunk_id": cid, "source": _safe_source(cr), "text": text})
                         local_token_count += approx_token_count(text)
                         local_steps += 1
-                        name = extract_person_name_from_text(text, work_hint=work)
+                        name = extract_person_name_from_text(text, work_hint=work, chunk_id=cid)
                         if name:
                             break
 
@@ -1813,7 +1795,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                 )
                 local_token_count += approx_token_count(text)
                 local_steps += 1
-                name = extract_person_name_from_text(text, work_hint=work)
+                name = extract_person_name_from_text(text, work_hint=work, chunk_id=cid)
                 if name:
                     break
             inspected += 1
@@ -1864,7 +1846,7 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                 found = False
                 # First pass: single-sentence must contain both work variant and directed-by phrase
                 for i, s in enumerate(sents_low):
-                    if any(wv in s for wv in work_variants) and _re.search(r"written and directed by|written & directed by|directed by", s, _re.IGNORECASE):
+                    if any(wv in s for wv in work_variants) and has_directed_by(s):
                         # prefer the original-cased sentence for extraction
                         orig = sents[i]
                         nm = extract_person_name_from_text(orig, work_hint=work)
@@ -1886,11 +1868,11 @@ def two_hop_director_award_flow(question: str) -> Dict[str, Any]:
                 for start in range(0, n):
                     for end in range(start, min(n, start + 3)):
                         window_low = " ".join(sents_low[start : end + 1])
-                        if any(wv in window_low for wv in work_variants) and _re.search(r"written and directed by|written & directed by|directed by", window_low, _re.IGNORECASE):
+                        if any(wv in window_low for wv in work_variants) and has_directed_by(window_low):
                             # find the sentence in the window with directed-by
                             directed_idx = None
                             for j in range(start, end + 1):
-                                if _re.search(r"written and directed by|written & directed by|directed by", sents_low[j], _re.IGNORECASE):
+                                if has_directed_by(sents_low[j]):
                                     directed_idx = j
                                     break
                             if directed_idx is None:

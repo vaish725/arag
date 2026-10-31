@@ -4,6 +4,7 @@
 Usage: python eval/make_chart.py
 """
 import json
+import os
 
 import matplotlib
 
@@ -19,8 +20,10 @@ GREEN, RED, GREY = "#009E73", "#D55E00", "#9AA0A6"
 def main() -> None:
     before = json.load(open("eval/results/before_fixes/summary.json"))
     after = json.load(open("eval/results/after_fixes/summary.json"))
+    dfix_path = "eval/results/after_director_fix/summary.json"
+    dfix = json.load(open(dfix_path)) if os.path.exists(dfix_path) else None
     r = before["retrieval"]["test"]  # retrieval is unchanged by the verdict fixes (checked in run_eval)
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.5, 5.0), gridspec_kw={"width_ratios": [1.0, 1.15]})
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 6.2), gridspec_kw={"width_ratios": [1.0, 1.15]})
 
     # Panel 1: retrieval recall on the test split
     x = range(len(MODES))
@@ -41,7 +44,9 @@ def main() -> None:
     rows = []
     for m in MODES:
         rows.append((f"{LABELS[m]}\nbefore fixes (held out)", before["awards"]["test"][m]["overall"]))
-        rows.append((f"{LABELS[m]}\nafter fixes (not held out)", after["awards"]["test"][m]["overall"]))
+        rows.append((f"{LABELS[m]}\nafter verdict fixes (not held out)", after["awards"]["test"][m]["overall"]))
+        if dfix:
+            rows.append((f"{LABELS[m]}\nafter director fix (not held out)", dfix["awards"]["test"][m]["overall"]))
     n = before["awards"]["test"]["n_films"]
     left = [0] * len(rows)
     for key, colour, label in (("correct", GREEN, "correct"), ("wrong", RED, "wrong"), ("no_answer", GREY, "no answer")):
@@ -60,7 +65,7 @@ def main() -> None:
 
     for ax in (ax1, ax2):
         ax.spines[["top", "right"]].set_visible(False)
-    fig.suptitle("A-RAG evaluation (no LLM calls). 'After fixes' is NOT held out. Overall is strict: a director string with extra words counts as wrong.", fontsize=10.5, x=0.01, ha="left")
+    fig.suptitle("A-RAG evaluation (no LLM calls). Every 'after' bar is NOT held out. Overall is strict: a director string with extra words counts as wrong.", fontsize=10.5, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig("eval/results/eval_summary.png", dpi=150)
     print("wrote eval/results/eval_summary.png")
