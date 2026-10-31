@@ -11,7 +11,8 @@ Track B (awards): hand-checked films whose pages are in the corpus (eval/data/aw
 Both tracks are split into dev and test by eval/data/splits.json (seeded, committed). Nothing here
 tunes anything; retrieval and verdict code are used exactly as shipped.
 
-Usage: PYTHONPATH=. python eval/run_eval.py [--out eval/results]
+Usage: PYTHONPATH=. python eval/run_eval.py [--out eval/results/after_fixes]
+       PYTHONPATH=. python eval/run_eval.py --reaggregate eval/results/before_fixes   # no run, recompute the summary
 """
 from __future__ import annotations
 
@@ -160,15 +161,48 @@ def aggregate_awards(rows):
                 "wrong_positive_claims": sum(1 for r in sel if r["modes"][mode]["score"] == "wrong"),
                 "correct_on_positive_truth": sum(1 for r in sel if r["truth"] != "no_win" and r["modes"][mode]["score"] == "correct"),
                 "positive_truth_films": sum(1 for r in sel if r["truth"] != "no_win"),
+                # by truth class; a no_win film can never be "correct" (the system has no "no win" output)
+                "by_truth": {
+                    t: {
+                        "n": sum(1 for r in sel if r["truth"] == t),
+                        "correct": sum(1 for r in sel if r["truth"] == t and r["modes"][mode]["score"] == "correct"),
+                        "wrong": sum(1 for r in sel if r["truth"] == t and r["modes"][mode]["score"] == "wrong"),
+                        "no_answer": sum(1 for r in sel if r["truth"] == t and r["modes"][mode]["score"] == "no answer"),
+                    }
+                    for t in ("won", "nominated", "no_win")
+                },
+            }
+            answerable = agg[mode]["positive_truth_films"]
+            # coverage on answerable films = correct / (films whose truth is won or nominated)
+            agg[mode]["coverage_on_answerable"] = {
+                "correct": agg[mode]["correct_on_positive_truth"],
+                "of": answerable,
+                "ratio": round(agg[mode]["correct_on_positive_truth"] / answerable, 3) if answerable else None,
             }
         out[split] = agg
     return out
 
 
+def reaggregate(directory: str) -> int:
+    """Recompute summary.json from the saved per-row results (no retrieval or agent run)."""
+    splits = json.load(open("eval/data/splits.json"))
+    rows_r = json.load(open(os.path.join(directory, "retrieval_results.json")))["rows"]
+    rows_a = json.load(open(os.path.join(directory, "awards_results.json")))["rows"]
+    summary = {"seed": splits["seed"], "pool_per_retriever": POOL, "retrieval": aggregate_retrieval(rows_r), "awards": aggregate_awards(rows_a)}
+    with open(os.path.join(directory, "summary.json"), "w") as f:
+        json.dump(summary, f, indent=1, sort_keys=True)
+        f.write("\n")
+    print(f"re-aggregated {directory}/summary.json from the saved rows")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="eval/results")
+    ap.add_argument("--reaggregate", metavar="DIR", help="only recompute DIR/summary.json from DIR's saved rows")
     args = ap.parse_args()
+    if args.reaggregate:
+        return reaggregate(args.reaggregate)
     os.makedirs(args.out, exist_ok=True)
 
     from arag import agent_loop

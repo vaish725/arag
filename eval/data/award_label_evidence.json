@@ -114,7 +114,7 @@
    "source_url": "https://en.wikipedia.org/wiki/Ed_Wood_(film)",
    "supporting_text": "Landau and Rick Baker won Academy Awards for their work on the film.",
    "source_problems": [],
-   "status": "consistent"
+   "status": "consistent; absence check: variant hit(s) reviewed as other people"
   },
   {
    "film": "True Lies",
@@ -130,7 +130,7 @@
    "source_url": "https://en.wikipedia.org/wiki/True_Lies",
    "supporting_text": "It was also nominated at the Academy Awards and BAFTAs in the Best Visual Effects category",
    "source_problems": [],
-   "status": "consistent (manual reading of the passages)",
+   "status": "consistent (manual reading of the passages); absence check: variant hit(s) reviewed as other people",
    "manual_review": "Cameron won the Saturn Award for Best Director; the film was nominated at the Academy Awards for Best Visual Effects only."
   },
   {
@@ -147,7 +147,7 @@
    "source_url": "https://en.wikipedia.org/wiki/Total_Recall_(1990_film)",
    "supporting_text": "The practical special effects were well received, earning the film an Academy Award",
    "source_problems": [],
-   "status": "consistent"
+   "status": "consistent; absence check: variant hit(s) reviewed as other people"
   },
   {
    "film": "Innerspace",
@@ -304,7 +304,7 @@
    "source_url": "https://en.wikipedia.org/wiki/81st_Academy_Awards",
    "supporting_text": "Best Directing Danny Boyle – Slumdog Millionaire ‡ David Fincher – The Curious Case of Benjamin Button Ron Howard – Frost/Nixon Gus Van Sant –",
    "source_problems": [],
-   "status": "consistent"
+   "status": "consistent; absence check: variant hit(s) reviewed as other people"
   },
   {
    "film": "The Exorcism of Emily Rose",

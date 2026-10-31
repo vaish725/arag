@@ -39,6 +39,15 @@ QUOTES = {
     "Innerspace": ("Innerspace", "won an Academy Award for Best Visual Effects , the only film directed by Dante to do so."),
     "Romeo + Juliet": ("Romeo_%2B_Juliet", "The film received a single nomination for Best Art Direction at the 69th Academy Awards ."),
 }
+# Variant hits on the ceremony pages (surname alone, first-name variants) that I read in context.
+# Each is a different person with the same name; the label is unchanged.
+VARIANT_REVIEWS = {
+    "Ed Wood (film)": "'Burton' on the 67th page is Willie D. Burton (sound), not Tim Burton.",
+    "True Lies": "'Cameron' on the 67th and 68th pages are Cameron Mitchell (in memoriam) and Cameron Alborzian (a model in a production number); James Cameron is not on either page.",
+    "Total Recall (1990 film)": "'Verhoeven' on the 63rd page is Michael Verhoeven (German director of The Nasty Girl), not Paul Verhoeven.",
+    "Sex and the City (film)": "'King' on the 81st page is Richard King (Best Sound Editing winner for The Dark Knight), not Michael Patrick King.",
+}
+
 # Names differ for one film between the two data files.
 BASELINE_KEY = {"Doctor Strange (2016 film)": "Doctor Strange"}
 
@@ -92,16 +101,25 @@ def main() -> None:
         if row["truth"] == "no_win":
             numbers = [year + 1 - 1928, year + 2 - 1928]  # the ceremony after release, and the one after that
             names = [n.strip() for n in re.split(r"\s+and\s+", director)]
+            pages = [W + ordinal(n) + "_Academy_Awards" for n in numbers]
+            hits = v.find_variant_hits(names, pages)
             row["absence_check"] = {
-                "ceremony_pages": [W + ordinal(n) + "_Academy_Awards" for n in numbers],
+                "ceremony_pages": pages,
                 "director_names": names,
                 "name_absent_from_all_pages": all(name.lower() not in ceremony(n)[1][2].lower() for n in numbers for name in names),
+                "variants_checked": {n: v.name_variants(n) for n in names},
+                "variant_hits": hits,
+                "all_variants_absent": not hits,
+                "review": VARIANT_REVIEWS.get(film) if hits else None,
             }
         row["verified_by"] = "agent-sourced"
         row.pop("basis_source", None)
     path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
     bad = [r["film"] for r in data["films"] if r.get("absence_check", {}).get("name_absent_from_all_pages") is False]
-    print(f"sourced {len(data['films'])} rows; absence check FAILED for: {bad or 'none'}")
+    changed = [r["film"] for r in data["films"] if r.get("absence_check", {}).get("variant_hits")]
+    unreviewed = [r["film"] for r in data["films"] if r.get("absence_check", {}).get("variant_hits") and not r["absence_check"]["review"]]
+    print(f"sourced {len(data['films'])} rows; full-name absence check FAILED for: {bad or 'none'}")
+    print(f"rows whose status changes under surname/variant matching: {changed or 'none'}; without a review: {unreviewed or 'none'}")
 
 
 if __name__ == "__main__":

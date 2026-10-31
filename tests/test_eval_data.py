@@ -71,3 +71,38 @@ def test_every_award_row_is_sourced_with_at_most_25_words():
         assert 0 < len(row["supporting_text"].split()) <= 25, row["film"]
         if row["truth"] == "no_win":
             assert row["absence_check"]["name_absent_from_all_pages"] is True, row["film"]
+
+
+def test_eval_md_results_block_matches_the_saved_results():
+    import sys
+
+    sys.path.insert(0, str(ROOT / "eval"))
+    import render_eval_md
+
+    text = (ROOT / "EVAL.md").read_text()
+    a, b = text.index(render_eval_md.BEGIN), text.index(render_eval_md.END) + len(render_eval_md.END)
+    assert text[a:b] == render_eval_md.render(), "EVAL.md is out of date: run python eval/render_eval_md.py"
+
+
+def test_no_win_rows_record_variant_hits_with_a_review():
+    for row in load("award_set.json")["films"]:
+        check = row.get("absence_check")
+        if not check:
+            continue
+        assert check["name_absent_from_all_pages"] is True and check["variants_checked"], row["film"]
+        assert check["all_variants_absent"] == (not check["variant_hits"]), row["film"]
+        if check["variant_hits"]:
+            assert check["review"], f"{row['film']}: variant hits need a written review"
+
+
+def test_requirements_eval_lists_the_eval_packages():
+    packages = {line.strip() for line in (ROOT / "requirements-eval.txt").read_text().splitlines() if line.strip() and not line.startswith("#")}
+    assert {"datasets", "matplotlib", "beautifulsoup4"} <= packages
+    assert not (ROOT / "eval" / "requirements.txt").exists()
+
+
+def test_the_documented_director_detection_failures_are_exactly_the_three_in_the_results():
+    rows = json.loads((ROOT / "eval" / "results" / "after_fixes" / "awards_results.json").read_text())["rows"]
+    failed = {r["film"] for r in rows if not r["modes"]["semantic"]["director_ok"]}
+    assert failed == {"Ed Wood (film)", "Romeo + Juliet", "Last Action Hero"}, "update the Limits section of EVAL.md"
+    assert "Kathryn Bigelow" in {r["modes"]["semantic"]["director_found"] for r in rows if r["film"] == "Last Action Hero"}

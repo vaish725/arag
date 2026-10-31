@@ -73,7 +73,17 @@
     "director_names": [
      "Scott Derrickson"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -94,7 +104,23 @@
     "director_names": [
      "Tim Burton"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Tim Burton": [
+      "Tim Burton",
+      "Timothy Burton",
+      "Burton"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "Burton",
+      "page": "67th_Academy_Awards",
+      "context": "Elliot Tyson , Michael Herbick and Willie D. Burton Best Sound Effects Editing Speed – Stephen H"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'Burton' on the 67th page is Willie D. Burton (sound), not Tim Burton."
    },
    "verified_by": "agent-sourced"
   },
@@ -115,7 +141,27 @@
     "director_names": [
      "James Cameron"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "James Cameron": [
+      "James Cameron",
+      "Cameron"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "Cameron",
+      "page": "67th_Academy_Awards",
+      "context": ", honored the following people: Fernando Rey Cameron Mitchell Barry Sullivan Giulietta Masina Pet"
+     },
+     {
+      "variant": "Cameron",
+      "page": "68th_Academy_Awards",
+      "context": "ton , the production featured models such as Cameron Alborzian , Tyson Beckford , Tyra Banks , Ma"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'Cameron' on the 67th and 68th pages are Cameron Mitchell (in memoriam) and Cameron Alborzian (a model in a production number); James Cameron is not on either page."
    },
    "verified_by": "agent-sourced"
   },
@@ -136,7 +182,23 @@
     "director_names": [
      "Paul Verhoeven"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Paul Verhoeven": [
+      "Paul Verhoeven",
+      "Pablo Verhoeven",
+      "Verhoeven"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "Verhoeven",
+      "page": "63rd_Academy_Awards",
+      "context": "e Nasty Girl ( Germany ) in German – Michael Verhoeven Open Doors ( Italy ) in Italian – Gianni Ame"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'Verhoeven' on the 63rd page is Michael Verhoeven (German director of The Nasty Girl), not Paul Verhoeven."
    },
    "verified_by": "agent-sourced"
   },
@@ -157,7 +219,17 @@
     "director_names": [
      "Joe Dante"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Joe Dante": [
+      "Joe Dante",
+      "Joseph Dante",
+      "Dante"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -178,7 +250,17 @@
     "director_names": [
      "Baz Luhrmann"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Baz Luhrmann": [
+      "Baz Luhrmann",
+      "Bazmark Luhrmann",
+      "Luhrmann"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -199,7 +281,17 @@
     "director_names": [
      "Chris Menges"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Chris Menges": [
+      "Chris Menges",
+      "Christopher Menges",
+      "Menges"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -220,7 +312,16 @@
     "director_names": [
      "Dominic Sena"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Dominic Sena": [
+      "Dominic Sena",
+      "Sena"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -241,7 +342,16 @@
     "director_names": [
      "Brett Ratner"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Brett Ratner": [
+      "Brett Ratner",
+      "Ratner"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -262,7 +372,17 @@
     "director_names": [
      "Brad Silberling"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Brad Silberling": [
+      "Brad Silberling",
+      "Bradley Silberling",
+      "Silberling"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -283,7 +403,16 @@
     "director_names": [
      "Peter Hyams"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Peter Hyams": [
+      "Peter Hyams",
+      "Hyams"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -304,7 +433,17 @@
     "director_names": [
      "John McTiernan"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "John McTiernan": [
+      "John McTiernan",
+      "Jon McTiernan",
+      "McTiernan"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -325,7 +464,17 @@
     "director_names": [
      "Iain Softley"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Iain Softley": [
+      "Iain Softley",
+      "Ian Softley",
+      "Softley"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -346,7 +495,24 @@
     "director_names": [
      "Michael Patrick King"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Michael Patrick King": [
+      "Michael Patrick King",
+      "Michael King",
+      "Mike King",
+      "King"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "King",
+      "page": "81st_Academy_Awards",
+      "context": "Best Sound Editing The Dark Knight – Richard King ‡ Iron Man – Frank Eulner and Christopher Bo"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'King' on the 81st page is Richard King (Best Sound Editing winner for The Dark Knight), not Michael Patrick King."
    },
    "verified_by": "agent-sourced"
   },
@@ -367,7 +533,17 @@
     "director_names": [
      "Scott Derrickson"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -388,7 +564,17 @@
     "director_names": [
      "Scott Derrickson"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -409,7 +595,17 @@
     "director_names": [
      "Scott Derrickson"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -430,7 +626,17 @@
     "director_names": [
      "Scott Derrickson"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -451,7 +657,16 @@
     "director_names": [
      "Carlos Reygadas"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Carlos Reygadas": [
+      "Carlos Reygadas",
+      "Reygadas"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -472,7 +687,16 @@
     "director_names": [
      "Dominic Sena"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Dominic Sena": [
+      "Dominic Sena",
+      "Sena"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   },
@@ -493,7 +717,16 @@
     "director_names": [
      "Patrick Lussier"
     ],
-    "name_absent_from_all_pages": true
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Patrick Lussier": [
+      "Patrick Lussier",
+      "Lussier"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
    },
    "verified_by": "agent-sourced"
   }
