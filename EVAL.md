@@ -16,9 +16,11 @@ candidates, de-duplicated to chunks.
 
 **Track B: director-award answers.** 26 films whose pages are in the corpus (`eval/data/award_set.json`), asked
 as "Who directed X and did they win any Academy Awards?" in evidence-only mode. Truth = the director's Oscar
-outcome *for that film*: `won` / `nominated` / `no_win`. Scored **correct** (verdict equals truth), **wrong**
-(a different positive claim) or **no answer** ("unknown"; absence of evidence cannot prove a negative, so this
-is never counted as wrong). Rows with the verdict passage: `eval/results/*/awards_results.json`.
+outcome *for that film*: `won` / `nominated` / `no_win`. The **director is scored as its own column**: correct,
+**wrong** (a name that is not the director) or no answer ("Unknown"). The **verdict** is correct, **wrong** (a
+different positive claim) or no answer ("unknown"; absence of evidence cannot prove a negative, so this is never
+counted as wrong). A row is **wrong overall if the director OR the verdict is wrong**, correct overall only if
+both are correct, and no answer otherwise. Rows with the verdict passage: `eval/results/*/awards_results.json`.
 
 **Labels are agent-sourced, not owner-verified.** Every row carries `source_url`, `supporting_text` (verbatim,
 at most 25 words) and `verified_by: "agent-sourced"`. `python eval/verify_award_labels.py` re-checks, against
@@ -57,47 +59,121 @@ From `eval/results/before_fixes/`. Nothing had been tuned on the test split at t
 
 Paired on recall@10 (test): semantic beats BM25 on 3 of 16 questions and loses on 0; hybrid beats semantic on 0 and loses on 0 (16 tied), and has lower recall@5 (0.81 vs 0.88). **There is no evidence that hybrid retrieval helps at n=16.**
 
-**Awards by truth class, held-out, before fixes**
+**Awards, test split, held-out, before fixes**
 
-Cells are correct / wrong / no answer.
+Cells are correct / wrong / no answer. A row is wrong overall if the director OR the verdict is wrong; it is correct overall only if both are correct.
 
-| Truth class (n films) | BM25 | Semantic | Hybrid (RRF) |
+| Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | won (2) | 1 / 1 / 0 | 2 / 0 / 0 | 1 / 1 / 0 |
 | nominated (1) | 0 / 0 / 1 | 0 / 0 / 1 | 0 / 0 / 1 |
-| no_win (13) (never scored correct: the system has no "no win" output) | 0 / 2 / 11 | 0 / 2 / 11 | 0 / 2 / 11 |
-| **all (16)** | 1 / 3 / 12 | 2 / 2 / 12 | 1 / 3 / 12 |
-| **coverage on answerable films** (correct ÷ 3 won or nominated) | 1/3 = 0.33 | 2/3 = 0.67 | 1/3 = 0.33 |
+| no_win (13) (never correct: the system has no "no win" output) | 0 / 2 / 11 | 0 / 2 / 11 | 0 / 3 / 10 |
+| **all (16)** | 1 / 3 / 12 | 2 / 2 / 12 | 1 / 4 / 11 |
+| **coverage on answerable films** (overall correct ÷ answerable films) | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
+
+| Components (all 16 films) | BM25 | Semantic | Hybrid (RRF) |
+|---|---|---|---|
+| Verdict only | 1 / 3 / 12 | 2 / 2 / 12 | 1 / 3 / 12 |
+| Director only | 14 / 0 / 2 | 14 / 0 / 2 | 14 / 1 / 1 |
+| Verdict-only coverage | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
+
+This split has 13 of 16 films with truth `no_win`, so it mostly measures abstention: only 3 films can be answered correctly.
+
+**Awards, all 26 films (dev + test), before fixes: descriptive, not a held-out estimate**
+
+Cells are correct / wrong / no answer. A row is wrong overall if the director OR the verdict is wrong; it is correct overall only if both are correct.
+
+| Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
+|---|---|---|---|
+| won (3) | 2 / 1 / 0 | 3 / 0 / 0 | 2 / 1 / 0 |
+| nominated (2) | 0 / 0 / 2 | 0 / 0 / 2 | 0 / 0 / 2 |
+| no_win (21) (never correct: the system has no "no win" output) | 0 / 2 / 19 | 0 / 3 / 18 | 0 / 3 / 18 |
+| **all (26)** | 2 / 3 / 21 | 3 / 3 / 20 | 2 / 4 / 20 |
+| **coverage on answerable films** (overall correct ÷ answerable films) | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
+
+| Components (all 26 films) | BM25 | Semantic | Hybrid (RRF) |
+|---|---|---|---|
+| Verdict only | 2 / 3 / 21 | 3 / 2 / 21 | 2 / 3 / 21 |
+| Director only | 23 / 0 / 3 | 23 / 1 / 2 | 23 / 1 / 2 |
+| Verdict-only coverage | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
+
+These films include 21 of 26 films with truth `no_win`, so it mostly measures abstention: only 5 films can be answered correctly.
 
 ### After fixes: test split no longer held out
 
-Two verdict faults were found on this test split and fixed (see below). The numbers here, from `eval/results/after_fixes/`, were produced **after** looking at this split, so they are **not held out** and say nothing about unseen films. Retrieval results are identical before and after.
+Two verdict faults were found on this test split and fixed (see below). The numbers here, from `eval/results/after_fixes/` (re-run on `main`), were produced **after** looking at this split, so they are **not held out** and say nothing about unseen films. Retrieval results are identical before and after.
 
-**Awards by truth class, after fixes (not held out)**
+**Awards, test split, after fixes (not held out)**
 
-Cells are correct / wrong / no answer.
+Cells are correct / wrong / no answer. A row is wrong overall if the director OR the verdict is wrong; it is correct overall only if both are correct.
 
-| Truth class (n films) | BM25 | Semantic | Hybrid (RRF) |
+| Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | won (2) | 1 / 1 / 0 | 2 / 0 / 0 | 1 / 1 / 0 |
 | nominated (1) | 0 / 0 / 1 | 0 / 0 / 1 | 0 / 0 / 1 |
-| no_win (13) (never scored correct: the system has no "no win" output) | 0 / 0 / 13 | 0 / 0 / 13 | 0 / 0 / 13 |
-| **all (16)** | 1 / 1 / 14 | 2 / 0 / 14 | 1 / 1 / 14 |
-| **coverage on answerable films** (correct ÷ 3 won or nominated) | 1/3 = 0.33 | 2/3 = 0.67 | 1/3 = 0.33 |
+| no_win (13) (never correct: the system has no "no win" output) | 0 / 0 / 13 | 0 / 0 / 13 | 0 / 1 / 12 |
+| **all (16)** | 1 / 1 / 14 | 2 / 0 / 14 | 1 / 2 / 13 |
+| **coverage on answerable films** (overall correct ÷ answerable films) | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
 
-Wrong answers on the test split after the fixes:
+| Components (all 16 films) | BM25 | Semantic | Hybrid (RRF) |
+|---|---|---|---|
+| Verdict only | 1 / 1 / 14 | 2 / 0 / 14 | 1 / 1 / 14 |
+| Director only | 14 / 0 / 2 | 14 / 0 / 2 | 14 / 1 / 1 |
+| Verdict-only coverage | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
 
-- BM25: The Godfather (said nominated, truth won)
+This split has 13 of 16 films with truth `no_win`, so it mostly measures abstention: only 3 films can be answered correctly.
+
+**Awards, all 26 films (dev + test), after fixes: descriptive, not a held-out estimate**
+
+Cells are correct / wrong / no answer. A row is wrong overall if the director OR the verdict is wrong; it is correct overall only if both are correct.
+
+| Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
+|---|---|---|---|
+| won (3) | 2 / 1 / 0 | 3 / 0 / 0 | 2 / 1 / 0 |
+| nominated (2) | 0 / 0 / 2 | 0 / 0 / 2 | 0 / 0 / 2 |
+| no_win (21) (never correct: the system has no "no win" output) | 0 / 0 / 21 | 0 / 1 / 20 | 0 / 1 / 20 |
+| **all (26)** | 2 / 1 / 23 | 3 / 1 / 22 | 2 / 2 / 22 |
+| **coverage on answerable films** (overall correct ÷ answerable films) | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
+
+| Components (all 26 films) | BM25 | Semantic | Hybrid (RRF) |
+|---|---|---|---|
+| Verdict only | 2 / 1 / 23 | 3 / 0 / 23 | 2 / 1 / 23 |
+| Director only | 23 / 0 / 3 | 23 / 1 / 2 | 23 / 1 / 2 |
+| Verdict-only coverage | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
+
+These films include 21 of 26 films with truth `no_win`, so it mostly measures abstention: only 5 films can be answered correctly.
+
+Wrong overall (director or verdict), after fixes:
+
+Test split:
+
+- BM25: The Godfather [test] (verdict nominated, truth won)
 - Semantic: none
-- Hybrid (RRF): The Godfather (said nominated, truth won)
+- Hybrid (RRF): The Godfather [test] (verdict nominated, truth won); Romeo + Juliet [test] (director "William Woodman and starring Alex Hyde-White as Romeo and Bl", expected Baz Luhrmann)
+
+All 26 films (dev + test):
+
+- BM25: The Godfather [test] (verdict nominated, truth won)
+- Semantic: Last Action Hero [dev] (director "Kathryn Bigelow", expected John McTiernan)
+- Hybrid (RRF): The Godfather [test] (verdict nominated, truth won); Romeo + Juliet [test] (director "William Woodman and starring Alex Hyde-White as Romeo and Bl", expected Baz Luhrmann)
+
+Films where some method did not get the director right (director output per method):
+
+| Film | Split | BM25 | Semantic | Hybrid (RRF) |
+|---|---|---|---|---|
+| Ed Wood (film) | test | Unknown | Unknown | Unknown |
+| Romeo + Juliet | test | Unknown | Unknown | **WRONG**: "William Woodman and starring Alex Hyde-White as " |
+| Last Action Hero | dev | Unknown | **WRONG**: "Kathryn Bigelow" | Unknown |
 
 Label sourcing check (`python eval/verify_award_labels.py`): 26 of 26 award rows pass; 4 of them needed a manual reading of the passages.
 
 <!-- results:end -->
 
-What the two fixes changed: *Innerspace* (the film's Best Visual Effects win, "the only film directed by Dante
-to do so") and *Silent Light* (an Independent Spirit nomination) became "no answer". Remaining wrong answers
-are retrieval effects (the passage naming a win is not retrieved), not the fixed faults.
+What the two verdict fixes changed: *Innerspace* (the film's Best Visual Effects win, "the only film directed by
+Dante to do so") and *Silent Light* (an Independent Spirit nomination) became "no answer". **Wrong answers that
+remain are listed above, by method, and include wrong directors**, so "0 wrong" holds only where the lists say
+"none" and only for the split named: for the semantic method it holds on the test split but not across all 26
+films (Last Action Hero, a dev-split film, gets a wrong director).
 
 ## Limits
 
@@ -106,10 +182,12 @@ are retrieval effects (the passage naming a win is not retrieved), not the fixed
 - **Retrieval is likely optimistic.** The corpus was built from the contexts of the first validation questions,
   so every usable question has its distractors in the corpus; only 27 of 7,405 questions qualify.
 - Award rows are not independent (Derrickson 4 films, Cameron 2); most films have no Oscar story, so "no
-  answer" dominates by design. Director detection fails on 3 of 26 films (not fixed here; next PR): the extractor only matches the literal
-  phrase "directed by". *Ed Wood*: the page says "directed and produced by Tim Burton". *Romeo + Juliet*: "directed,
-  co-produced, and co-written by Baz Luhrmann". *Last Action Hero*: "directed and produced by John McTiernan", and
-  the system returned a **wrong** director, Kathryn Bigelow, taken from an unrelated passage ("Cameron served as
-  executive producer for Point Break (1991), directed by Kathryn Bigelow") because the match does not require the
-  sentence to be about the film.
+  answer" dominates by design. Director detection is not perfect (not fixed here; next PR): the extractor only matches the literal phrase
+  "directed by". Films where some method did not get the director right are tabled above with their split and
+  each method's output. *Ed Wood* (test split): the page says "directed and produced by Tim Burton". *Romeo +
+  Juliet* (test split): "directed, co-produced, and co-written by Baz Luhrmann"; under hybrid retrieval the system
+  returned a **wrong** director taken from another film's page. *Last Action Hero* (dev split): "directed and
+  produced by John McTiernan"; under semantic retrieval the system returned a **wrong** director, Kathryn Bigelow,
+  from an unrelated passage ("Cameron served as executive producer for Point Break (1991), directed by Kathryn
+  Bigelow") because the match does not require the sentence to be about the film.
 - Chunks are 200-word windows, so chunk-level gold is usually the whole paragraph.

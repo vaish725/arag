@@ -40,8 +40,8 @@ def main() -> None:
     # Panel 2: director-award answers on the test split, before vs after the two verdict fixes
     rows = []
     for m in MODES:
-        rows.append((f"{LABELS[m]}\nbefore fixes (held out)", before["awards"]["test"][m]))
-        rows.append((f"{LABELS[m]}\nafter fixes (not held out)", after["awards"]["test"][m]))
+        rows.append((f"{LABELS[m]}\nbefore fixes (held out)", before["awards"]["test"][m]["overall"]))
+        rows.append((f"{LABELS[m]}\nafter fixes (not held out)", after["awards"]["test"][m]["overall"]))
     n = before["awards"]["test"]["n_films"]
     left = [0] * len(rows)
     for key, colour, label in (("correct", GREEN, "correct"), ("wrong", RED, "wrong"), ("no_answer", GREY, "no answer")):
@@ -55,7 +55,7 @@ def main() -> None:
     ax2.set_xlim(0, n)
     ax2.set_xlabel("films")
     ax2.tick_params(axis="y", labelsize=8)
-    ax2.set_title(f"Director-award answers, test split (n={n} films)", fontsize=11, loc="left")
+    ax2.set_title(f"Director-award answers, overall (director AND verdict), test split (n={n} films)", fontsize=10, loc="left")
     ax2.legend(frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.5, -0.13))
 
     for ax in (ax1, ax2):

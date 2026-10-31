@@ -109,6 +109,29 @@ def aggregate_retrieval(rows):
 
 
 # ---------------------------------------------------------------- track B: awards
+def director_status(m: dict) -> str:
+    """The director as its own column: correct / wrong (a name that is not the director) / no answer (Unknown)."""
+    if m["director_ok"]:
+        return "correct"
+    found = m.get("director_found")
+    if not found or found.lower().startswith("unknown"):
+        return "no answer"
+    return "wrong"
+
+
+def overall_status(m: dict) -> str:
+    """Wrong overall if the director OR the verdict is wrong; correct only if both are correct; else no answer."""
+    d, v = director_status(m), m["score"]
+    if d == "wrong" or v == "wrong":
+        return "wrong"
+    return "correct" if d == "correct" and v == "correct" else "no answer"
+
+
+def tally3(statuses) -> dict:
+    statuses = list(statuses)
+    return {"correct": statuses.count("correct"), "wrong": statuses.count("wrong"), "no_answer": statuses.count("no answer")}
+
+
 def run_awards(award_set, splits, agent_loop, rt):
     split_of = {f: "dev" for f in splits["awards"]["dev"]}
     split_of.update({f: "test" for f in splits["awards"]["test"]})
@@ -140,10 +163,15 @@ def run_awards(award_set, splits, agent_loop, rt):
                 "score": score(verdict, f["truth"]),
                 "director_found": found,
                 "director_ok": bool(found) and any(s in found.lower() for s in surnames),
+                "director_status": None,  # filled below
+                "overall": None,
                 "verdict_passage": None if not ev else {"chunk_id": ev["chunk_id"], "type": ev["type"], "matched_text": ev.get("matched_text")},
                 "career_wins": [{"work": c.get("work"), "chunk_id": c.get("chunk_id")} for c in res.get("career_wins", [])],
                 "answer": answer,
             }
+        for m in row["modes"].values():
+            m["director_status"] = director_status(m)
+            m["overall"] = overall_status(m)
         rows.append(row)
     return rows
 
@@ -153,32 +181,31 @@ def aggregate_awards(rows):
     for split in ("dev", "test", "all"):
         sel = [r for r in rows if split == "all" or r["split"] == split]
         agg = {"n_films": len(sel), "truth_mix": {t: sum(r["truth"] == t for r in sel) for t in ("won", "nominated", "no_win")}}
+        answerable = [r for r in sel if r["truth"] != "no_win"]
         for mode in MODES:
-            sc = [r["modes"][mode]["score"] for r in sel]
+            ms = {r["film"]: r["modes"][mode] for r in sel}
+            verdict = tally3(m["score"] for m in ms.values())
             agg[mode] = {
-                "correct": sc.count("correct"), "wrong": sc.count("wrong"), "no_answer": sc.count("no answer"),
-                "director_found": sum(r["modes"][mode]["director_ok"] for r in sel),
-                "wrong_positive_claims": sum(1 for r in sel if r["modes"][mode]["score"] == "wrong"),
-                "correct_on_positive_truth": sum(1 for r in sel if r["truth"] != "no_win" and r["modes"][mode]["score"] == "correct"),
-                "positive_truth_films": sum(1 for r in sel if r["truth"] != "no_win"),
-                # by truth class; a no_win film can never be "correct" (the system has no "no win" output)
+                **verdict,  # verdict only (kept for compatibility)
+                "verdict": verdict,
+                "director": tally3(director_status(m) for m in ms.values()),
+                "overall": tally3(overall_status(m) for m in ms.values()),
                 "by_truth": {
                     t: {
                         "n": sum(1 for r in sel if r["truth"] == t),
-                        "correct": sum(1 for r in sel if r["truth"] == t and r["modes"][mode]["score"] == "correct"),
-                        "wrong": sum(1 for r in sel if r["truth"] == t and r["modes"][mode]["score"] == "wrong"),
-                        "no_answer": sum(1 for r in sel if r["truth"] == t and r["modes"][mode]["score"] == "no answer"),
+                        "verdict": tally3(r["modes"][mode]["score"] for r in sel if r["truth"] == t),
+                        "overall": tally3(overall_status(r["modes"][mode]) for r in sel if r["truth"] == t),
                     }
                     for t in ("won", "nominated", "no_win")
                 },
+                # coverage on answerable films = correct / (films whose truth is won or nominated)
+                "coverage_on_answerable_verdict": {"correct": sum(1 for r in answerable if r["modes"][mode]["score"] == "correct"), "of": len(answerable)},
+                "coverage_on_answerable_overall": {"correct": sum(1 for r in answerable if overall_status(r["modes"][mode]) == "correct"), "of": len(answerable)},
+                "wrong_overall_films": [r["film"] for r in sel if overall_status(r["modes"][mode]) == "wrong"],
             }
-            answerable = agg[mode]["positive_truth_films"]
-            # coverage on answerable films = correct / (films whose truth is won or nominated)
-            agg[mode]["coverage_on_answerable"] = {
-                "correct": agg[mode]["correct_on_positive_truth"],
-                "of": answerable,
-                "ratio": round(agg[mode]["correct_on_positive_truth"] / answerable, 3) if answerable else None,
-            }
+            for key in ("coverage_on_answerable_verdict", "coverage_on_answerable_overall"):
+                c = agg[mode][key]
+                c["ratio"] = round(c["correct"] / c["of"], 3) if c["of"] else None
         out[split] = agg
     return out
 
@@ -232,9 +259,10 @@ def main() -> int:
     for m in MODES:
         print(f"  {m:9} {t[m]['recall@5']:.3f} / {t[m]['recall@10']:.3f} / {t[m]['all_gold@10']['count']}/{t[m]['all_gold@10']['of']} / {t[m]['mrr']:.3f}")
     a = summary["awards"]["test"]
-    print(f"AWARDS test (n={a['n_films']}): correct / wrong / no answer")
+    print(f"AWARDS test (n={a['n_films']}), overall (director AND verdict) correct / wrong / no answer:")
     for m in MODES:
-        print(f"  {m:9} {a[m]['correct']} / {a[m]['wrong']} / {a[m]['no_answer']}")
+        o = a[m]["overall"]
+        print(f"  {m:9} {o['correct']} / {o['wrong']} / {o['no_answer']}")
     return 0
 
 

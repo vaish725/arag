@@ -23,27 +23,62 @@ def cwn(d):
     return f"{d['correct']} / {d['wrong']} / {d['no_answer']}"
 
 
-def awards_table(summary, title):
-    a = summary["awards"]["test"]
-    lines = [f"**{title}**", "", "Cells are correct / wrong / no answer.", "",
-             "| Truth class (n films) | " + " | ".join(n for _, n in MODES) + " |", "|---|" + "---|" * len(MODES)]
-    for t, note in (("won", ""), ("nominated", ""), ("no_win", " (never scored correct: the system has no \"no win\" output)")):
+def awards_table(summary, scope, title):
+    """Overall (director AND verdict) by truth class, plus the director and verdict columns on their own."""
+    a = summary["awards"][scope]
+    lines = [f"**{title}**", "", "Cells are correct / wrong / no answer. A row is wrong overall if the director OR the verdict is wrong; "
+             "it is correct overall only if both are correct.", "",
+             "| Truth class (n films), overall | " + " | ".join(n for _, n in MODES) + " |", "|---|" + "---|" * len(MODES)]
+    for t, note in (("won", ""), ("nominated", ""), ("no_win", " (never correct: the system has no \"no win\" output)")):
         n = a["semantic"]["by_truth"][t]["n"]
-        lines.append(f"| {t} ({n}){note} | " + " | ".join(cwn(a[m]["by_truth"][t]) for m, _ in MODES) + " |")
-    lines.append(f"| **all ({a['n_films']})** | " + " | ".join(cwn(a[m]) if "no_answer" in a[m] else "" for m, _ in MODES) + " |")
-    cov = a["semantic"]["coverage_on_answerable"]
-    lines.append(f"| **coverage on answerable films** (correct ÷ {cov['of']} won or nominated) | " + " | ".join(
-        f"{a[m]['coverage_on_answerable']['correct']}/{a[m]['coverage_on_answerable']['of']} = {a[m]['coverage_on_answerable']['ratio']:.2f}" for m, _ in MODES) + " |")
+        lines.append(f"| {t} ({n}){note} | " + " | ".join(cwn(a[m]["by_truth"][t]["overall"]) for m, _ in MODES) + " |")
+    lines.append(f"| **all ({a['n_films']})** | " + " | ".join(cwn(a[m]["overall"]) for m, _ in MODES) + " |")
+    cov = lambda m: a[m]["coverage_on_answerable_overall"]
+    lines.append("| **coverage on answerable films** (overall correct ÷ answerable films) | " + " | ".join(
+        f"{cov(m)['correct']}/{cov(m)['of']} answerable films = {cov(m)['ratio']:.2f}" for m, _ in MODES) + " |")
+    lines += ["", "| Components (all %d films) | " % a["n_films"] + " | ".join(n for _, n in MODES) + " |", "|---|" + "---|" * len(MODES),
+              "| Verdict only | " + " | ".join(cwn(a[m]["verdict"]) for m, _ in MODES) + " |",
+              "| Director only | " + " | ".join(cwn(a[m]["director"]) for m, _ in MODES) + " |"]
+    cov_v = lambda m: a[m]["coverage_on_answerable_verdict"]
+    lines.append("| Verdict-only coverage | " + " | ".join(f"{cov_v(m)['correct']}/{cov_v(m)['of']} answerable films = {cov_v(m)['ratio']:.2f}" for m, _ in MODES) + " |")
+    mix = a["truth_mix"]
+    which = "This split has" if scope != "all" else "These films include"
+    lines += ["", f"{which} {mix['no_win']} of {a['n_films']} films with truth `no_win`, so it mostly measures abstention: "
+              f"only {mix['won'] + mix['nominated']} films can be answered correctly."]
     return "\n".join(lines)
 
 
-def wrong_answers(rows_path):
-    rows = load(rows_path)["rows"]
+def wrong_overall(rows_path, scope):
+    rows = [r for r in load(rows_path)["rows"] if scope == "all" or r["split"] == scope]
     out = []
     for m, name in MODES:
-        wrong = [f"{r['film']} (said {r['modes'][m]['verdict']}, truth {r['truth']})" for r in rows if r["split"] == "test" and r["modes"][m]["score"] == "wrong"]
-        out.append(f"- {name}: " + (", ".join(wrong) if wrong else "none"))
+        items = []
+        for r in rows:
+            x = r["modes"][m]
+            why = []
+            if x["score"] == "wrong":
+                why.append(f"verdict {x['verdict']}, truth {r['truth']}")
+            if x["director_status"] == "wrong":
+                why.append(f"director \"{x['director_found'][:60]}\", expected {r['expected_director']}")
+            if why:
+                items.append(f"{r['film']} [{r['split']}] ({'; '.join(why)})")
+        out.append(f"- {name}: " + ("; ".join(items) if items else "none"))
     return "\n".join(out)
+
+
+def director_failures(rows_path):
+    """Every film where some mode did not get the director right, with the split and each mode's output."""
+    rows = load(rows_path)["rows"]
+    lines = ["| Film | Split | " + " | ".join(n for _, n in MODES) + " |", "|---|---|" + "---|" * len(MODES)]
+    for r in rows:
+        if all(r["modes"][m]["director_status"] == "correct" for m, _ in MODES):
+            continue
+        cells = []
+        for m, _ in MODES:
+            x = r["modes"][m]
+            cells.append({"correct": "correct", "no answer": "Unknown"}.get(x["director_status"], f"**WRONG**: \"{(x['director_found'] or '')[:48]}\""))
+        lines.append(f"| {r['film']} | {r['split']} | " + " | ".join(cells) + " |")
+    return "\n".join(lines)
 
 
 def render() -> str:
@@ -67,13 +102,18 @@ def render() -> str:
         f"Paired on recall@10 (test): semantic beats BM25 on {sb['better']} of {r['n_questions']} questions and loses on {sb['worse']}; "
         f"hybrid beats semantic on {hs['better']} and loses on {hs['worse']} ({hs['tied']} tied), and has lower recall@5 "
         f"({r['hybrid']['recall@5']:.2f} vs {r['semantic']['recall@5']:.2f}). **There is no evidence that hybrid retrieval helps at n={r['n_questions']}.**", "",
-        awards_table(before, "Awards by truth class, held-out, before fixes"), "",
+        awards_table(before, "test", "Awards, test split, held-out, before fixes"), "",
+        awards_table(before, "all", "Awards, all 26 films (dev + test), before fixes: descriptive, not a held-out estimate"), "",
         "### After fixes: test split no longer held out", "",
         "Two verdict faults were found on this test split and fixed (see below). The numbers here, from "
-        "`eval/results/after_fixes/`, were produced **after** looking at this split, so they are **not held out** and say nothing about unseen films. "
+        "`eval/results/after_fixes/` (re-run on `main`), were produced **after** looking at this split, so they are **not held out** and say nothing about unseen films. "
         f"Retrieval results are {'identical' if unchanged else 'DIFFERENT'} before and after.", "",
-        awards_table(after, "Awards by truth class, after fixes (not held out)"), "",
-        "Wrong answers on the test split after the fixes:", "", wrong_answers("eval/results/after_fixes/awards_results.json"), "",
+        awards_table(after, "test", "Awards, test split, after fixes (not held out)"), "",
+        awards_table(after, "all", "Awards, all 26 films (dev + test), after fixes: descriptive, not a held-out estimate"), "",
+        "Wrong overall (director or verdict), after fixes:", "",
+        "Test split:", "", wrong_overall("eval/results/after_fixes/awards_results.json", "test"), "",
+        "All 26 films (dev + test):", "", wrong_overall("eval/results/after_fixes/awards_results.json", "all"), "",
+        "Films where some method did not get the director right (director output per method):", "", director_failures("eval/results/after_fixes/awards_results.json"), "",
         f"Label sourcing check (`python eval/verify_award_labels.py`): {ok} of {len(evidence)} award rows pass; {manual} of them needed a manual reading of the passages.",
         "", END,
     ]

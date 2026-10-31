@@ -10,6 +10,8 @@
      "career_wins": [],
      "director_found": "Francis Ford Coppola",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "wrong",
      "score": "wrong",
      "verdict": "nominated",
      "verdict_passage": {
@@ -23,6 +25,8 @@
      "career_wins": [],
      "director_found": "Francis Ford Coppola",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "wrong",
      "score": "wrong",
      "verdict": "nominated",
      "verdict_passage": {
@@ -36,6 +40,8 @@
      "career_wins": [],
      "director_found": "Francis Ford Coppola",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
      "score": "correct",
      "verdict": "won",
      "verdict_passage": {
@@ -58,6 +64,8 @@
      "career_wins": [],
      "director_found": "James Cameron",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
      "score": "correct",
      "verdict": "won",
      "verdict_passage": {
@@ -71,6 +79,8 @@
      "career_wins": [],
      "director_found": "James Cameron",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
      "score": "correct",
      "verdict": "won",
      "verdict_passage": {
@@ -84,6 +94,8 @@
      "career_wins": [],
      "director_found": "James Cameron",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
      "score": "correct",
      "verdict": "won",
      "verdict_passage": {
@@ -106,6 +118,8 @@
      "career_wins": [],
      "director_found": "Damien Chazelle",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
      "score": "correct",
      "verdict": "won",
      "verdict_passage": {
@@ -119,6 +133,8 @@
      "career_wins": [],
      "director_found": "Damien Chazelle",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
      "score": "correct",
      "verdict": "won",
      "verdict_passage": {
@@ -132,6 +148,8 @@
      "career_wins": [],
      "director_found": "Damien Chazelle",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
      "score": "correct",
      "verdict": "won",
      "verdict_passage": {
@@ -159,6 +177,8 @@
      ],
      "director_found": "Christopher Nolan",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -177,6 +197,8 @@
      ],
      "director_found": "Christopher Nolan",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -195,6 +217,8 @@
      ],
      "director_found": "Christopher Nolan",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -213,6 +237,8 @@
      "career_wins": [],
      "director_found": "brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -222,6 +248,8 @@
      "career_wins": [],
      "director_found": "brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -231,6 +259,8 @@
      "career_wins": [],
      "director_found": "brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -249,6 +279,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -258,6 +290,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -267,6 +301,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -285,6 +321,8 @@
      "career_wins": [],
      "director_found": "Unknown based on provided contexts",
      "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -294,6 +332,8 @@
      "career_wins": [],
      "director_found": "Unknown based on provided contexts",
      "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -303,6 +343,8 @@
      "career_wins": [],
      "director_found": "Unknown based on provided contexts",
      "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -326,6 +368,8 @@
      ],
      "director_found": "James Cameron",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -340,6 +384,8 @@
      ],
      "director_found": "James Cameron",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -354,6 +400,8 @@
      ],
      "director_found": "James Cameron",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -372,6 +420,8 @@
      "career_wins": [],
      "director_found": "Paul Verhoeven",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -381,6 +431,8 @@
      "career_wins": [],
      "director_found": "Paul Verhoeven",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -390,6 +442,8 @@
      "career_wins": [],
      "director_found": "Paul Verhoeven",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -408,6 +462,8 @@
      "career_wins": [],
      "director_found": "Joe Dante and produced by Michael Finnell",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -417,6 +473,8 @@
      "career_wins": [],
      "director_found": "Joe Dante and produced by Michael Finnell",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -426,6 +484,8 @@
      "career_wins": [],
      "director_found": "Joe Dante and produced by Michael Finnell",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -444,6 +504,8 @@
      "career_wins": [],
      "director_found": "Unknown based on provided contexts",
      "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -453,6 +515,8 @@
      "career_wins": [],
      "director_found": "William Woodman and starring Alex Hyde-White as Romeo and Blanche Baker as Juliet",
      "director_ok": false,
+     "director_status": "wrong",
+     "overall": "wrong",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -462,6 +526,8 @@
      "career_wins": [],
      "director_found": "Unknown based on provided contexts",
      "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -480,6 +546,8 @@
      "career_wins": [],
      "director_found": "Chris Menges",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -498,6 +566,8 @@
      ],
      "director_found": "Chris Menges",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -507,6 +577,8 @@
      "career_wins": [],
      "director_found": "Chris Menges",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -525,6 +597,8 @@
      "career_wins": [],
      "director_found": "Dominic Sena",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -534,6 +608,8 @@
      "career_wins": [],
      "director_found": "Dominic Sena",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -543,6 +619,8 @@
      "career_wins": [],
      "director_found": "Dominic Sena",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -561,6 +639,8 @@
      "career_wins": [],
      "director_found": "Brett Ratner",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -570,6 +650,8 @@
      "career_wins": [],
      "director_found": "Brett Ratner",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -579,6 +661,8 @@
      "career_wins": [],
      "director_found": "Brett Ratner",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -597,6 +681,8 @@
      "career_wins": [],
      "director_found": "Brad Silberling and starring Nicolas Cage and Meg Ryan",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -606,6 +692,8 @@
      "career_wins": [],
      "director_found": "Brad Silberling and starring Nicolas Cage and Meg Ryan",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -615,6 +703,8 @@
      "career_wins": [],
      "director_found": "Brad Silberling and starring Nicolas Cage and Meg Ryan",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -633,6 +723,8 @@
      "career_wins": [],
      "director_found": "Peter Hyams and starring Arnold Schwarzenegger",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -642,6 +734,8 @@
      "career_wins": [],
      "director_found": "Peter Hyams and starring Arnold Schwarzenegger",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -651,6 +745,8 @@
      "career_wins": [],
      "director_found": "Peter Hyams and starring Arnold Schwarzenegger",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -669,6 +765,8 @@
      "career_wins": [],
      "director_found": "Unknown based on provided contexts",
      "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -678,6 +776,8 @@
      "career_wins": [],
      "director_found": "Unknown based on provided contexts",
      "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -687,6 +787,8 @@
      "career_wins": [],
      "director_found": "Kathryn Bigelow",
      "director_ok": false,
+     "director_status": "wrong",
+     "overall": "wrong",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -705,6 +807,8 @@
      "career_wins": [],
      "director_found": "Iain Softley and starring Jonny Lee Miller",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -714,6 +818,8 @@
      "career_wins": [],
      "director_found": "Iain Softley and starring Jonny Lee Miller",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -723,6 +829,8 @@
      "career_wins": [],
      "director_found": "Iain Softley and starring Jonny Lee Miller",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -741,6 +849,8 @@
      "career_wins": [],
      "director_found": "Michael Patrick King in his feature film directorial debut",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -750,6 +860,8 @@
      "career_wins": [],
      "director_found": "Michael Patrick King in his feature film directorial debut",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -759,6 +871,8 @@
      "career_wins": [],
      "director_found": "Michael Patrick King in his feature film directorial debut",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -777,6 +891,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and starring Laura Linney and Tom Wilkinson",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -786,6 +902,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and starring Laura Linney and Tom Wilkinson",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -795,6 +913,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and starring Laura Linney and Tom Wilkinson",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -813,6 +933,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and written by Derrickson and C",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -822,6 +944,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and written by Derrickson and C",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -831,6 +955,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and written by Derrickson and C",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -849,6 +975,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and produced by Jerry Bruckheimer",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -858,6 +986,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and produced by Jerry Bruckheimer",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -867,6 +997,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and produced by Jerry Bruckheimer",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -885,6 +1017,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and released on October",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -894,6 +1028,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and released on October",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -903,6 +1039,8 @@
      "career_wins": [],
      "director_found": "Scott Derrickson and released on October",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -921,6 +1059,8 @@
      "career_wins": [],
      "director_found": "Carlos Reygadas",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -930,6 +1070,8 @@
      "career_wins": [],
      "director_found": "Carlos Reygadas",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -939,6 +1081,8 @@
      "career_wins": [],
      "director_found": "Carlos Reygadas",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -957,6 +1101,8 @@
      "career_wins": [],
      "director_found": "Dominic Sena with extensive uncredited reshoots by Brett Ratner",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -966,6 +1112,8 @@
      "career_wins": [],
      "director_found": "Dominic Sena with extensive uncredited reshoots by Brett Ratner",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -975,6 +1123,8 @@
      "career_wins": [],
      "director_found": "Dominic Sena with extensive uncredited reshoots by Brett Ratner",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -993,6 +1143,8 @@
      "career_wins": [],
      "director_found": "Patrick Lussier",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -1002,6 +1154,8 @@
      "career_wins": [],
      "director_found": "Patrick Lussier",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null
@@ -1011,6 +1165,8 @@
      "career_wins": [],
      "director_found": "Patrick Lussier",
      "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
      "score": "no answer",
      "verdict": "unknown",
      "verdict_passage": null

@@ -101,8 +101,29 @@ def test_requirements_eval_lists_the_eval_packages():
     assert not (ROOT / "eval" / "requirements.txt").exists()
 
 
-def test_the_documented_director_detection_failures_are_exactly_the_three_in_the_results():
-    rows = json.loads((ROOT / "eval" / "results" / "after_fixes" / "awards_results.json").read_text())["rows"]
-    failed = {r["film"] for r in rows if not r["modes"]["semantic"]["director_ok"]}
+def test_the_documented_director_failures_match_the_results_and_splits():
+    rows = {r["film"]: r for r in json.loads((ROOT / "eval" / "results" / "after_fixes" / "awards_results.json").read_text())["rows"]}
+    splits = load("splits.json")["awards"]
+    failed = {f for f, r in rows.items() if any(r["modes"][m]["director_status"] != "correct" for m in ("bm25", "semantic", "hybrid"))}
     assert failed == {"Ed Wood (film)", "Romeo + Juliet", "Last Action Hero"}, "update the Limits section of EVAL.md"
-    assert "Kathryn Bigelow" in {r["modes"]["semantic"]["director_found"] for r in rows if r["film"] == "Last Action Hero"}
+    assert ("Ed Wood (film)" in splits["test"], "Romeo + Juliet" in splits["test"], "Last Action Hero" in splits["dev"]) == (True, True, True)
+    assert rows["Last Action Hero"]["modes"]["semantic"]["director_found"] == "Kathryn Bigelow"
+    assert rows["Last Action Hero"]["modes"]["semantic"]["director_status"] == "wrong"
+    assert rows["Romeo + Juliet"]["modes"]["hybrid"]["director_status"] == "wrong"
+    # a wrong director makes the row wrong overall even when the verdict is only "no answer"
+    assert rows["Last Action Hero"]["modes"]["semantic"]["overall"] == "wrong" and rows["Last Action Hero"]["modes"]["semantic"]["score"] != "wrong"
+
+
+def test_overall_scoring_rules():
+    import sys
+
+    sys.path.insert(0, str(ROOT / "eval"))
+    from run_eval import director_status, overall_status
+
+    ok = {"director_ok": True, "director_found": "Jane Roe", "score": "correct"}
+    assert overall_status(ok) == "correct"
+    assert overall_status({**ok, "director_ok": False, "director_found": "Someone Else"}) == "wrong"  # wrong director
+    assert overall_status({**ok, "score": "wrong"}) == "wrong"  # wrong verdict
+    assert overall_status({**ok, "score": "no answer"}) == "no answer"
+    assert director_status({"director_ok": False, "director_found": "Unknown based on provided contexts"}) == "no answer"
+    assert overall_status({"director_ok": False, "director_found": "Unknown based on provided contexts", "score": "correct"}) == "no answer"
