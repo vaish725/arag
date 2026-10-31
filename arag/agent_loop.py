@@ -1127,11 +1127,15 @@ def detect_award_evidence(
         # If no win, look for nomination patterns
         if not matched_type:
             for p in patterns_nom:
-                m = re.search(p, text)
-                if m:
+                for m in re.finditer(p, text):
+                    sent = _sentence_at(clean_text, m.start()) if len(clean_text) == len(text) else None
+                    if sent is not None and not _AWARD_WORD_RE.search(sent):
+                        continue  # a nomination only counts as an Oscar nomination if the sentence says Academy Award / Oscar
                     matched_type = "nom"
                     matched_pattern = p
-                    matched_text = _sentence_at(clean_text, m.start()) if len(clean_text) == len(text) else None
+                    matched_text = sent
+                    break
+                if matched_type:
                     break
 
         if matched_type:
@@ -1265,6 +1269,22 @@ def extract_asked_title(question: str) -> str | None:
     return title or None
 
 
+_DIRECTED_BY_RE = re.compile(
+    r"(?:directed|directing|director|helmed|produced|written)\s+(?:and\s+\w+\s+)?by\s+(?:[\w.'\u2019-]+\s+){0,3}$"
+)
+
+
+def _names_recipient(sentence: str, surname: Optional[str]) -> bool:
+    """True if ``surname`` appears in ``sentence`` other than as "directed by <surname>"."""
+    if not surname:
+        return False
+    low = sentence.lower()
+    for m in re.finditer(r"(?<!\w)" + re.escape(surname) + r"(?!\w)", low):
+        if not _DIRECTED_BY_RE.search(low[: m.start()]):
+            return True
+    return False
+
+
 def attribute_award_evidence(evidence: List[Dict[str, Any]], film: str | None, director: str | None) -> Dict[str, Any]:
     """Tie award evidence to the film that was asked about.
 
@@ -1293,10 +1313,11 @@ def attribute_award_evidence(evidence: List[Dict[str, Any]], film: str | None, d
         return bool(page_re.match((ev.get("chunk_id") or "").lower()))
 
     def credited(sentence: str) -> bool:
-        low = sentence.lower()
-        if "best director" in low or (surname and surname in low):
-            return True
-        return not _CATEGORY_RE.search(sentence)  # no categories listed: cannot tell, count it
+        """A win is the director's only if the sentence names Best Director, or names the director
+        as a recipient ("Puzo and Coppola won ..."). Naming the director only as the film's director
+        ("the only film directed by Dante to do so") does not credit them, and a sentence that names
+        neither is the film's win, not the director's."""
+        return "best director" in sentence.lower() or _names_recipient(sentence, surname)
 
     film_win = film_nom = None
     career: List[Dict[str, Any]] = []

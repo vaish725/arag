@@ -13,7 +13,9 @@
       "verdict": "unknown"
     },
     "expected_truth": {
+      "check": "scripts/verify_regression_truth.py re-fetches each source and checks the quote is on the page",
       "note": "No Oscar win",
+      "source_url": "https://en.wikipedia.org/wiki/Doctor_Strange_(2016_film)",
       "sources": [
         {
           "quote": "The film received an Academy Award nomination for Best Visual Effects.",
@@ -27,8 +29,9 @@
           "url": "https://en.wikipedia.org/wiki/89th_Academy_Awards"
         }
       ],
+      "supporting_text": "The film received an Academy Award nomination for Best Visual Effects.",
       "verdict": "no_win",
-      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_by": "agent-sourced",
       "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
@@ -52,7 +55,9 @@
       "verdict": "unknown"
     },
     "expected_truth": {
+      "check": "scripts/verify_regression_truth.py re-fetches each source and checks the quote is on the page",
       "note": "No win for this film (nominated, Original Screenplay); Nolan's career Oscar wins are for Oppenheimer",
+      "source_url": "https://en.wikipedia.org/wiki/83rd_Academy_Awards",
       "sources": [
         {
           "quote": "Inception – Emma Thomas and Christopher Nolan , producers",
@@ -67,8 +72,9 @@
           "url": "https://en.wikipedia.org/wiki/83rd_Academy_Awards"
         }
       ],
+      "supporting_text": "Inception – Emma Thomas and Christopher Nolan , producers",
       "verdict": "nominated",
-      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_by": "agent-sourced",
       "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
@@ -92,15 +98,18 @@
       "verdict": "won"
     },
     "expected_truth": {
+      "check": "scripts/verify_regression_truth.py re-fetches each source and checks the quote is on the page",
       "note": "Won (Best Director)",
+      "source_url": "https://en.wikipedia.org/wiki/89th_Academy_Awards",
       "sources": [
         {
           "quote": "Damien Chazelle – La La Land ‡",
           "url": "https://en.wikipedia.org/wiki/89th_Academy_Awards"
         }
       ],
+      "supporting_text": "Damien Chazelle – La La Land ‡",
       "verdict": "won",
-      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_by": "agent-sourced",
       "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
@@ -123,15 +132,18 @@
       "verdict": "won"
     },
     "expected_truth": {
+      "check": "scripts/verify_regression_truth.py re-fetches each source and checks the quote is on the page",
       "note": "Won (Adapted Screenplay, shared with Mario Puzo)",
+      "source_url": "https://en.wikipedia.org/wiki/The_Godfather",
       "sources": [
         {
           "quote": "At the 45th Academy Awards, the film won Best Picture, Brando won Best Actor, and Puzo and Coppola won for Best Adapted Screenplay.",
           "url": "https://en.wikipedia.org/wiki/The_Godfather"
         }
       ],
+      "supporting_text": "At the 45th Academy Awards, the film won Best Picture, Brando won Best Actor, and Puzo and Coppola won for Best Adapted Screenplay.",
       "verdict": "won",
-      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_by": "agent-sourced",
       "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
@@ -154,15 +166,18 @@
       "verdict": "unknown"
     },
     "expected_truth": {
+      "check": "scripts/verify_regression_truth.py re-fetches each source and checks the quote is on the page",
       "note": "Won (Director, Picture, Adapted Screenplay)",
+      "source_url": "https://en.wikipedia.org/wiki/The_Godfather_Part_II",
       "sources": [
         {
           "quote": "Its six Oscar wins also included Best Director for Coppola, Best Supporting Actor for De Niro, and Best Adapted Screenplay for Coppola and Puzo.",
           "url": "https://en.wikipedia.org/wiki/The_Godfather_Part_II"
         }
       ],
+      "supporting_text": "Its six Oscar wins also included Best Director for Coppola, Best Supporting Actor for De Niro, and Best Adapted Screenplay for Coppola and Puzo.",
       "verdict": "won",
-      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_by": "agent-sourced",
       "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
@@ -185,7 +200,9 @@
       "verdict": "won"
     },
     "expected_truth": {
+      "check": "scripts/verify_regression_truth.py re-fetches each source and checks the quote is on the page",
       "note": "Assumes the 1997 film. Ambiguous: the corpus page 'Titanic' (94 chunks) is about the RMS Titanic ship; the film is the separate 'Titanic (1997 film)' page (87 chunks). There is also a 1953 film (dir. Jean Negulesco). Truth copied from 'Titanic (1997 film)'.",
+      "source_url": "https://en.wikipedia.org/wiki/70th_Academy_Awards",
       "sources": [
         {
           "quote": "James Cameron – Titanic ‡",
@@ -196,8 +213,9 @@
           "url": "https://en.wikipedia.org/wiki/Titanic_(1997_film)"
         }
       ],
+      "supporting_text": "James Cameron – Titanic ‡",
       "verdict": "won",
-      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_by": "agent-sourced",
       "verified_on": "2026-10-30"
     },
     "same_film_as": "Titanic (1997 film)",
@@ -221,7 +239,9 @@
       "verdict": "won"
     },
     "expected_truth": {
+      "check": "scripts/verify_regression_truth.py re-fetches each source and checks the quote is on the page",
       "note": "Won (Director, Picture, Editing)",
+      "source_url": "https://en.wikipedia.org/wiki/70th_Academy_Awards",
       "sources": [
         {
           "quote": "James Cameron – Titanic ‡",
@@ -232,8 +252,9 @@
           "url": "https://en.wikipedia.org/wiki/Titanic_(1997_film)"
         }
       ],
+      "supporting_text": "James Cameron – Titanic ‡",
       "verdict": "won",
-      "verified_by": "scripts/verify_regression_truth.py (quotes re-checked against the live Wikipedia pages)",
+      "verified_by": "agent-sourced",
       "verified_on": "2026-10-30"
     },
     "semantic_search_errors": [
