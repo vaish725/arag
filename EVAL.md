@@ -189,6 +189,30 @@ Films where some method's director string is not exactly right (output per metho
 | Hellraiser: Inferno | test | **MALFORMED**: "Scott Derrickson and released on October" | **MALFORMED**: "Scott Derrickson and released on October" | **MALFORMED**: "Scott Derrickson and released on October" |
 | Season of the Witch (2011 film) | test | **MALFORMED**: "Dominic Sena with extensive uncredited reshoot" | **MALFORMED**: "Dominic Sena with extensive uncredited reshoot" | **MALFORMED**: "Dominic Sena with extensive uncredited reshoot" |
 
+### After the director-detection fix: NOT held out
+
+The fix was written while looking at these films (Ed Wood: test split, Romeo + Juliet: test split, Last Action Hero: dev split), so every number in this section is **not held out**; it shows what the change did on films it was developed on, not how it behaves on unseen ones. Retrieval results are identical before and after.
+
+**Director fix, test split (n=16)** (cells: correct / wrong / no answer)
+
+| | BM25: before | BM25: after | Semantic: before | Semantic: after | Hybrid (RRF): before | Hybrid (RRF): after |
+|---|---|---|---|---|---|---|
+| Overall (director AND verdict, strict) | 1 / 8 / 7 | 1 / 1 / 14 | 2 / 7 / 7 | 2 / 0 / 14 | 1 / 9 / 6 | 1 / 1 / 14 |
+| Director only (wrong includes malformed) | 7 / 7 / 2 | 16 / 0 / 0 | 7 / 7 / 2 | 16 / 0 / 0 | 7 / 8 / 1 | 16 / 0 / 0 |
+| Verdict only | 1 / 1 / 14 | 1 / 1 / 14 | 2 / 0 / 14 | 2 / 0 / 14 | 1 / 1 / 14 | 1 / 1 / 14 |
+| Director strings that are the right name plus extra words | 7 | 0 | 7 | 0 | 7 | 0 |
+
+**Director fix, all 26 films (dev + test)** (cells: correct / wrong / no answer)
+
+| | BM25: before | BM25: after | Semantic: before | Semantic: after | Hybrid (RRF): before | Hybrid (RRF): after |
+|---|---|---|---|---|---|---|
+| Overall (director AND verdict, strict) | 2 / 12 / 12 | 2 / 1 / 23 | 3 / 12 / 11 | 3 / 0 / 23 | 2 / 13 / 11 | 2 / 1 / 23 |
+| Director only (wrong includes malformed) | 12 / 11 / 3 | 26 / 0 / 0 | 12 / 12 / 2 | 26 / 0 / 0 | 12 / 12 / 2 | 26 / 0 / 0 |
+| Verdict only | 2 / 1 / 23 | 2 / 1 / 23 | 3 / 0 / 23 | 3 / 0 / 23 | 2 / 1 / 23 | 2 / 1 / 23 |
+| Director strings that are the right name plus extra words | 11 | 0 | 11 | 0 | 11 | 0 |
+
+Director strings still not exactly right after the fix: none.
+
 Label sourcing check (`python eval/verify_award_labels.py`): 26 of 26 award rows pass; 4 of them needed a manual reading of the passages.
 
 <!-- results:end -->
@@ -207,14 +231,13 @@ holds only for the reading and the split it names.
 - **Retrieval is likely optimistic.** The corpus was built from the contexts of the first validation questions,
   so every usable question has its distractors in the corpus; only 27 of 7,405 questions qualify.
 - Award rows are not independent (Derrickson 4 films, Cameron 2); most films have no Oscar story, so "no
-  answer" dominates by design. Director detection is poor in two ways (not fixed here; next PR). (1) **Malformed output:** the name capture runs
-  past the name, so for 11 of 26 films the answer says things like "Scott Derrickson and released on October" or
-  "Joe Dante and produced by Michael Finnell"; a plain substring check on the surname would have hidden this.
-  (2) **Missed or wrong directors:** the extractor only matches the literal phrase "directed by". *Ed Wood* (test
-  split): "directed and produced by Tim Burton". *Romeo + Juliet* (test split): "directed, co-produced, and co-written
-  by Baz Luhrmann"; under hybrid retrieval the system returned a **wrong** director from another film's page.
-  *Last Action Hero* (dev split): "directed and produced by John McTiernan"; under semantic retrieval the system
-  returned a **wrong** director, Kathryn Bigelow, from an unrelated passage ("Cameron served as executive producer
-  for Point Break (1991), directed by Kathryn Bigelow") because the match does not require the sentence to be about
-  the film. The table above lists every film whose director string is not exactly right.
+  answer" dominates by design. Director detection **was** poor in two ways, both addressed in the director-detection change (see the section
+  above; its numbers are not held out): (1) the name capture ran past the name, so 11 of 26 answers said things like
+  "Joe Dante and produced by Michael Finnell"; (2) the extractor only matched the literal phrase "directed by" and
+  accepted any "directed by" sentence, so *Ed Wood* ("directed and produced by Tim Burton"), *Romeo + Juliet*
+  ("directed, co-produced, and co-written by Baz Luhrmann") and *Last Action Hero* ("directed and produced by John
+  McTiernan") were missed, and Last Action Hero (semantic) and Romeo + Juliet (hybrid) got a **wrong** director from
+  an unrelated passage ("Cameron served as executive producer for Point Break (1991), directed by Kathryn
+  Bigelow"). After the change all 26 director strings are exactly right, but only these 26 films (plus 7 regression
+  films) were tried, and the change was written looking at them.
 - Chunks are 200-word windows, so chunk-level gold is usually the whole paragraph.
