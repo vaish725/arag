@@ -137,3 +137,62 @@ def test_extract_asked_title():
     assert extract_asked_title("Who directed The Godfather Part II and did they win any Academy Awards?") == "The Godfather Part II"
     assert extract_asked_title("Who directed Titanic (1997 film) and did they win any Academy Awards?") == "Titanic"
     assert extract_asked_title("What is the capital of France?") is None
+
+
+# ---- general rules for what counts as the director's win / an Oscar nomination ------------------
+INNERSPACE_0 = "It earned well over $25 million in its domestic gross revenue and won an Oscar, the only film directed by Dante to do so."
+SILENT_LIGHT_SPIRIT = "The film was nominated for Best Foreign Film at the 24th Independent Spirit Awards."
+SILENT_LIGHT_OSCAR_ENTRY = "The film was selected as the Mexican entry for the Best Foreign Language Oscar at the 80th Academy Awards, but it did not make the shortlist."
+
+from arag.agent_loop import _names_recipient  # noqa: E402
+
+
+def test_innerspace_film_win_is_not_a_director_win():
+    ev = detect_award_evidence([entry("Innerspace_0", INNERSPACE_0, "Innerspace")], name_hint="Joe Dante")
+    att = attribute_award_evidence(ev, "Innerspace", "Joe Dante")
+    assert att["verdict"].startswith("Unknown"), att
+    assert att["evidence"] is None and att["career_wins"] == []
+
+
+def test_a_win_sentence_that_names_neither_director_nor_best_director_is_the_films_win():
+    # previously "no categories listed -> count it"
+    ev = detect_award_evidence(
+        [entry("Some_Film_0", "The film won an Academy Award and made money.", "Some Film"), entry("Jane_Roe_0", "Jane Roe is a director.", "Jane Roe")],
+        name_hint="Jane Roe",
+    )
+    assert attribute_award_evidence(ev, "Some Film", "Jane Roe")["verdict"].startswith("Unknown")
+
+
+def test_director_named_as_a_recipient_is_credited():
+    ev = detect_award_evidence([entry("Joe_Dante_0", "Dante won an Academy Award for Best Visual Effects.", "Joe Dante")], name_hint="Joe Dante")
+    assert attribute_award_evidence(ev, None, "Joe Dante")["verdict"].startswith("Won")
+
+
+def test_names_recipient_ignores_directed_by_but_accepts_recipients():
+    assert not _names_recipient(INNERSPACE_0, "dante")
+    assert not _names_recipient("Won an Oscar; written and directed by Joe Dante.", "dante")
+    assert _names_recipient("Puzo and Coppola won for Best Adapted Screenplay.", "coppola")
+    assert _names_recipient("Coppola, who directed it, won an Oscar.", "coppola")
+    assert _names_recipient("Dante won an Academy Award.", "dante")
+    assert not _names_recipient("Anything at all.", None)
+
+
+def test_independent_spirit_nomination_is_not_an_oscar_nomination():
+    ev = detect_award_evidence([entry("Silent_Light_0", SILENT_LIGHT_SPIRIT, "Silent Light")], name_hint="Carlos Reygadas")
+    assert ev == []
+    # the other Silent Light sentence is an Oscar *entry* that "did not make the shortlist": not a nomination either
+    assert detect_award_evidence([entry("Silent_Light_0", SILENT_LIGHT_OSCAR_ENTRY, "Silent Light")], name_hint="Carlos Reygadas") == []
+
+
+def test_a_nomination_with_academy_award_in_the_same_sentence_still_counts():
+    ev = detect_award_evidence(  # a person page among the passages is what attributes film-page sentences
+        [entry("Carlos_Reygadas_0", "Carlos Reygadas is a filmmaker.", "Carlos Reygadas"),
+         entry("Silent_Light_0", "The film was nominated for an Academy Award for Best Foreign Language Film.", "Silent Light")],
+        name_hint="Carlos Reygadas",
+    )
+    assert [(e["chunk_id"], e["type"]) for e in ev] == [("Silent_Light_0", "nom")]
+
+
+def test_an_oscar_word_in_a_different_sentence_does_not_make_a_nomination_an_oscar_one():
+    text = "The film was nominated for Best Foreign Film at the Independent Spirit Awards. Separately, it later screened. Oscar fans cheered."
+    assert detect_award_evidence([entry("Silent_Light_0", text, "Silent Light")], name_hint="Carlos Reygadas") == []

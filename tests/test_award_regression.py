@@ -47,6 +47,8 @@ def test_every_baseline_film_has_sourced_truth_and_expectations():
         truth = rec["expected_truth"]
         assert truth["verdict"] in {"won", "nominated", "no_win"}, film
         assert truth["sources"], f"{film}: no source for the truth label"
+        assert truth["verified_by"] == "agent-sourced" and truth["source_url"] == truth["sources"][0]["url"], film
+        assert truth["supporting_text"] == truth["sources"][0]["quote"] and len(truth["supporting_text"].split()) <= 25, film
         for s in truth["sources"]:
             assert s["url"].startswith("https://en.wikipedia.org/wiki/") and 0 < len(s["quote"].split()) <= 25, (film, s)
         assert set(rec["expected_system"]) >= {"director", "verdict", "required_verdict_chunk", "career_line", "note"}, film
