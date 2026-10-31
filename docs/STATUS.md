@@ -67,7 +67,6 @@ Open: [#6](https://github.com/vaish725/arag/pull/6), the evaluation (retrieval a
 ## Open work
 
 1. Merge and review the evaluation (PR #6); its award labels are agent-sourced from Wikipedia, not owner-verified.
-2. Trace completeness and the legacy OpenAI path in `llm_backend`.
-3. Evaluate hybrid retrieval on a larger question set before deciding whether it ships.
-4. Chunking tails and a single BM25 tokenizer (C-19); enforce formatting and type checks in CI (C-22).
-5. The LLM tool-calling loop the paper describes (Phase 5).
+2. Evaluate hybrid retrieval on a larger question set before deciding whether it ships.
+3. Chunking tails and a single BM25 tokenizer (C-19); enforce formatting and type checks in CI (C-22).
+4. The LLM tool-calling loop the paper describes (Phase 5).
