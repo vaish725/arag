@@ -12,6 +12,10 @@ Anything else is "needs review". This is corroboration, not proof: an article th
 nomination cannot show there was none (the Academy database was not queried).
 Writes eval/data/award_label_evidence.json. Needs network (Wikipedia API only).
 
+It ALSO re-checks the sourcing stored on every row (eval/build_label_sources.py): `supporting_text` must
+be at most 25 words and appear on `source_url` (whitespace-insensitive), and for no_win rows each
+`absence_check` must still hold (the director's full name appears on none of the ceremony pages).
+
 Usage: python eval/verify_award_labels.py
 """
 from __future__ import annotations
@@ -60,6 +64,42 @@ def trim(text: str, words: int = 40) -> str:
     return " ".join(parts[:words]) + (" ..." if len(parts) > words else "")
 
 
+_text_cache: dict = {}
+
+
+def page_text(url: str) -> str:
+    title = urllib.parse.unquote(url.rsplit("/wiki/", 1)[1])
+    if title not in _text_cache:
+        _text_cache[title] = fetch(title)[0].get_text(" ")
+    return _text_cache[title]
+
+
+def squash(text: str) -> str:
+    return "".join(text.split()).lower()
+
+
+def check_source(row: dict) -> list:
+    """Problems with the stored source of one row (empty list = fine)."""
+    problems = []
+    if row.get("verified_by") != "agent-sourced":
+        problems.append("verified_by is not 'agent-sourced'")
+    quote = row.get("supporting_text") or ""
+    if not quote or len(quote.split()) > 25:
+        problems.append(f"supporting_text must be 1-25 words (has {len(quote.split())})")
+    elif squash(quote) not in squash(page_text(row["source_url"])):
+        problems.append("supporting_text NOT found on source_url")
+    check = row.get("absence_check")
+    if check:
+        for url in check["ceremony_pages"]:
+            text = squash(page_text(url))
+            for name in check["director_names"]:
+                if squash(name) in text:
+                    problems.append(f"{name!r} appears on {url.rsplit('/', 1)[1]}")
+    elif row["truth"] == "no_win":
+        problems.append("no_win row without an absence_check")
+    return problems
+
+
 def main() -> int:
     films = json.loads((ROOT / "eval/data/award_set.json").read_text())["films"]
     baseline = json.loads((ROOT / "scripts/regression_baseline.json").read_text())
@@ -73,6 +113,7 @@ def main() -> int:
             text = re.sub(r"\s+", " ", el.get_text(" ", strip=True))
             if OSCAR.search(text) and text not in units and len(text.split()) < 120:
                 units.append(text)
+        source_problems = check_source(f)
         surnames = [p.split()[-1].lower() for p in re.split(r"\s+and\s+", f["director"])]
         named = [u for u in units if any(s in u.lower() for s in surnames)]
         if f["film"] in sourced:
@@ -84,6 +125,8 @@ def main() -> int:
         manual = MANUAL_REVIEW.get(title) if status == "needs review" else None
         if manual:
             status = "consistent (manual reading of the passages)"
+        if source_problems:
+            status = "needs review"
         review += status == "needs review"
         out.append({
             "film": title,
@@ -94,6 +137,9 @@ def main() -> int:
             "academy_award_passages": len(units),
             "passages_naming_the_director": len(named),
             "examples": [trim(u) for u in (named or units)[:3]],
+            "source_url": f["source_url"],
+            "supporting_text": f["supporting_text"],
+            "source_problems": source_problems,
             "status": status,
             **({"manual_review": manual} if manual else {}),
         })

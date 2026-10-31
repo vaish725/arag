@@ -38,8 +38,8 @@ def test_award_labels_are_valid_and_flagged_for_owner_review():
 
 
 def test_summary_matches_the_per_row_results():
-    rows = json.loads((ROOT / "eval" / "results" / "retrieval_results.json").read_text())["rows"]
-    summary = json.loads((ROOT / "eval" / "results" / "summary.json").read_text())["retrieval"]["test"]
+    rows = json.loads((ROOT / "eval" / "results" / "before_fixes" / "retrieval_results.json").read_text())["rows"]
+    summary = json.loads((ROOT / "eval" / "results" / "before_fixes" / "summary.json").read_text())["retrieval"]["test"]
     test_rows = [r for r in rows if r["split"] == "test"]
     assert summary["n_questions"] == len(test_rows)
     for mode in ("bm25", "semantic", "hybrid"):
@@ -56,3 +56,18 @@ def test_every_award_label_has_wikipedia_evidence_and_none_is_left_unreviewed():
         assert e["status"].startswith("consistent"), e
         if "manual" in e["status"]:
             assert e["manual_review"], e
+
+
+def test_retrieval_results_are_unchanged_by_the_verdict_fixes():
+    before = json.loads((ROOT / "eval" / "results" / "before_fixes" / "summary.json").read_text())
+    after = json.loads((ROOT / "eval" / "results" / "after_fixes" / "summary.json").read_text())
+    assert before["retrieval"] == after["retrieval"]
+
+
+def test_every_award_row_is_sourced_with_at_most_25_words():
+    for row in load("award_set.json")["films"]:
+        assert row["verified_by"] == "agent-sourced", row["film"]
+        assert row["source_url"].startswith("https://en.wikipedia.org/wiki/"), row["film"]
+        assert 0 < len(row["supporting_text"].split()) <= 25, row["film"]
+        if row["truth"] == "no_win":
+            assert row["absence_check"]["name_absent_from_all_pages"] is True, row["film"]
