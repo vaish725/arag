@@ -60,7 +60,7 @@ def main() -> None:
 
     for ax in (ax1, ax2):
         ax.spines[["top", "right"]].set_visible(False)
-    fig.suptitle("A-RAG evaluation (no LLM calls). 'After fixes' is NOT held out: the two faults were found on this split.", fontsize=11, x=0.01, ha="left")
+    fig.suptitle("A-RAG evaluation (no LLM calls). 'After fixes' is NOT held out. Overall is strict: a director string with extra words counts as wrong.", fontsize=10.5, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig("eval/results/eval_summary.png", dpi=150)
     print("wrote eval/results/eval_summary.png")

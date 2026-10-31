@@ -7,8 +7,8 @@
       "n": 21,
       "overall": {
        "correct": 0,
-       "no_answer": 19,
-       "wrong": 2
+       "no_answer": 10,
+       "wrong": 11
       },
       "verdict": {
        "correct": 0,
@@ -20,8 +20,8 @@
       "n": 2,
       "overall": {
        "correct": 0,
-       "no_answer": 2,
-       "wrong": 0
+       "no_answer": 1,
+       "wrong": 1
       },
       "verdict": {
        "correct": 0,
@@ -55,12 +55,18 @@
      "ratio": 0.4
     },
     "director": {
-     "correct": 23,
+     "correct": 12,
+     "malformed": 11,
      "no_answer": 3,
-     "wrong": 0
+     "wrong": 11
     },
     "no_answer": 21,
     "overall": {
+     "correct": 2,
+     "no_answer": 11,
+     "wrong": 13
+    },
+    "overall_if_malformed_accepted": {
      "correct": 2,
      "no_answer": 21,
      "wrong": 3
@@ -73,8 +79,18 @@
     "wrong": 3,
     "wrong_overall_films": [
      "The Godfather",
+     "About a Boy (film)",
      "Innerspace",
-     "Silent Light"
+     "City of Angels (film)",
+     "End of Days (film)",
+     "Hackers (film)",
+     "Sex and the City (film)",
+     "The Exorcism of Emily Rose",
+     "Sinister (film)",
+     "Deliver Us from Evil (2014 film)",
+     "Hellraiser: Inferno",
+     "Silent Light",
+     "Season of the Witch (2011 film)"
     ]
    },
    "hybrid": {
@@ -83,8 +99,8 @@
       "n": 21,
       "overall": {
        "correct": 0,
-       "no_answer": 18,
-       "wrong": 3
+       "no_answer": 9,
+       "wrong": 12
       },
       "verdict": {
        "correct": 0,
@@ -96,8 +112,8 @@
       "n": 2,
       "overall": {
        "correct": 0,
-       "no_answer": 2,
-       "wrong": 0
+       "no_answer": 1,
+       "wrong": 1
       },
       "verdict": {
        "correct": 0,
@@ -131,12 +147,18 @@
      "ratio": 0.4
     },
     "director": {
-     "correct": 23,
+     "correct": 12,
+     "malformed": 11,
      "no_answer": 2,
-     "wrong": 1
+     "wrong": 12
     },
     "no_answer": 21,
     "overall": {
+     "correct": 2,
+     "no_answer": 10,
+     "wrong": 14
+    },
+    "overall_if_malformed_accepted": {
      "correct": 2,
      "no_answer": 20,
      "wrong": 4
@@ -149,9 +171,19 @@
     "wrong": 3,
     "wrong_overall_films": [
      "The Godfather",
+     "About a Boy (film)",
      "Innerspace",
      "Romeo + Juliet",
-     "Silent Light"
+     "City of Angels (film)",
+     "End of Days (film)",
+     "Hackers (film)",
+     "Sex and the City (film)",
+     "The Exorcism of Emily Rose",
+     "Sinister (film)",
+     "Deliver Us from Evil (2014 film)",
+     "Hellraiser: Inferno",
+     "Silent Light",
+     "Season of the Witch (2011 film)"
     ]
    },
    "n_films": 26,
@@ -161,8 +193,8 @@
       "n": 21,
       "overall": {
        "correct": 0,
-       "no_answer": 18,
-       "wrong": 3
+       "no_answer": 9,
+       "wrong": 12
       },
       "verdict": {
        "correct": 0,
@@ -174,8 +206,8 @@
       "n": 2,
       "overall": {
        "correct": 0,
-       "no_answer": 2,
-       "wrong": 0
+       "no_answer": 1,
+       "wrong": 1
       },
       "verdict": {
        "correct": 0,
@@ -209,12 +241,18 @@
      "ratio": 0.6
     },
     "director": {
-     "correct": 23,
+     "correct": 12,
+     "malformed": 11,
      "no_answer": 2,
-     "wrong": 1
+     "wrong": 12
     },
     "no_answer": 21,
     "overall": {
+     "correct": 3,
+     "no_answer": 10,
+     "wrong": 13
+    },
+    "overall_if_malformed_accepted": {
      "correct": 3,
      "no_answer": 20,
      "wrong": 3
@@ -226,9 +264,19 @@
     },
     "wrong": 2,
     "wrong_overall_films": [
+     "About a Boy (film)",
      "Innerspace",
+     "City of Angels (film)",
+     "End of Days (film)",
      "Last Action Hero",
-     "Silent Light"
+     "Hackers (film)",
+     "Sex and the City (film)",
+     "The Exorcism of Emily Rose",
+     "Sinister (film)",
+     "Deliver Us from Evil (2014 film)",
+     "Hellraiser: Inferno",
+     "Silent Light",
+     "Season of the Witch (2011 film)"
     ]
    },
    "truth_mix": {
@@ -244,8 +292,8 @@
       "n": 8,
       "overall": {
        "correct": 0,
-       "no_answer": 8,
-       "wrong": 0
+       "no_answer": 4,
+       "wrong": 4
       },
       "verdict": {
        "correct": 0,
@@ -292,12 +340,18 @@
      "ratio": 0.5
     },
     "director": {
-     "correct": 9,
+     "correct": 5,
+     "malformed": 4,
      "no_answer": 1,
-     "wrong": 0
+     "wrong": 4
     },
     "no_answer": 9,
     "overall": {
+     "correct": 1,
+     "no_answer": 5,
+     "wrong": 4
+    },
+    "overall_if_malformed_accepted": {
      "correct": 1,
      "no_answer": 9,
      "wrong": 0
@@ -308,7 +362,12 @@
      "wrong": 0
     },
     "wrong": 0,
-    "wrong_overall_films": []
+    "wrong_overall_films": [
+     "City of Angels (film)",
+     "Sex and the City (film)",
+     "The Exorcism of Emily Rose",
+     "Sinister (film)"
+    ]
    },
    "hybrid": {
     "by_truth": {
@@ -316,8 +375,8 @@
       "n": 8,
       "overall": {
        "correct": 0,
-       "no_answer": 8,
-       "wrong": 0
+       "no_answer": 4,
+       "wrong": 4
       },
       "verdict": {
        "correct": 0,
@@ -364,12 +423,18 @@
      "ratio": 0.5
     },
     "director": {
-     "correct": 9,
+     "correct": 5,
+     "malformed": 4,
      "no_answer": 1,
-     "wrong": 0
+     "wrong": 4
     },
     "no_answer": 9,
     "overall": {
+     "correct": 1,
+     "no_answer": 5,
+     "wrong": 4
+    },
+    "overall_if_malformed_accepted": {
      "correct": 1,
      "no_answer": 9,
      "wrong": 0
@@ -380,7 +445,12 @@
      "wrong": 0
     },
     "wrong": 0,
-    "wrong_overall_films": []
+    "wrong_overall_films": [
+     "City of Angels (film)",
+     "Sex and the City (film)",
+     "The Exorcism of Emily Rose",
+     "Sinister (film)"
+    ]
    },
    "n_films": 10,
    "semantic": {
@@ -389,8 +459,8 @@
       "n": 8,
       "overall": {
        "correct": 0,
-       "no_answer": 7,
-       "wrong": 1
+       "no_answer": 3,
+       "wrong": 5
       },
       "verdict": {
        "correct": 0,
@@ -437,12 +507,18 @@
      "ratio": 0.5
     },
     "director": {
-     "correct": 9,
+     "correct": 5,
+     "malformed": 4,
      "no_answer": 0,
-     "wrong": 1
+     "wrong": 5
     },
     "no_answer": 9,
     "overall": {
+     "correct": 1,
+     "no_answer": 4,
+     "wrong": 5
+    },
+    "overall_if_malformed_accepted": {
      "correct": 1,
      "no_answer": 8,
      "wrong": 1
@@ -454,7 +530,11 @@
     },
     "wrong": 0,
     "wrong_overall_films": [
-     "Last Action Hero"
+     "City of Angels (film)",
+     "Last Action Hero",
+     "Sex and the City (film)",
+     "The Exorcism of Emily Rose",
+     "Sinister (film)"
     ]
    },
    "truth_mix": {
@@ -470,8 +550,8 @@
       "n": 13,
       "overall": {
        "correct": 0,
-       "no_answer": 11,
-       "wrong": 2
+       "no_answer": 6,
+       "wrong": 7
       },
       "verdict": {
        "correct": 0,
@@ -483,8 +563,8 @@
       "n": 1,
       "overall": {
        "correct": 0,
-       "no_answer": 1,
-       "wrong": 0
+       "no_answer": 0,
+       "wrong": 1
       },
       "verdict": {
        "correct": 0,
@@ -518,12 +598,18 @@
      "ratio": 0.333
     },
     "director": {
-     "correct": 14,
+     "correct": 7,
+     "malformed": 7,
      "no_answer": 2,
-     "wrong": 0
+     "wrong": 7
     },
     "no_answer": 12,
     "overall": {
+     "correct": 1,
+     "no_answer": 6,
+     "wrong": 9
+    },
+    "overall_if_malformed_accepted": {
      "correct": 1,
      "no_answer": 12,
      "wrong": 3
@@ -536,8 +622,14 @@
     "wrong": 3,
     "wrong_overall_films": [
      "The Godfather",
+     "About a Boy (film)",
      "Innerspace",
-     "Silent Light"
+     "End of Days (film)",
+     "Hackers (film)",
+     "Deliver Us from Evil (2014 film)",
+     "Hellraiser: Inferno",
+     "Silent Light",
+     "Season of the Witch (2011 film)"
     ]
    },
    "hybrid": {
@@ -546,8 +638,8 @@
       "n": 13,
       "overall": {
        "correct": 0,
-       "no_answer": 10,
-       "wrong": 3
+       "no_answer": 5,
+       "wrong": 8
       },
       "verdict": {
        "correct": 0,
@@ -559,8 +651,8 @@
       "n": 1,
       "overall": {
        "correct": 0,
-       "no_answer": 1,
-       "wrong": 0
+       "no_answer": 0,
+       "wrong": 1
       },
       "verdict": {
        "correct": 0,
@@ -594,12 +686,18 @@
      "ratio": 0.333
     },
     "director": {
-     "correct": 14,
+     "correct": 7,
+     "malformed": 7,
      "no_answer": 1,
-     "wrong": 1
+     "wrong": 8
     },
     "no_answer": 12,
     "overall": {
+     "correct": 1,
+     "no_answer": 5,
+     "wrong": 10
+    },
+    "overall_if_malformed_accepted": {
      "correct": 1,
      "no_answer": 11,
      "wrong": 4
@@ -612,9 +710,15 @@
     "wrong": 3,
     "wrong_overall_films": [
      "The Godfather",
+     "About a Boy (film)",
      "Innerspace",
      "Romeo + Juliet",
-     "Silent Light"
+     "End of Days (film)",
+     "Hackers (film)",
+     "Deliver Us from Evil (2014 film)",
+     "Hellraiser: Inferno",
+     "Silent Light",
+     "Season of the Witch (2011 film)"
     ]
    },
    "n_films": 16,
@@ -624,8 +728,8 @@
       "n": 13,
       "overall": {
        "correct": 0,
-       "no_answer": 11,
-       "wrong": 2
+       "no_answer": 6,
+       "wrong": 7
       },
       "verdict": {
        "correct": 0,
@@ -637,8 +741,8 @@
       "n": 1,
       "overall": {
        "correct": 0,
-       "no_answer": 1,
-       "wrong": 0
+       "no_answer": 0,
+       "wrong": 1
       },
       "verdict": {
        "correct": 0,
@@ -672,12 +776,18 @@
      "ratio": 0.667
     },
     "director": {
-     "correct": 14,
+     "correct": 7,
+     "malformed": 7,
      "no_answer": 2,
-     "wrong": 0
+     "wrong": 7
     },
     "no_answer": 12,
     "overall": {
+     "correct": 2,
+     "no_answer": 6,
+     "wrong": 8
+    },
+    "overall_if_malformed_accepted": {
      "correct": 2,
      "no_answer": 12,
      "wrong": 2
@@ -689,8 +799,14 @@
     },
     "wrong": 2,
     "wrong_overall_films": [
+     "About a Boy (film)",
      "Innerspace",
-     "Silent Light"
+     "End of Days (film)",
+     "Hackers (film)",
+     "Deliver Us from Evil (2014 film)",
+     "Hellraiser: Inferno",
+     "Silent Light",
+     "Season of the Witch (2011 film)"
     ]
    },
    "truth_mix": {

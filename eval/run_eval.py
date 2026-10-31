@@ -109,20 +109,37 @@ def aggregate_retrieval(rows):
 
 
 # ---------------------------------------------------------------- track B: awards
-def director_status(m: dict) -> str:
-    """The director as its own column: correct / wrong (a name that is not the director) / no answer (Unknown)."""
-    if m["director_ok"]:
-        return "correct"
+def _norm_name(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "").lower().replace("\u2019", "'")).strip(" .,")
+
+
+def director_status(m: dict, expected: str) -> str:
+    """The director as its own column, scored STRICTLY on the string the user sees.
+
+    correct   : exactly the expected name(s) (co-directors may be joined with "and"), nothing else
+    malformed : contains the expected name(s) but with extra text, e.g. "Joe Dante and produced by Michael Finnell"
+    wrong     : another name, or a co-director missing
+    no answer : "Unknown"
+    """
     found = m.get("director_found")
     if not found or found.lower().startswith("unknown"):
         return "no answer"
-    return "wrong"
+    names = [_norm_name(n) for n in re.split(r"\s+and\s+", expected)]
+    rest = _norm_name(found)
+    if not all(n in rest for n in names):
+        return "wrong"  # another name, or a co-director missing
+    for n in names:
+        rest = rest.replace(n, "")
+    return "correct" if re.sub(r"\b(and)\b|[,\s]", "", rest) == "" else "malformed"
 
 
-def overall_status(m: dict) -> str:
-    """Wrong overall if the director OR the verdict is wrong; correct only if both are correct; else no answer."""
-    d, v = director_status(m), m["score"]
-    if d == "wrong" or v == "wrong":
+def overall_status(m: dict, expected: str, accept_malformed: bool = False) -> str:
+    """Wrong overall if the director (wrong OR malformed) or the verdict is wrong; correct only if both are correct.
+    accept_malformed=True is the lenient reading, reported alongside for transparency."""
+    d, v = director_status(m, expected), m["score"]
+    if accept_malformed and d == "malformed":
+        d = "correct"
+    if d in ("wrong", "malformed") or v == "wrong":
         return "wrong"
     return "correct" if d == "correct" and v == "correct" else "no answer"
 
@@ -170,8 +187,8 @@ def run_awards(award_set, splits, agent_loop, rt):
                 "answer": answer,
             }
         for m in row["modes"].values():
-            m["director_status"] = director_status(m)
-            m["overall"] = overall_status(m)
+            m["director_status"] = director_status(m, f["director"])
+            m["overall"] = overall_status(m, f["director"])
         rows.append(row)
     return rows
 
@@ -184,24 +201,28 @@ def aggregate_awards(rows):
         answerable = [r for r in sel if r["truth"] != "no_win"]
         for mode in MODES:
             ms = {r["film"]: r["modes"][mode] for r in sel}
+            expected = {r["film"]: r["expected_director"] for r in sel}
             verdict = tally3(m["score"] for m in ms.values())
+            dstat = [director_status(m, expected[f]) for f, m in ms.items()]
             agg[mode] = {
                 **verdict,  # verdict only (kept for compatibility)
                 "verdict": verdict,
-                "director": tally3(director_status(m) for m in ms.values()),
-                "overall": tally3(overall_status(m) for m in ms.values()),
+                # "wrong" here includes "malformed"; the malformed count is also given on its own
+                "director": {**tally3("wrong" if d == "malformed" else d for d in dstat), "malformed": dstat.count("malformed")},
+                "overall": tally3(overall_status(m, expected[f]) for f, m in ms.items()),
+                "overall_if_malformed_accepted": tally3(overall_status(m, expected[f], accept_malformed=True) for f, m in ms.items()),
                 "by_truth": {
                     t: {
                         "n": sum(1 for r in sel if r["truth"] == t),
                         "verdict": tally3(r["modes"][mode]["score"] for r in sel if r["truth"] == t),
-                        "overall": tally3(overall_status(r["modes"][mode]) for r in sel if r["truth"] == t),
+                        "overall": tally3(overall_status(r["modes"][mode], r["expected_director"]) for r in sel if r["truth"] == t),
                     }
                     for t in ("won", "nominated", "no_win")
                 },
                 # coverage on answerable films = correct / (films whose truth is won or nominated)
                 "coverage_on_answerable_verdict": {"correct": sum(1 for r in answerable if r["modes"][mode]["score"] == "correct"), "of": len(answerable)},
-                "coverage_on_answerable_overall": {"correct": sum(1 for r in answerable if overall_status(r["modes"][mode]) == "correct"), "of": len(answerable)},
-                "wrong_overall_films": [r["film"] for r in sel if overall_status(r["modes"][mode]) == "wrong"],
+                "coverage_on_answerable_overall": {"correct": sum(1 for r in answerable if overall_status(r["modes"][mode], r["expected_director"]) == "correct"), "of": len(answerable)},
+                "wrong_overall_films": [r["film"] for r in sel if overall_status(r["modes"][mode], r["expected_director"]) == "wrong"],
             }
             for key in ("coverage_on_answerable_verdict", "coverage_on_answerable_overall"):
                 c = agg[mode][key]
@@ -214,7 +235,15 @@ def reaggregate(directory: str) -> int:
     """Recompute summary.json from the saved per-row results (no retrieval or agent run)."""
     splits = json.load(open("eval/data/splits.json"))
     rows_r = json.load(open(os.path.join(directory, "retrieval_results.json")))["rows"]
-    rows_a = json.load(open(os.path.join(directory, "awards_results.json")))["rows"]
+    awards_doc = json.load(open(os.path.join(directory, "awards_results.json")))
+    rows_a = awards_doc["rows"]
+    for r in rows_a:  # refresh the stored statuses with the current scoring rules
+        for m in r["modes"].values():
+            m["director_status"] = director_status(m, r["expected_director"])
+            m["overall"] = overall_status(m, r["expected_director"])
+    with open(os.path.join(directory, "awards_results.json"), "w") as f:
+        json.dump(awards_doc, f, indent=1, sort_keys=True)
+        f.write("\n")
     summary = {"seed": splits["seed"], "pool_per_retriever": POOL, "retrieval": aggregate_retrieval(rows_r), "awards": aggregate_awards(rows_a)}
     with open(os.path.join(directory, "summary.json"), "w") as f:
         json.dump(summary, f, indent=1, sort_keys=True)

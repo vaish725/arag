@@ -33,12 +33,14 @@ def awards_table(summary, scope, title):
         n = a["semantic"]["by_truth"][t]["n"]
         lines.append(f"| {t} ({n}){note} | " + " | ".join(cwn(a[m]["by_truth"][t]["overall"]) for m, _ in MODES) + " |")
     lines.append(f"| **all ({a['n_films']})** | " + " | ".join(cwn(a[m]["overall"]) for m, _ in MODES) + " |")
+    lines.append("| *all, if a name with extra text were accepted as correct* | " + " | ".join(cwn(a[m]["overall_if_malformed_accepted"]) for m, _ in MODES) + " |")
     cov = lambda m: a[m]["coverage_on_answerable_overall"]
     lines.append("| **coverage on answerable films** (overall correct ÷ answerable films) | " + " | ".join(
         f"{cov(m)['correct']}/{cov(m)['of']} answerable films = {cov(m)['ratio']:.2f}" for m, _ in MODES) + " |")
     lines += ["", "| Components (all %d films) | " % a["n_films"] + " | ".join(n for _, n in MODES) + " |", "|---|" + "---|" * len(MODES),
               "| Verdict only | " + " | ".join(cwn(a[m]["verdict"]) for m, _ in MODES) + " |",
-              "| Director only | " + " | ".join(cwn(a[m]["director"]) for m, _ in MODES) + " |"]
+              "| Director only (wrong includes malformed) | " + " | ".join(cwn(a[m]["director"]) for m, _ in MODES) + " |",
+              "| of which malformed: the right name with extra text attached | " + " | ".join(str(a[m]["director"]["malformed"]) for m, _ in MODES) + " |"]
     cov_v = lambda m: a[m]["coverage_on_answerable_verdict"]
     lines.append("| Verdict-only coverage | " + " | ".join(f"{cov_v(m)['correct']}/{cov_v(m)['of']} answerable films = {cov_v(m)['ratio']:.2f}" for m, _ in MODES) + " |")
     mix = a["truth_mix"]
@@ -58,8 +60,8 @@ def wrong_overall(rows_path, scope):
             why = []
             if x["score"] == "wrong":
                 why.append(f"verdict {x['verdict']}, truth {r['truth']}")
-            if x["director_status"] == "wrong":
-                why.append(f"director \"{x['director_found'][:60]}\", expected {r['expected_director']}")
+            if x["director_status"] in ("wrong", "malformed"):
+                why.append(f"{x['director_status']} director \"{x['director_found'][:50]}\", expected {r['expected_director']}")
             if why:
                 items.append(f"{r['film']} [{r['split']}] ({'; '.join(why)})")
         out.append(f"- {name}: " + ("; ".join(items) if items else "none"))
@@ -67,7 +69,7 @@ def wrong_overall(rows_path, scope):
 
 
 def director_failures(rows_path):
-    """Every film where some mode did not get the director right, with the split and each mode's output."""
+    """Every film where some mode's director string is not exactly right, with the split and each mode's output."""
     rows = load(rows_path)["rows"]
     lines = ["| Film | Split | " + " | ".join(n for _, n in MODES) + " |", "|---|---|" + "---|" * len(MODES)]
     for r in rows:
@@ -76,7 +78,9 @@ def director_failures(rows_path):
         cells = []
         for m, _ in MODES:
             x = r["modes"][m]
-            cells.append({"correct": "correct", "no answer": "Unknown"}.get(x["director_status"], f"**WRONG**: \"{(x['director_found'] or '')[:48]}\""))
+            st = x["director_status"]
+            cells.append("correct" if st == "correct" else "Unknown" if st == "no answer"
+                         else f"**{st.upper()}**: \"{(x['director_found'] or '')[:46]}\"")
         lines.append(f"| {r['film']} | {r['split']} | " + " | ".join(cells) + " |")
     return "\n".join(lines)
 
@@ -113,7 +117,7 @@ def render() -> str:
         "Wrong overall (director or verdict), after fixes:", "",
         "Test split:", "", wrong_overall("eval/results/after_fixes/awards_results.json", "test"), "",
         "All 26 films (dev + test):", "", wrong_overall("eval/results/after_fixes/awards_results.json", "all"), "",
-        "Films where some method did not get the director right (director output per method):", "", director_failures("eval/results/after_fixes/awards_results.json"), "",
+        "Films where some method's director string is not exactly right (output per method):", "", director_failures("eval/results/after_fixes/awards_results.json"), "",
         f"Label sourcing check (`python eval/verify_award_labels.py`): {ok} of {len(evidence)} award rows pass; {manual} of them needed a manual reading of the passages.",
         "", END,
     ]

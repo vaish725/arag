@@ -16,11 +16,16 @@ candidates, de-duplicated to chunks.
 
 **Track B: director-award answers.** 26 films whose pages are in the corpus (`eval/data/award_set.json`), asked
 as "Who directed X and did they win any Academy Awards?" in evidence-only mode. Truth = the director's Oscar
-outcome *for that film*: `won` / `nominated` / `no_win`. The **director is scored as its own column**: correct,
-**wrong** (a name that is not the director) or no answer ("Unknown"). The **verdict** is correct, **wrong** (a
-different positive claim) or no answer ("unknown"; absence of evidence cannot prove a negative, so this is never
-counted as wrong). A row is **wrong overall if the director OR the verdict is wrong**, correct overall only if
-both are correct, and no answer otherwise. Rows with the verdict passage: `eval/results/*/awards_results.json`.
+outcome *for that film*: `won` / `nominated` / `no_win`. The **director is scored as its own column, strictly on the string the user sees**: **correct** (exactly the expected
+name; co-directors joined with "and"), **malformed** (the right name with extra text attached, e.g. "Joe Dante and
+produced by Michael Finnell"), **wrong** (another name) or no answer ("Unknown"). The **verdict** is correct, **wrong**
+(a different positive claim) or no answer ("unknown"; absence of evidence cannot prove a negative, so this is never
+counted as wrong). A row is **wrong overall if the director (wrong or malformed) OR the verdict is wrong**, correct
+overall only if both are correct, and no answer otherwise. Counting malformed as wrong is a judgment call, so each
+table also shows the lenient reading (a name with extra text accepted). Rows with the verdict passage:
+`eval/results/*/awards_results.json`.
+
+Rows with the verdict passage: `eval/results/*/awards_results.json`.
 
 **Labels are agent-sourced, not owner-verified.** Every row carries `source_url`, `supporting_text` (verbatim,
 at most 25 words) and `verified_by: "agent-sourced"`. `python eval/verify_award_labels.py` re-checks, against
@@ -66,15 +71,17 @@ Cells are correct / wrong / no answer. A row is wrong overall if the director OR
 | Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | won (2) | 1 / 1 / 0 | 2 / 0 / 0 | 1 / 1 / 0 |
-| nominated (1) | 0 / 0 / 1 | 0 / 0 / 1 | 0 / 0 / 1 |
-| no_win (13) (never correct: the system has no "no win" output) | 0 / 2 / 11 | 0 / 2 / 11 | 0 / 3 / 10 |
-| **all (16)** | 1 / 3 / 12 | 2 / 2 / 12 | 1 / 4 / 11 |
+| nominated (1) | 0 / 1 / 0 | 0 / 1 / 0 | 0 / 1 / 0 |
+| no_win (13) (never correct: the system has no "no win" output) | 0 / 7 / 6 | 0 / 7 / 6 | 0 / 8 / 5 |
+| **all (16)** | 1 / 9 / 6 | 2 / 8 / 6 | 1 / 10 / 5 |
+| *all, if a name with extra text were accepted as correct* | 1 / 3 / 12 | 2 / 2 / 12 | 1 / 4 / 11 |
 | **coverage on answerable films** (overall correct ÷ answerable films) | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
 
 | Components (all 16 films) | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | Verdict only | 1 / 3 / 12 | 2 / 2 / 12 | 1 / 3 / 12 |
-| Director only | 14 / 0 / 2 | 14 / 0 / 2 | 14 / 1 / 1 |
+| Director only (wrong includes malformed) | 7 / 7 / 2 | 7 / 7 / 2 | 7 / 8 / 1 |
+| of which malformed: the right name with extra text attached | 7 | 7 | 7 |
 | Verdict-only coverage | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
 
 This split has 13 of 16 films with truth `no_win`, so it mostly measures abstention: only 3 films can be answered correctly.
@@ -86,15 +93,17 @@ Cells are correct / wrong / no answer. A row is wrong overall if the director OR
 | Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | won (3) | 2 / 1 / 0 | 3 / 0 / 0 | 2 / 1 / 0 |
-| nominated (2) | 0 / 0 / 2 | 0 / 0 / 2 | 0 / 0 / 2 |
-| no_win (21) (never correct: the system has no "no win" output) | 0 / 2 / 19 | 0 / 3 / 18 | 0 / 3 / 18 |
-| **all (26)** | 2 / 3 / 21 | 3 / 3 / 20 | 2 / 4 / 20 |
+| nominated (2) | 0 / 1 / 1 | 0 / 1 / 1 | 0 / 1 / 1 |
+| no_win (21) (never correct: the system has no "no win" output) | 0 / 11 / 10 | 0 / 12 / 9 | 0 / 12 / 9 |
+| **all (26)** | 2 / 13 / 11 | 3 / 13 / 10 | 2 / 14 / 10 |
+| *all, if a name with extra text were accepted as correct* | 2 / 3 / 21 | 3 / 3 / 20 | 2 / 4 / 20 |
 | **coverage on answerable films** (overall correct ÷ answerable films) | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
 
 | Components (all 26 films) | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | Verdict only | 2 / 3 / 21 | 3 / 2 / 21 | 2 / 3 / 21 |
-| Director only | 23 / 0 / 3 | 23 / 1 / 2 | 23 / 1 / 2 |
+| Director only (wrong includes malformed) | 12 / 11 / 3 | 12 / 12 / 2 | 12 / 12 / 2 |
+| of which malformed: the right name with extra text attached | 11 | 11 | 11 |
 | Verdict-only coverage | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
 
 These films include 21 of 26 films with truth `no_win`, so it mostly measures abstention: only 5 films can be answered correctly.
@@ -110,15 +119,17 @@ Cells are correct / wrong / no answer. A row is wrong overall if the director OR
 | Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | won (2) | 1 / 1 / 0 | 2 / 0 / 0 | 1 / 1 / 0 |
-| nominated (1) | 0 / 0 / 1 | 0 / 0 / 1 | 0 / 0 / 1 |
-| no_win (13) (never correct: the system has no "no win" output) | 0 / 0 / 13 | 0 / 0 / 13 | 0 / 1 / 12 |
-| **all (16)** | 1 / 1 / 14 | 2 / 0 / 14 | 1 / 2 / 13 |
+| nominated (1) | 0 / 1 / 0 | 0 / 1 / 0 | 0 / 1 / 0 |
+| no_win (13) (never correct: the system has no "no win" output) | 0 / 6 / 7 | 0 / 6 / 7 | 0 / 7 / 6 |
+| **all (16)** | 1 / 8 / 7 | 2 / 7 / 7 | 1 / 9 / 6 |
+| *all, if a name with extra text were accepted as correct* | 1 / 1 / 14 | 2 / 0 / 14 | 1 / 2 / 13 |
 | **coverage on answerable films** (overall correct ÷ answerable films) | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
 
 | Components (all 16 films) | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | Verdict only | 1 / 1 / 14 | 2 / 0 / 14 | 1 / 1 / 14 |
-| Director only | 14 / 0 / 2 | 14 / 0 / 2 | 14 / 1 / 1 |
+| Director only (wrong includes malformed) | 7 / 7 / 2 | 7 / 7 / 2 | 7 / 8 / 1 |
+| of which malformed: the right name with extra text attached | 7 | 7 | 7 |
 | Verdict-only coverage | 1/3 answerable films = 0.33 | 2/3 answerable films = 0.67 | 1/3 answerable films = 0.33 |
 
 This split has 13 of 16 films with truth `no_win`, so it mostly measures abstention: only 3 films can be answered correctly.
@@ -130,15 +141,17 @@ Cells are correct / wrong / no answer. A row is wrong overall if the director OR
 | Truth class (n films), overall | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | won (3) | 2 / 1 / 0 | 3 / 0 / 0 | 2 / 1 / 0 |
-| nominated (2) | 0 / 0 / 2 | 0 / 0 / 2 | 0 / 0 / 2 |
-| no_win (21) (never correct: the system has no "no win" output) | 0 / 0 / 21 | 0 / 1 / 20 | 0 / 1 / 20 |
-| **all (26)** | 2 / 1 / 23 | 3 / 1 / 22 | 2 / 2 / 22 |
+| nominated (2) | 0 / 1 / 1 | 0 / 1 / 1 | 0 / 1 / 1 |
+| no_win (21) (never correct: the system has no "no win" output) | 0 / 10 / 11 | 0 / 11 / 10 | 0 / 11 / 10 |
+| **all (26)** | 2 / 12 / 12 | 3 / 12 / 11 | 2 / 13 / 11 |
+| *all, if a name with extra text were accepted as correct* | 2 / 1 / 23 | 3 / 1 / 22 | 2 / 2 / 22 |
 | **coverage on answerable films** (overall correct ÷ answerable films) | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
 
 | Components (all 26 films) | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|
 | Verdict only | 2 / 1 / 23 | 3 / 0 / 23 | 2 / 1 / 23 |
-| Director only | 23 / 0 / 3 | 23 / 1 / 2 | 23 / 1 / 2 |
+| Director only (wrong includes malformed) | 12 / 11 / 3 | 12 / 12 / 2 | 12 / 12 / 2 |
+| of which malformed: the right name with extra text attached | 11 | 11 | 11 |
 | Verdict-only coverage | 2/5 answerable films = 0.40 | 3/5 answerable films = 0.60 | 2/5 answerable films = 0.40 |
 
 These films include 21 of 26 films with truth `no_win`, so it mostly measures abstention: only 5 films can be answered correctly.
@@ -147,33 +160,45 @@ Wrong overall (director or verdict), after fixes:
 
 Test split:
 
-- BM25: The Godfather [test] (verdict nominated, truth won)
-- Semantic: none
-- Hybrid (RRF): The Godfather [test] (verdict nominated, truth won); Romeo + Juliet [test] (director "William Woodman and starring Alex Hyde-White as Romeo and Bl", expected Baz Luhrmann)
+- BM25: The Godfather [test] (verdict nominated, truth won); About a Boy (film) [test] (malformed director "brothers Chris Weitz and Paul Weitz with music by ", expected Chris Weitz and Paul Weitz); Innerspace [test] (malformed director "Joe Dante and produced by Michael Finnell", expected Joe Dante); End of Days (film) [test] (malformed director "Peter Hyams and starring Arnold Schwarzenegger", expected Peter Hyams); Hackers (film) [test] (malformed director "Iain Softley and starring Jonny Lee Miller", expected Iain Softley); Deliver Us from Evil (2014 film) [test] (malformed director "Scott Derrickson and produced by Jerry Bruckheimer", expected Scott Derrickson); Hellraiser: Inferno [test] (malformed director "Scott Derrickson and released on October", expected Scott Derrickson); Season of the Witch (2011 film) [test] (malformed director "Dominic Sena with extensive uncredited reshoots by", expected Dominic Sena)
+- Semantic: About a Boy (film) [test] (malformed director "brothers Chris Weitz and Paul Weitz with music by ", expected Chris Weitz and Paul Weitz); Innerspace [test] (malformed director "Joe Dante and produced by Michael Finnell", expected Joe Dante); End of Days (film) [test] (malformed director "Peter Hyams and starring Arnold Schwarzenegger", expected Peter Hyams); Hackers (film) [test] (malformed director "Iain Softley and starring Jonny Lee Miller", expected Iain Softley); Deliver Us from Evil (2014 film) [test] (malformed director "Scott Derrickson and produced by Jerry Bruckheimer", expected Scott Derrickson); Hellraiser: Inferno [test] (malformed director "Scott Derrickson and released on October", expected Scott Derrickson); Season of the Witch (2011 film) [test] (malformed director "Dominic Sena with extensive uncredited reshoots by", expected Dominic Sena)
+- Hybrid (RRF): The Godfather [test] (verdict nominated, truth won); About a Boy (film) [test] (malformed director "brothers Chris Weitz and Paul Weitz with music by ", expected Chris Weitz and Paul Weitz); Innerspace [test] (malformed director "Joe Dante and produced by Michael Finnell", expected Joe Dante); Romeo + Juliet [test] (wrong director "William Woodman and starring Alex Hyde-White as Ro", expected Baz Luhrmann); End of Days (film) [test] (malformed director "Peter Hyams and starring Arnold Schwarzenegger", expected Peter Hyams); Hackers (film) [test] (malformed director "Iain Softley and starring Jonny Lee Miller", expected Iain Softley); Deliver Us from Evil (2014 film) [test] (malformed director "Scott Derrickson and produced by Jerry Bruckheimer", expected Scott Derrickson); Hellraiser: Inferno [test] (malformed director "Scott Derrickson and released on October", expected Scott Derrickson); Season of the Witch (2011 film) [test] (malformed director "Dominic Sena with extensive uncredited reshoots by", expected Dominic Sena)
 
 All 26 films (dev + test):
 
-- BM25: The Godfather [test] (verdict nominated, truth won)
-- Semantic: Last Action Hero [dev] (director "Kathryn Bigelow", expected John McTiernan)
-- Hybrid (RRF): The Godfather [test] (verdict nominated, truth won); Romeo + Juliet [test] (director "William Woodman and starring Alex Hyde-White as Romeo and Bl", expected Baz Luhrmann)
+- BM25: The Godfather [test] (verdict nominated, truth won); About a Boy (film) [test] (malformed director "brothers Chris Weitz and Paul Weitz with music by ", expected Chris Weitz and Paul Weitz); Innerspace [test] (malformed director "Joe Dante and produced by Michael Finnell", expected Joe Dante); City of Angels (film) [dev] (malformed director "Brad Silberling and starring Nicolas Cage and Meg ", expected Brad Silberling); End of Days (film) [test] (malformed director "Peter Hyams and starring Arnold Schwarzenegger", expected Peter Hyams); Hackers (film) [test] (malformed director "Iain Softley and starring Jonny Lee Miller", expected Iain Softley); Sex and the City (film) [dev] (malformed director "Michael Patrick King in his feature film directori", expected Michael Patrick King); The Exorcism of Emily Rose [dev] (malformed director "Scott Derrickson and starring Laura Linney and Tom", expected Scott Derrickson); Sinister (film) [dev] (malformed director "Scott Derrickson and written by Derrickson and C", expected Scott Derrickson); Deliver Us from Evil (2014 film) [test] (malformed director "Scott Derrickson and produced by Jerry Bruckheimer", expected Scott Derrickson); Hellraiser: Inferno [test] (malformed director "Scott Derrickson and released on October", expected Scott Derrickson); Season of the Witch (2011 film) [test] (malformed director "Dominic Sena with extensive uncredited reshoots by", expected Dominic Sena)
+- Semantic: About a Boy (film) [test] (malformed director "brothers Chris Weitz and Paul Weitz with music by ", expected Chris Weitz and Paul Weitz); Innerspace [test] (malformed director "Joe Dante and produced by Michael Finnell", expected Joe Dante); City of Angels (film) [dev] (malformed director "Brad Silberling and starring Nicolas Cage and Meg ", expected Brad Silberling); End of Days (film) [test] (malformed director "Peter Hyams and starring Arnold Schwarzenegger", expected Peter Hyams); Last Action Hero [dev] (wrong director "Kathryn Bigelow", expected John McTiernan); Hackers (film) [test] (malformed director "Iain Softley and starring Jonny Lee Miller", expected Iain Softley); Sex and the City (film) [dev] (malformed director "Michael Patrick King in his feature film directori", expected Michael Patrick King); The Exorcism of Emily Rose [dev] (malformed director "Scott Derrickson and starring Laura Linney and Tom", expected Scott Derrickson); Sinister (film) [dev] (malformed director "Scott Derrickson and written by Derrickson and C", expected Scott Derrickson); Deliver Us from Evil (2014 film) [test] (malformed director "Scott Derrickson and produced by Jerry Bruckheimer", expected Scott Derrickson); Hellraiser: Inferno [test] (malformed director "Scott Derrickson and released on October", expected Scott Derrickson); Season of the Witch (2011 film) [test] (malformed director "Dominic Sena with extensive uncredited reshoots by", expected Dominic Sena)
+- Hybrid (RRF): The Godfather [test] (verdict nominated, truth won); About a Boy (film) [test] (malformed director "brothers Chris Weitz and Paul Weitz with music by ", expected Chris Weitz and Paul Weitz); Innerspace [test] (malformed director "Joe Dante and produced by Michael Finnell", expected Joe Dante); Romeo + Juliet [test] (wrong director "William Woodman and starring Alex Hyde-White as Ro", expected Baz Luhrmann); City of Angels (film) [dev] (malformed director "Brad Silberling and starring Nicolas Cage and Meg ", expected Brad Silberling); End of Days (film) [test] (malformed director "Peter Hyams and starring Arnold Schwarzenegger", expected Peter Hyams); Hackers (film) [test] (malformed director "Iain Softley and starring Jonny Lee Miller", expected Iain Softley); Sex and the City (film) [dev] (malformed director "Michael Patrick King in his feature film directori", expected Michael Patrick King); The Exorcism of Emily Rose [dev] (malformed director "Scott Derrickson and starring Laura Linney and Tom", expected Scott Derrickson); Sinister (film) [dev] (malformed director "Scott Derrickson and written by Derrickson and C", expected Scott Derrickson); Deliver Us from Evil (2014 film) [test] (malformed director "Scott Derrickson and produced by Jerry Bruckheimer", expected Scott Derrickson); Hellraiser: Inferno [test] (malformed director "Scott Derrickson and released on October", expected Scott Derrickson); Season of the Witch (2011 film) [test] (malformed director "Dominic Sena with extensive uncredited reshoots by", expected Dominic Sena)
 
-Films where some method did not get the director right (director output per method):
+Films where some method's director string is not exactly right (output per method):
 
 | Film | Split | BM25 | Semantic | Hybrid (RRF) |
 |---|---|---|---|---|
+| About a Boy (film) | test | **MALFORMED**: "brothers Chris Weitz and Paul Weitz with music" | **MALFORMED**: "brothers Chris Weitz and Paul Weitz with music" | **MALFORMED**: "brothers Chris Weitz and Paul Weitz with music" |
 | Ed Wood (film) | test | Unknown | Unknown | Unknown |
-| Romeo + Juliet | test | Unknown | Unknown | **WRONG**: "William Woodman and starring Alex Hyde-White as " |
+| Innerspace | test | **MALFORMED**: "Joe Dante and produced by Michael Finnell" | **MALFORMED**: "Joe Dante and produced by Michael Finnell" | **MALFORMED**: "Joe Dante and produced by Michael Finnell" |
+| Romeo + Juliet | test | Unknown | Unknown | **WRONG**: "William Woodman and starring Alex Hyde-White a" |
+| City of Angels (film) | dev | **MALFORMED**: "Brad Silberling and starring Nicolas Cage and " | **MALFORMED**: "Brad Silberling and starring Nicolas Cage and " | **MALFORMED**: "Brad Silberling and starring Nicolas Cage and " |
+| End of Days (film) | test | **MALFORMED**: "Peter Hyams and starring Arnold Schwarzenegger" | **MALFORMED**: "Peter Hyams and starring Arnold Schwarzenegger" | **MALFORMED**: "Peter Hyams and starring Arnold Schwarzenegger" |
 | Last Action Hero | dev | Unknown | **WRONG**: "Kathryn Bigelow" | Unknown |
+| Hackers (film) | test | **MALFORMED**: "Iain Softley and starring Jonny Lee Miller" | **MALFORMED**: "Iain Softley and starring Jonny Lee Miller" | **MALFORMED**: "Iain Softley and starring Jonny Lee Miller" |
+| Sex and the City (film) | dev | **MALFORMED**: "Michael Patrick King in his feature film direc" | **MALFORMED**: "Michael Patrick King in his feature film direc" | **MALFORMED**: "Michael Patrick King in his feature film direc" |
+| The Exorcism of Emily Rose | dev | **MALFORMED**: "Scott Derrickson and starring Laura Linney and" | **MALFORMED**: "Scott Derrickson and starring Laura Linney and" | **MALFORMED**: "Scott Derrickson and starring Laura Linney and" |
+| Sinister (film) | dev | **MALFORMED**: "Scott Derrickson and written by Derrickson and" | **MALFORMED**: "Scott Derrickson and written by Derrickson and" | **MALFORMED**: "Scott Derrickson and written by Derrickson and" |
+| Deliver Us from Evil (2014 film) | test | **MALFORMED**: "Scott Derrickson and produced by Jerry Bruckhe" | **MALFORMED**: "Scott Derrickson and produced by Jerry Bruckhe" | **MALFORMED**: "Scott Derrickson and produced by Jerry Bruckhe" |
+| Hellraiser: Inferno | test | **MALFORMED**: "Scott Derrickson and released on October" | **MALFORMED**: "Scott Derrickson and released on October" | **MALFORMED**: "Scott Derrickson and released on October" |
+| Season of the Witch (2011 film) | test | **MALFORMED**: "Dominic Sena with extensive uncredited reshoot" | **MALFORMED**: "Dominic Sena with extensive uncredited reshoot" | **MALFORMED**: "Dominic Sena with extensive uncredited reshoot" |
 
 Label sourcing check (`python eval/verify_award_labels.py`): 26 of 26 award rows pass; 4 of them needed a manual reading of the passages.
 
 <!-- results:end -->
 
 What the two verdict fixes changed: *Innerspace* (the film's Best Visual Effects win, "the only film directed by
-Dante to do so") and *Silent Light* (an Independent Spirit nomination) became "no answer". **Wrong answers that
-remain are listed above, by method, and include wrong directors**, so "0 wrong" holds only where the lists say
-"none" and only for the split named: for the semantic method it holds on the test split but not across all 26
-films (Last Action Hero, a dev-split film, gets a wrong director).
+Dante to do so") and *Silent Light* (an Independent Spirit nomination) became "no answer". **Wrong rows that
+remain are listed above, by method.** Most are *malformed directors*: the extractor returns the right name followed
+by extra words, so the strict overall counts are far worse than the lenient row beside them. Only the lenient row
+(or the verdict-only components) is comparable with the verdict-only numbers reported earlier; any "0 wrong" claim
+holds only for the reading and the split it names.
 
 ## Limits
 
@@ -182,12 +207,14 @@ films (Last Action Hero, a dev-split film, gets a wrong director).
 - **Retrieval is likely optimistic.** The corpus was built from the contexts of the first validation questions,
   so every usable question has its distractors in the corpus; only 27 of 7,405 questions qualify.
 - Award rows are not independent (Derrickson 4 films, Cameron 2); most films have no Oscar story, so "no
-  answer" dominates by design. Director detection is not perfect (not fixed here; next PR): the extractor only matches the literal phrase
-  "directed by". Films where some method did not get the director right are tabled above with their split and
-  each method's output. *Ed Wood* (test split): the page says "directed and produced by Tim Burton". *Romeo +
-  Juliet* (test split): "directed, co-produced, and co-written by Baz Luhrmann"; under hybrid retrieval the system
-  returned a **wrong** director taken from another film's page. *Last Action Hero* (dev split): "directed and
-  produced by John McTiernan"; under semantic retrieval the system returned a **wrong** director, Kathryn Bigelow,
-  from an unrelated passage ("Cameron served as executive producer for Point Break (1991), directed by Kathryn
-  Bigelow") because the match does not require the sentence to be about the film.
+  answer" dominates by design. Director detection is poor in two ways (not fixed here; next PR). (1) **Malformed output:** the name capture runs
+  past the name, so for 11 of 26 films the answer says things like "Scott Derrickson and released on October" or
+  "Joe Dante and produced by Michael Finnell"; a plain substring check on the surname would have hidden this.
+  (2) **Missed or wrong directors:** the extractor only matches the literal phrase "directed by". *Ed Wood* (test
+  split): "directed and produced by Tim Burton". *Romeo + Juliet* (test split): "directed, co-produced, and co-written
+  by Baz Luhrmann"; under hybrid retrieval the system returned a **wrong** director from another film's page.
+  *Last Action Hero* (dev split): "directed and produced by John McTiernan"; under semantic retrieval the system
+  returned a **wrong** director, Kathryn Bigelow, from an unrelated passage ("Cameron served as executive producer
+  for Point Break (1991), directed by Kathryn Bigelow") because the match does not require the sentence to be about
+  the film. The table above lists every film whose director string is not exactly right.
 - Chunks are 200-word windows, so chunk-level gold is usually the whole paragraph.

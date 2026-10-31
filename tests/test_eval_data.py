@@ -104,14 +104,17 @@ def test_requirements_eval_lists_the_eval_packages():
 def test_the_documented_director_failures_match_the_results_and_splits():
     rows = {r["film"]: r for r in json.loads((ROOT / "eval" / "results" / "after_fixes" / "awards_results.json").read_text())["rows"]}
     splits = load("splits.json")["awards"]
-    failed = {f for f, r in rows.items() if any(r["modes"][m]["director_status"] != "correct" for m in ("bm25", "semantic", "hybrid"))}
-    assert failed == {"Ed Wood (film)", "Romeo + Juliet", "Last Action Hero"}, "update the Limits section of EVAL.md"
+    modes = ("bm25", "semantic", "hybrid")
+    # films where some method says Unknown or names the wrong person
+    missed = {f for f, r in rows.items() if any(r["modes"][m]["director_status"] in ("wrong", "no answer") for m in modes)}
+    assert missed == {"Ed Wood (film)", "Romeo + Juliet", "Last Action Hero"}, "update the Limits section of EVAL.md"
     assert ("Ed Wood (film)" in splits["test"], "Romeo + Juliet" in splits["test"], "Last Action Hero" in splits["dev"]) == (True, True, True)
-    assert rows["Last Action Hero"]["modes"]["semantic"]["director_found"] == "Kathryn Bigelow"
-    assert rows["Last Action Hero"]["modes"]["semantic"]["director_status"] == "wrong"
-    assert rows["Romeo + Juliet"]["modes"]["hybrid"]["director_status"] == "wrong"
-    # a wrong director makes the row wrong overall even when the verdict is only "no answer"
-    assert rows["Last Action Hero"]["modes"]["semantic"]["overall"] == "wrong" and rows["Last Action Hero"]["modes"]["semantic"]["score"] != "wrong"
+    lah, rj = rows["Last Action Hero"]["modes"]["semantic"], rows["Romeo + Juliet"]["modes"]["hybrid"]
+    assert lah["director_found"] == "Kathryn Bigelow" and lah["director_status"] == "wrong" and lah["overall"] == "wrong"
+    assert rj["director_status"] == "wrong" and rj["overall"] == "wrong"
+    assert lah["score"] != "wrong"  # the row is wrong overall because of the director alone
+    # the other documented problem: the right name with extra words attached (11 of 26 films, semantic method)
+    assert sum(r["modes"]["semantic"]["director_status"] == "malformed" for r in rows.values()) == 11
 
 
 def test_overall_scoring_rules():
@@ -120,10 +123,20 @@ def test_overall_scoring_rules():
     sys.path.insert(0, str(ROOT / "eval"))
     from run_eval import director_status, overall_status
 
-    ok = {"director_ok": True, "director_found": "Jane Roe", "score": "correct"}
-    assert overall_status(ok) == "correct"
-    assert overall_status({**ok, "director_ok": False, "director_found": "Someone Else"}) == "wrong"  # wrong director
-    assert overall_status({**ok, "score": "wrong"}) == "wrong"  # wrong verdict
-    assert overall_status({**ok, "score": "no answer"}) == "no answer"
-    assert director_status({"director_ok": False, "director_found": "Unknown based on provided contexts"}) == "no answer"
-    assert overall_status({"director_ok": False, "director_found": "Unknown based on provided contexts", "score": "correct"}) == "no answer"
+    exp = "Jane Roe"
+    ok = {"director_found": "Jane Roe", "score": "correct"}
+    assert director_status(ok, exp) == "correct" and overall_status(ok, exp) == "correct"
+    assert director_status({**ok, "director_found": "Someone Else"}, exp) == "wrong"
+    assert overall_status({**ok, "director_found": "Someone Else"}, exp) == "wrong"  # wrong director
+    assert overall_status({**ok, "score": "wrong"}, exp) == "wrong"  # wrong verdict
+    assert overall_status({**ok, "score": "no answer"}, exp) == "no answer"
+    unknown = {"director_found": "Unknown based on provided contexts", "score": "correct"}
+    assert director_status(unknown, exp) == "no answer" and overall_status(unknown, exp) == "no answer"
+    # the name plus extra words is malformed: wrong overall, unless the lenient reading is asked for
+    garbled = {"director_found": "Jane Roe and produced by John Smith", "score": "correct"}
+    assert director_status(garbled, exp) == "malformed" and overall_status(garbled, exp) == "wrong"
+    assert overall_status(garbled, exp, accept_malformed=True) == "correct"
+    # co-directors in either order, joined with "and"
+    two = "Chris Weitz and Paul Weitz"
+    assert director_status({"director_found": "Paul Weitz and Chris Weitz"}, two) == "correct"
+    assert director_status({"director_found": "Chris Weitz"}, two) == "wrong"
