@@ -29,7 +29,7 @@ tool calls per question is enforced, but the choice of steps is code, not a mode
   the CLI prints the same line to stderr, and every `run_agent` result carries `vector_search`. A one-line
   startup health line is logged.
 
-## What changed in PRs #1 to #5
+## What changed in PRs #1 to #5 and #8
 
 | PR | Change |
 |---|---|
@@ -38,15 +38,19 @@ tool calls per question is enforced, but the choice of steps is code, not a mode
 | [#3](https://github.com/vaish725/arag/pull/3) | Manual `reembed.yml` workflow (workflow_dispatch only, no secrets) used to rebuild the indexes on a runner. |
 | [#4](https://github.com/vaish725/arag/pull/4) | Award evidence: "winning N including <category>" counts as a win; "See also" / "List of" / reference text no longer counts; the verdict passage is reported. |
 | [#5](https://github.com/vaish725/arag/pull/5) | Award attribution: generic "Oscar winner" needs the surname; wins are tied to the film asked about; career wins are reported separately and a work is named only when a passage states it; regression truth sourced from Wikipedia; tests read expectations from `scripts/regression_baseline.json`. |
+| [#8](https://github.com/vaish725/arag/pull/8) | Regression labels sourced from Wikipedia (`source_url`, `supporting_text`); two general verdict fixes: a film's win counts for the director only if the sentence names Best Director or names the director as a recipient, and a nomination counts as an Oscar nomination only if "Academy Award(s)" or "Oscar" is in the same sentence. |
 
-Open: [#6](https://github.com/vaish725/arag/pull/6), the held-out evaluation (retrieval and award tracks, seeded dev/test split).
+Open: [#6](https://github.com/vaish725/arag/pull/6), the evaluation (retrieval and award tracks, seeded dev/test split; award scores are reported by truth class).
 
 ## Known limits
 
 - Only the director to Oscar question type has a specialised path; the verdict logic is regex heuristics over
-  retrieved sentences. PR #6 found two faults that are **not fixed**: a film's "won an Oscar" with no category
-  listed is counted as the director's win, and a non-Oscar nomination ("Independent Spirit Awards") matches the
-  generic `was nominated` pattern.
+  retrieved sentences. The evaluation (PR #6) found two faults, now fixed in #8 (a film's win counted as the
+  director's; a non-Oscar nomination counted as an Oscar one). Other faults may remain: only 26 + 7 films were
+  tested.
+- **Director detection** only matches the literal "directed by". It misses "directed and produced by" (Ed Wood,
+  Last Action Hero) and "directed, co-produced, and co-written by" (Romeo + Juliet), and for Last Action Hero it
+  returned a wrong director from an unrelated passage. Not fixed yet.
 - The corpus is tiny and shaped around the demo films. Retrieval constants (boosts, thresholds, blend weights,
   top-k) are hand-picked and untuned.
 - The recipe can use many tool calls per question (up to 40 observed), including `chunk_read` probes that do
@@ -61,8 +65,8 @@ Open: [#6](https://github.com/vaish725/arag/pull/6), the held-out evaluation (re
 
 ## Open work
 
-1. Merge and review the held-out evaluation (PR #6); the award labels there are unverified.
-2. Fix the two verdict faults above, each with a test.
+1. Merge and review the evaluation (PR #6); its award labels are agent-sourced from Wikipedia, not owner-verified.
+2. Fix director detection (the three failures above), with tests.
 3. Evaluate hybrid retrieval on a larger question set before deciding whether it ships.
 4. Chunking tails and a single BM25 tokenizer (C-19); enforce formatting and type checks in CI (C-22).
 5. The LLM tool-calling loop the paper describes (Phase 5).
