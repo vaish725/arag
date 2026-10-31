@@ -28,17 +28,23 @@ try:
     keyword_search = getattr(_rt, "keyword_search", None)
     semantic_search = getattr(_rt, "semantic_search", None)
 except Exception:
+    _rt = None
     chunk_read = None
     keyword_search = None
     semantic_search = None
 
 
-# --- Step budget: max_steps = the number of retrieval tool calls (keyword_search, semantic_search,
-# chunk_read) one run_agent() call may make. The three tools are wrapped once; the budget lives in a
-# ContextVar so concurrent runs (Streamlit sessions run in threads) never share a counter. Once the
-# budget is spent the tools return nothing, the recipe finishes with what it has, and the result
-# carries budget_exhausted=True.
-DEFAULT_MAX_STEPS = 100  # generous: the longest recipe path in the regression set uses 40 calls (plain 'Titanic')
+# --- Step budget and the complete tool trace.
+# max_steps = the number of retrieval tool calls (keyword_search, semantic_search, chunk_read) one
+# run_agent() call may make. The three tools are wrapped once; the wrapper (a) counts every call against
+# the budget and (b) RECORDS every call, including the chunk_read probes the recipe makes internally.
+# The record lives in a ContextVar so concurrent runs (Streamlit sessions run in threads) never share
+# state. Once the budget is spent the tools return nothing and the attempt is recorded as "blocked", the
+# recipe finishes with what it has, and the result carries budget_exhausted=True.
+# run_agent() builds result["tool_trace"] from this record, so the number of tool entries equals the number
+# of calls actually made (result["tool_calls"]).
+DEFAULT_MAX_STEPS = 100  # generous: the longest path seen uses 59 calls (Last Action Hero)
+TOOL_NAMES = ("semantic_search", "keyword_search", "chunk_read")
 
 
 class _StepBudget:
@@ -46,33 +52,62 @@ class _StepBudget:
         self.limit = limit
         self.used = 0
         self.exhausted = False
+        self.log: List[Dict[str, Any]] = []  # one entry per call (plus blocked attempts), in call order
 
 
 _STEP_BUDGET: "contextvars.ContextVar[Optional[_StepBudget]]" = contextvars.ContextVar("arag_step_budget", default=None)
 
 
-def _counted(fn: Optional[Callable[..., Any]], empty: Callable[[], Any]) -> Optional[Callable[..., Any]]:
-    if fn is None:
-        return None
+def _tool_args(name: str, args: tuple, kwargs: dict) -> Dict[str, Any]:
+    if name == "chunk_read":
+        return {"chunk_id": args[0] if args else kwargs.get("chunk_id")}
+    return {"query": args[0] if args else kwargs.get("query"), "k": args[1] if len(args) > 1 else kwargs.get("k", 5)}
 
-    @functools.wraps(fn)
+
+def _recorded_tool(name: str, empty: Callable[[], Any]) -> Callable[..., Any]:
     def wrapper(*args: Any, **kwargs: Any) -> Any:
+        fn = getattr(_rt, name)  # resolved at call time, so a substituted implementation is still counted and recorded
         budget = _STEP_BUDGET.get()
-        if budget is not None and budget.limit is not None:
-            if budget.used >= budget.limit:
+        entry: Dict[str, Any] = {"tool": name, "args": _tool_args(name, args, kwargs)}
+        if budget is not None:
+            if budget.limit is not None and budget.used >= budget.limit:
                 budget.exhausted = True
+                budget.log.append({**entry, "blocked": True, "error": "step budget exhausted"})
                 return empty()
             budget.used += 1
-        elif budget is not None:
-            budget.used += 1
-        return fn(*args, **kwargs)
+            entry["step"] = budget.used
+            budget.log.append(entry)
+        try:
+            result = fn(*args, **kwargs)
+        except Exception as e:
+            entry["error"] = str(e)
+            raise
+        if name == "chunk_read":
+            text = result.get("full_context") if isinstance(result, dict) else None
+            entry["result_summary"] = (text or "")[:400]
+        else:
+            entry["raw_results"] = result
+        return result
 
+    wrapper.__name__ = name
     return wrapper
 
 
-chunk_read = _counted(chunk_read, dict)  # type: ignore[assignment]
-keyword_search = _counted(keyword_search, list)  # type: ignore[assignment]
-semantic_search = _counted(semantic_search, list)  # type: ignore[assignment]
+chunk_read = _recorded_tool("chunk_read", dict) if _rt is not None else None  # type: ignore[assignment]
+keyword_search = _recorded_tool("keyword_search", list) if _rt is not None else None  # type: ignore[assignment]
+semantic_search = _recorded_tool("semantic_search", list) if _rt is not None else None  # type: ignore[assignment]
+
+
+def _complete_trace(recorded: List[Dict[str, Any]], flow_trace: Any) -> List[Dict[str, Any]]:
+    """Every recorded call, in call order, plus the flow's own entries for anything not recorded.
+
+    The flow's own entries for a tool are dropped when that tool was recorded (the record is complete and
+    chronological); they are kept for a tool that bypassed the wrapper (an implementation substituted at
+    module level) and for pseudo-tools such as "find_award_mentions".
+    """
+    recorded_tools = {e["tool"] for e in recorded}
+    extra = [e for e in (flow_trace or []) if isinstance(e, dict) and e.get("tool") not in recorded_tools]
+    return list(recorded) + extra
 
 
 # "directed by", "directed and produced by", "directed, co-produced, and co-written by": the word
@@ -184,6 +219,7 @@ def run_agent(
         _STEP_BUDGET.reset(token)
     result["budget_exhausted"] = budget.exhausted
     result["tool_calls"] = budget.used
+    result["tool_trace"] = _complete_trace(budget.log, result.get("tool_trace"))
     result["vector_search"] = runtime_status(result.get("tool_trace"), vector_search_status())
     return result
 

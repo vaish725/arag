@@ -126,6 +126,7 @@ def test_synthesize_answer_uses_openai(monkeypatch):
     fake_openai = make_fake_openai_module(batch_embedding=[0.0])
     monkeypatch.setitem(sys.modules, "openai", fake_openai)
     monkeypatch.setenv("OPENAI_API_KEY", "ok")
+    monkeypatch.setenv("ARAG_LLM_PROVIDER", "openai")  # OpenAI answers are opt-in
 
     import arag.llm_backend as llm_backend
 
@@ -193,3 +194,82 @@ def test_synthesize_answer_no_backend_raises(monkeypatch):
     importlib.reload(llm_backend)
     with pytest.raises(RuntimeError, match="No LLM backend configured"):
         llm_backend.synthesize_answer("q", [])
+
+
+# ---- OpenAI answers are opt-in: OPENAI_API_KEY alone activates nothing ---------------------------------
+def _fake_openai_that_must_not_be_used(monkeypatch):
+    calls = []
+
+    class Boom:
+        def __init__(self, *a, **k):
+            calls.append("OpenAI client constructed")
+            raise AssertionError("the OpenAI client must not be used")
+
+    monkeypatch.setitem(sys.modules, "openai", SimpleNamespace(OpenAI=Boom))
+    return calls
+
+
+def test_openai_key_alone_activates_nothing(monkeypatch):
+    calls = _fake_openai_that_must_not_be_used(monkeypatch)
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    monkeypatch.delenv("ARAG_LLM_PROVIDER", raising=False)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    import arag.llm_backend as llm_backend
+
+    importlib.reload(llm_backend)
+    assert llm_backend.get_llm_provider() == "anthropic"
+    assert llm_backend.llm_available() is False
+    with pytest.raises(RuntimeError, match="No LLM backend configured"):
+        llm_backend.synthesize_answer("q", ["ctx"])
+    assert calls == []
+
+
+def test_openai_key_does_not_override_an_anthropic_key(monkeypatch):
+    calls = _fake_openai_that_must_not_be_used(monkeypatch)
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "akey")
+    monkeypatch.delenv("ARAG_LLM_PROVIDER", raising=False)
+
+    class FakeMessages:
+        @staticmethod
+        def create(**kw):
+            return SimpleNamespace(content=[SimpleNamespace(type="text", text='{"answer": "from anthropic", "citations": []}')])
+
+    monkeypatch.setitem(sys.modules, "anthropic", SimpleNamespace(Anthropic=lambda api_key=None: SimpleNamespace(messages=FakeMessages)))
+    import arag.llm_backend as llm_backend
+
+    importlib.reload(llm_backend)
+    assert llm_backend.synthesize_answer("q", ["ctx"])["answer"] == "from anthropic"
+    assert calls == []
+
+
+def test_openai_needs_the_explicit_provider_and_its_key(monkeypatch):
+    monkeypatch.setitem(sys.modules, "openai", make_fake_openai_module(batch_embedding=[0.0]))
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setenv("ARAG_LLM_PROVIDER", "openai")
+    import arag.llm_backend as llm_backend
+
+    importlib.reload(llm_backend)
+    assert llm_backend.llm_available() is False  # the provider alone is not enough
+    monkeypatch.setenv("OPENAI_API_KEY", "ok")
+    assert llm_backend.llm_available() is True
+    assert llm_backend.synthesize_answer("q", ["ctx"])["answer"] == "fake answer"
+
+
+def test_anthropic_key_is_ignored_when_openai_is_selected(monkeypatch):
+    monkeypatch.setenv("ARAG_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "akey")
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    import arag.llm_backend as llm_backend
+
+    importlib.reload(llm_backend)
+    assert llm_backend.llm_available() is False
+
+
+def test_unknown_llm_provider_is_rejected(monkeypatch):
+    monkeypatch.setenv("ARAG_LLM_PROVIDER", "carrier-pigeon")
+    import arag.llm_backend as llm_backend
+
+    importlib.reload(llm_backend)
+    with pytest.raises(ValueError, match="ARAG_LLM_PROVIDER"):
+        llm_backend.llm_available()
