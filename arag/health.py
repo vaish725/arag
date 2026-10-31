@@ -36,7 +36,7 @@ def runtime_status(trace: Any, static: tuple) -> Dict[str, Any]:
     enabled, reason = static
     if enabled:
         for step in trace or []:
-            if isinstance(step, dict) and step.get("tool") == "semantic_search" and step.get("error"):
+            if isinstance(step, dict) and step.get("tool") == "semantic_search" and step.get("error") and not step.get("blocked"):
                 return {"enabled": False, "reason": "semantic_search failed during this run: " + short_reason(str(step["error"]), 110)}
     return {"enabled": bool(enabled), "reason": reason}
 

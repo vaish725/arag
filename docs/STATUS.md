@@ -54,10 +54,10 @@ Open: [#6](https://github.com/vaish725/arag/pull/6), the evaluation (retrieval a
   afterwards), so how it behaves on unseen films is unknown.
 - The corpus is tiny and shaped around the demo films. Retrieval constants (boosts, thresholds, blend weights,
   top-k) are hand-picked and untuned.
-- The recipe can use many tool calls per question (up to 40 observed), including `chunk_read` probes that do
-  not appear in the trace; the default budget is 100.
-- `llm_backend` still contains an OpenAI path that would activate if `OPENAI_API_KEY` is set in the
-  environment. It is not used by default and is not documented as supported.
+- The recipe can use many tool calls per question (up to 59 observed). Every call, including the `chunk_read`
+  probes, is recorded in `tool_trace` and counts toward `max_steps` (default 100).
+- `llm_backend` has an OpenAI path that is **opt-in only**: it runs only with `ARAG_LLM_PROVIDER=openai` (default
+  `anthropic`); `OPENAI_API_KEY` alone activates nothing. It is not documented as supported.
 - The index loader reads pickles from `data/` (trusted files only). Paths resolve from the package, or from
   `ARAG_DATA_DIR`.
 - CI lint, format and type checks (`black`, `isort`, `flake8`, `mypy`) are informational (`|| true`); they are not

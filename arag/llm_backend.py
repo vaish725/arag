@@ -12,22 +12,33 @@ from arag.runtime_ops import BudgetExceededError, get_global_budget, get_global_
 
 log = logging.getLogger(__name__)
 
+LLM_PROVIDERS = ("anthropic", "openai")
+
+
+def get_llm_provider() -> str:
+    """The LLM provider for answers: ARAG_LLM_PROVIDER, default "anthropic".
+
+    OpenAI is used only when ARAG_LLM_PROVIDER=openai is set explicitly. Having OPENAI_API_KEY in the
+    environment does nothing by itself.
+    """
+    provider = (os.environ.get("ARAG_LLM_PROVIDER") or "anthropic").strip().lower()
+    if provider not in LLM_PROVIDERS:
+        raise ValueError(f"Unknown ARAG_LLM_PROVIDER={provider!r}; expected one of {list(LLM_PROVIDERS)}")
+    return provider
+
+
 def llm_available() -> bool:
     import importlib
 
-    if os.environ.get("OPENAI_API_KEY"):
-        try:
-            importlib.import_module("openai")
-            return True
-        except Exception:
-            return False
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        try:
-            importlib.import_module("anthropic")
-            return True
-        except Exception:
-            return False
-    return False
+    provider = get_llm_provider()
+    key, package = ("OPENAI_API_KEY", "openai") if provider == "openai" else ("ANTHROPIC_API_KEY", "anthropic")
+    if not os.environ.get(key):
+        return False
+    try:
+        importlib.import_module(package)
+        return True
+    except Exception:
+        return False
 
 
 def _parse_reply(text: str, allow_fallback: bool) -> dict[str, Any]:
@@ -116,7 +127,8 @@ def synthesize_answer(
         "JSON output."
     )
 
-    if os.environ.get("OPENAI_API_KEY"):
+    provider = get_llm_provider()
+    if provider == "openai" and os.environ.get("OPENAI_API_KEY"):
         try:
             from openai import OpenAI  # type: ignore
 
@@ -146,7 +158,7 @@ def synthesize_answer(
         except Exception as e:
             raise RuntimeError(f"OpenAI chat call failed: {e}")
 
-    if os.environ.get("ANTHROPIC_API_KEY"):
+    if provider == "anthropic" and os.environ.get("ANTHROPIC_API_KEY"):
         try:
             import anthropic  # type: ignore
 
@@ -174,4 +186,6 @@ def synthesize_answer(
         except Exception as e:
             raise RuntimeError(f"Anthropic call failed: {e}")
 
-    raise RuntimeError("No LLM backend configured (set OPENAI_API_KEY or ANTHROPIC_API_KEY)")
+    raise RuntimeError(
+        "No LLM backend configured (set ANTHROPIC_API_KEY; OpenAI is used only with ARAG_LLM_PROVIDER=openai and OPENAI_API_KEY)"
+    )
