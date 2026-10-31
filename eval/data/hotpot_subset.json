@@ -1,0 +1,905 @@
+{
+ "source": "HotpotQA fullwiki validation (hotpot_qa)",
+ "corpus_titles": 1000,
+ "questions_with_all_gold_titles_in_corpus": 29,
+ "dropped": {
+  "gold sentence index missing from the question's context": 2
+ },
+ "questions": [
+  {
+   "id": "5adbf0a255429947ff17385a",
+   "question": "Are the Laleli Mosque and Esma Sultan Mansion located in the same neighborhood?",
+   "answer": "no",
+   "type": "comparison",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Laleli Mosque",
+     "sent_id": 0,
+     "sentence": "The Laleli Mosque (Turkish: \"Laleli Camii, or Tulip Mosque\" ) is an 18th-century Ottoman imperial mosque located in Laleli, Fatih, Istanbul, Turkey.",
+     "chunk_ids": [
+      "Laleli_Mosque_0"
+     ]
+    },
+    {
+     "title": "Esma Sultan Mansion",
+     "sent_id": 0,
+     "sentence": "The Esma Sultan Mansion (Turkish: \"Esma Sultan Yal\u0131s\u0131\" ), a historical yal\u0131 (English: waterside mansion ) located at Bosphorus in Ortak\u00f6y neighborhood of Istanbul, Turkey and named after its original owner Esma Sultan, is used today as a cultural center after being redeveloped.",
+     "chunk_ids": [
+      "Esma_Sultan_Mansion_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Esma_Sultan_Mansion_0",
+    "Laleli_Mosque_0"
+   ]
+  },
+  {
+   "id": "5ab56e32554299637185c594",
+   "question": "Are Random House Tower and 888 7th Avenue both used for real estate?",
+   "answer": "no",
+   "type": "comparison",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Random House Tower",
+     "sent_id": 0,
+     "sentence": "The Random House Tower, also known as the Park Imperial Apartments, is a 52-story mixed-use tower in New York City, United States, that is used as the headquarters of book publisher Random House and a luxury apartment complex.",
+     "chunk_ids": [
+      "Random_House_Tower_0"
+     ]
+    },
+    {
+     "title": "888 7th Avenue",
+     "sent_id": 2,
+     "sentence": "It currently carries the Vornado Realty Trust corporate headquarters.",
+     "chunk_ids": [
+      "888_7th_Avenue_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "888_7th_Avenue_0",
+    "Random_House_Tower_0"
+   ]
+  },
+  {
+   "id": "5ab6d09255429954757d337d",
+   "question": "The football manager who recruited David Beckham managed Manchester United during what timeframe?",
+   "answer": "from 1986 to 2013",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "1995\u201396 Manchester United F.C. season",
+     "sent_id": 2,
+     "sentence": "Their triumph was made all the more remarkable by the fact that Alex Ferguson had sold experienced players Paul Ince, Mark Hughes and Andrei Kanchelskis before the start of the season, and not made any major signings.",
+     "chunk_ids": [
+      "1995\u201396_Manchester_United_F.C._season_0"
+     ]
+    },
+    {
+     "title": "1995\u201396 Manchester United F.C. season",
+     "sent_id": 3,
+     "sentence": "Instead, he had drafted in young players like Nicky Butt, David Beckham, Paul Scholes and the Neville brothers, Gary and Phil.",
+     "chunk_ids": [
+      "1995\u201396_Manchester_United_F.C._season_0"
+     ]
+    },
+    {
+     "title": "Alex Ferguson",
+     "sent_id": 0,
+     "sentence": "Sir Alexander Chapman Ferguson, CBE (born 31 December 1941) is a Scottish former football manager and player who managed Manchester United from 1986 to 2013.",
+     "chunk_ids": [
+      "Alex_Ferguson_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "1995\u201396_Manchester_United_F.C._season_0",
+    "Alex_Ferguson_0"
+   ]
+  },
+  {
+   "id": "5adddccd5542997dc7907069",
+   "question": "Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?",
+   "answer": "keyboard function keys",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Apple Remote",
+     "sent_id": 0,
+     "sentence": "The Apple Remote is a remote control device released in or after October 2005 by Apple Inc. for use with a number of its products which use infrared capabilities.",
+     "chunk_ids": [
+      "Apple_Remote_0"
+     ]
+    },
+    {
+     "title": "Apple Remote",
+     "sent_id": 1,
+     "sentence": "The device was originally designed to interact with the Front Row media program on the iSight iMac G5 and is compatible with some later desktop and portable Macintosh computers.",
+     "chunk_ids": [
+      "Apple_Remote_0"
+     ]
+    },
+    {
+     "title": "Front Row (software)",
+     "sent_id": 0,
+     "sentence": "Front Row is a discontinued media center software application for Apple's Macintosh computers and Apple TV for navigating and viewing video, photos, podcasts, and music from a computer, optical disc, or the Internet through a 10-foot user interface (similar to Windows Media Center and Kodi).",
+     "chunk_ids": [
+      "Front_Row_(software)_0"
+     ]
+    },
+    {
+     "title": "Front Row (software)",
+     "sent_id": 1,
+     "sentence": "The software relies on iTunes and iPhoto and is controlled by an Apple Remote or the keyboard function keys.",
+     "chunk_ids": [
+      "Front_Row_(software)_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Apple_Remote_0",
+    "Front_Row_(software)_0"
+   ]
+  },
+  {
+   "id": "5ae22b8d554299234fd0440f",
+   "question": "What was the father of Kasper Schmeichel voted to be by the IFFHS in 1992?",
+   "answer": "World's Best Goalkeeper",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Kasper Schmeichel",
+     "sent_id": 0,
+     "sentence": "Kasper Peter Schmeichel (] ; born 5 November 1986) is a Danish professional footballer who plays as a goalkeeper for Premier League club Leicester City and the Denmark national team.",
+     "chunk_ids": [
+      "Kasper_Schmeichel_0"
+     ]
+    },
+    {
+     "title": "Kasper Schmeichel",
+     "sent_id": 1,
+     "sentence": "He is the son of former Manchester United and Danish international goalkeeper Peter Schmeichel.",
+     "chunk_ids": [
+      "Kasper_Schmeichel_0"
+     ]
+    },
+    {
+     "title": "Peter Schmeichel",
+     "sent_id": 0,
+     "sentence": "Peter Boles\u0142aw Schmeichel MBE (] ; born 18 November 1963) is a Danish former professional footballer who played as a goalkeeper, and was voted the IFFHS World's Best Goalkeeper in 1992 and 1993.",
+     "chunk_ids": [
+      "Peter_Schmeichel_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Kasper_Schmeichel_0",
+    "Peter_Schmeichel_0"
+   ]
+  },
+  {
+   "id": "5a828c8355429966c78a6a50",
+   "question": "Kaiser Ventures corporation was founded by an American industrialist who became known as the father of modern American shipbuilding?",
+   "answer": "Henry J. Kaiser",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Kaiser Ventures",
+     "sent_id": 0,
+     "sentence": "Kaiser Ventures (formerly Kaiser Steel) corporation, headquartered in Ontario, California.",
+     "chunk_ids": [
+      "Kaiser_Ventures_0"
+     ]
+    },
+    {
+     "title": "Kaiser Ventures",
+     "sent_id": 1,
+     "sentence": "It was founded by Henry J. Kaiser to provide steel plate for the Pacific Coast shipbuilding industry, which expanded during World War II, then shrank, then expanded again during the Korean War.",
+     "chunk_ids": [
+      "Kaiser_Ventures_0"
+     ]
+    },
+    {
+     "title": "Henry J. Kaiser",
+     "sent_id": 0,
+     "sentence": "Henry John Kaiser (May 9, 1882 \u2013 August 24, 1967) was an American industrialist who became known as the father of modern American shipbuilding.",
+     "chunk_ids": [
+      "Henry_J._Kaiser_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Henry_J._Kaiser_0",
+    "Kaiser_Ventures_0"
+   ]
+  },
+  {
+   "id": "5ae0361155429925eb1afc2c",
+   "question": "Which  French ace pilot and adventurer fly L'Oiseau Blanc",
+   "answer": "Charles Eug\u00e8ne",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "L'Oiseau Blanc",
+     "sent_id": 1,
+     "sentence": "The aircraft was flown by French World War I aviation heroes, Charles Nungesser and Fran\u00e7ois Coli.",
+     "chunk_ids": [
+      "L'Oiseau_Blanc_0"
+     ]
+    },
+    {
+     "title": "Charles Nungesser",
+     "sent_id": 0,
+     "sentence": "Charles Eug\u00e8ne Jules Marie Nungesser, MC (15 March 1892 \u2013 presumably on or after 8 May 1927) was a French ace pilot and adventurer, best remembered as a rival of Charles Lindbergh.",
+     "chunk_ids": [
+      "Charles_Nungesser_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Charles_Nungesser_0",
+    "L'Oiseau_Blanc_0"
+   ]
+  },
+  {
+   "id": "5abc0a5d5542993f40c73c64",
+   "question": "Are Freakonomics and In the Realm of the Hackers both American documentaries?",
+   "answer": "no",
+   "type": "comparison",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Freakonomics (film)",
+     "sent_id": 0,
+     "sentence": "Freakonomics: The Movie is a 2010 American documentary film based on the 2005 book \"Freakonomics: A Rogue Economist Explores the Hidden Side of Everything\" by economist Steven D. Levitt and writer Stephen J. Dubner.",
+     "chunk_ids": [
+      "Freakonomics_(film)_0"
+     ]
+    },
+    {
+     "title": "In the Realm of the Hackers",
+     "sent_id": 0,
+     "sentence": "In The Realm of the Hackers is a 2003 Australian documentary directed by Kevin Anderson about the prominent hacker community, centered in Melbourne, Australia in the late 1980s until early 1990.",
+     "chunk_ids": [
+      "In_the_Realm_of_the_Hackers_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Freakonomics_(film)_0",
+    "In_the_Realm_of_the_Hackers_0"
+   ]
+  },
+  {
+   "id": "5abf63f15542997ec76fd3ea",
+   "question": "Alexander Kerensky was defeated and destroyed by the Bolsheviks in the course of a civil war that ended when ?",
+   "answer": "October 1922",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Socialist Revolutionary Party",
+     "sent_id": 5,
+     "sentence": "The anti-Bolshevik faction of this party, known as the Right SRs, which remained loyal to the Provisional Government leader Alexander Kerensky was defeated and destroyed by the Bolsheviks in the course of the Russian Civil War and subsequent persecution.",
+     "chunk_ids": [
+      "Socialist_Revolutionary_Party_0"
+     ]
+    },
+    {
+     "title": "Russian Civil War",
+     "sent_id": 0,
+     "sentence": "The Russian Civil War (Russian: \u0413\u0440\u0430\u0436\u0434\u0430\u0301\u043d\u0441\u043a\u0430\u044f \u0432\u043e\u0439\u043d\u0430\u0301 \u0432 \u0420\u043e\u0441\u0441\u0438\u0301\u0438 , \"Grazhdanskaya voyna v Rossiyi\" ; November 1917 \u2013 October 1922) was a multi-party war in the former Russian Empire immediately after the Russian Revolutions of 1917, as many factions vied to determine Russia's political future.",
+     "chunk_ids": [
+      "Russian_Civil_War_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Russian_Civil_War_0",
+    "Socialist_Revolutionary_Party_0"
+   ]
+  },
+  {
+   "id": "5ab51dae5542991779162d82",
+   "question": "Are both Elko Regional Airport and Gerald R. Ford International Airport located in Michigan?",
+   "answer": "no",
+   "type": "comparison",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Elko Regional Airport",
+     "sent_id": 0,
+     "sentence": "Elko Regional Airport (IATA: EKO, ICAO: KEKO, FAA LID: EKO) , formerly Elko Municipal Airport, is a mile west of downtown Elko, in Elko County, Nevada.",
+     "chunk_ids": [
+      "Elko_Regional_Airport_0"
+     ]
+    },
+    {
+     "title": "Gerald R. Ford International Airport",
+     "sent_id": 0,
+     "sentence": "Gerald R. Ford International Airport (IATA: GRR, ICAO: KGRR, FAA LID: GRR) is a commercial airport in Cascade Township approximately 13 mi southeast of Grand Rapids, Michigan.",
+     "chunk_ids": [
+      "Gerald_R._Ford_International_Airport_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Elko_Regional_Airport_0",
+    "Gerald_R._Ford_International_Airport_0"
+   ]
+  },
+  {
+   "id": "5ab2d3df554299194fa9352c",
+   "question": "The battle in which Giuseppe Arimondi lost his life secured what for Ethiopia?",
+   "answer": "sovereignty",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Giuseppe Arimondi",
+     "sent_id": 2,
+     "sentence": "After a long and successfull colonial service, he died in combat at Adwa, and was posthumously awarded the Gold Medal of Military Valor.",
+     "chunk_ids": [
+      "Giuseppe_Arimondi_0"
+     ]
+    },
+    {
+     "title": "Battle of Adwa",
+     "sent_id": 1,
+     "sentence": "This climactic battle of the First Italo-Ethiopian War, was a decisive defeat for Italy and secured Ethiopian sovereignty.",
+     "chunk_ids": [
+      "Battle_of_Adwa_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Battle_of_Adwa_0",
+    "Giuseppe_Arimondi_0"
+   ]
+  },
+  {
+   "id": "5a7d54165542995f4f402256",
+   "question": "A medieval fortress in Dirleton, East Lothian, Scotland borders on the south side of what coastal area?",
+   "answer": "Yellowcraig",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Yellowcraigs",
+     "sent_id": 0,
+     "sentence": "Yellowcraig, less commonly known as Broad Sands Bay, is a coastal area of forest, beach and grassland in East Lothian, south-east Scotland.",
+     "chunk_ids": [
+      "Yellowcraigs_0"
+     ]
+    },
+    {
+     "title": "Yellowcraigs",
+     "sent_id": 1,
+     "sentence": "Yellowcraig is partly within the Firth of Forth Site of Special Scientific Interest (SSSI).",
+     "chunk_ids": [
+      "Yellowcraigs_0"
+     ]
+    },
+    {
+     "title": "Yellowcraigs",
+     "sent_id": 2,
+     "sentence": "It is bordered to the north by the Firth of Forth, to the south by the village of Dirleton and Dirleton Castle, to the east by the North Berwick West Links golf course, and to the west by the Archerfield Estate and Links golf courses.",
+     "chunk_ids": [
+      "Yellowcraigs_0"
+     ]
+    },
+    {
+     "title": "Dirleton Castle",
+     "sent_id": 0,
+     "sentence": "Dirleton Castle is a medieval fortress in the village of Dirleton, East Lothian, Scotland.",
+     "chunk_ids": [
+      "Dirleton_Castle_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Dirleton_Castle_0",
+    "Yellowcraigs_0"
+   ]
+  },
+  {
+   "id": "5abbf698554299114383a0b5",
+   "question": "Which British first-generation jet-powered medium bomber was used in the South West Pacific theatre of World War II?",
+   "answer": "English Electric Canberra",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "No. 2 Squadron RAAF",
+     "sent_id": 5,
+     "sentence": "It saw action as a bomber unit in the South West Pacific theatre of World War II and, equipped with English Electric Canberra jets, in the Malayan Emergency and the Vietnam War.",
+     "chunk_ids": [
+      "No._2_Squadron_RAAF_0"
+     ]
+    },
+    {
+     "title": "English Electric Canberra",
+     "sent_id": 0,
+     "sentence": "The English Electric Canberra is a British first-generation jet-powered medium bomber that was manufactured during the 1950s.",
+     "chunk_ids": [
+      "English_Electric_Canberra_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "English_Electric_Canberra_0",
+    "No._2_Squadron_RAAF_0"
+   ]
+  },
+  {
+   "id": "5ab84bf555429916710eb01f",
+   "question": "In 1991 Euromarch\u00e9 was bought by a chain that operated how any hypermarkets at the end of 2016?",
+   "answer": "1,462",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Euromarch\u00e9",
+     "sent_id": 2,
+     "sentence": "In June 1991, the group was rebought by its rival, Carrefour, for 5,2 billion francs.",
+     "chunk_ids": [
+      "Euromarch\u00e9_0"
+     ]
+    },
+    {
+     "title": "Carrefour",
+     "sent_id": 1,
+     "sentence": "It is one of the largest hypermarket chains in the world (with 1,462 hypermarkets at the end of 2016).",
+     "chunk_ids": [
+      "Carrefour_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Carrefour_0",
+    "Euromarch\u00e9_0"
+   ]
+  },
+  {
+   "id": "5ab96ab755429970cfb8eacd",
+   "question": "Ellie Goulding worked with what other writers on her third studio album, Delirium?",
+   "answer": "Max Martin, Savan Kotecha and Ilya Salmanzadeh",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Delirium (Ellie Goulding album)",
+     "sent_id": 0,
+     "sentence": "Delirium is the third studio album by English singer and songwriter Ellie Goulding, released on 6 November 2015 by Polydor Records.",
+     "chunk_ids": [
+      "Delirium_(Ellie_Goulding_album)_0"
+     ]
+    },
+    {
+     "title": "Delirium (Ellie Goulding album)",
+     "sent_id": 3,
+     "sentence": "The album spawned three singles: \"On My Mind\", \"Army\" and \"Something in the Way You Move\".",
+     "chunk_ids": [
+      "Delirium_(Ellie_Goulding_album)_0"
+     ]
+    },
+    {
+     "title": "On My Mind (Ellie Goulding song)",
+     "sent_id": 0,
+     "sentence": "\"On My Mind\" is a song by English singer Ellie Goulding from her third studio album \"Delirium\" (2015).",
+     "chunk_ids": [
+      "On_My_Mind_(Ellie_Goulding_song)_0"
+     ]
+    },
+    {
+     "title": "On My Mind (Ellie Goulding song)",
+     "sent_id": 2,
+     "sentence": "It was written by Goulding, Max Martin, Savan Kotecha and Ilya Salmanzadeh.",
+     "chunk_ids": [
+      "On_My_Mind_(Ellie_Goulding_song)_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Delirium_(Ellie_Goulding_album)_0",
+    "On_My_Mind_(Ellie_Goulding_song)_0"
+   ]
+  },
+  {
+   "id": "5ae5aba0554299546bf82f17",
+   "question": "Which of Tara Strong major voice role in animated series is an American animated television series based on the DC Comics fictional superhero team, the \"Teen Titans\"?",
+   "answer": "Teen Titans Go!",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Tara Strong",
+     "sent_id": 1,
+     "sentence": "Many of her major voice roles include animated series such as \"Rugrats\", \"The Powerpuff Girls\", \"The Fairly OddParents\", \"Drawn Together\", \"Teen Titans\" and the spin-off series \"Teen Titans Go!",
+     "chunk_ids": [
+      "Tara_Strong_0"
+     ]
+    },
+    {
+     "title": "Teen Titans Go! (TV series)",
+     "sent_id": 0,
+     "sentence": "Teen Titans Go!",
+     "chunk_ids": [
+      "Teen_Titans_Go!_(TV_series)_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Tara_Strong_0",
+    "Teen_Titans_Go!_(TV_series)_0"
+   ]
+  },
+  {
+   "id": "5ae7e1fc55429952e35ea9cc",
+   "question": "What color clothing do people of the Netherlands wear during Oranjegekte or to celebrate the national holiday Koningsdag? ",
+   "answer": "orange",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Oranjegekte",
+     "sent_id": 1,
+     "sentence": "It manifests itself in the wearing of orange clothing such as T-shirts, caps and scarfs; lavish attention for sports and sports fans in the media; and the decoration of cars, rooms, houses, shops, and even entire streets in orange, the traditional color of the Dutch royal family, the House of Orange-Nassau.",
+     "chunk_ids": [
+      "Oranjegekte_0"
+     ]
+    },
+    {
+     "title": "Koningsdag",
+     "sent_id": 0,
+     "sentence": "Koningsdag (] ) or King's Day is a national holiday in the Kingdom of the Netherlands.",
+     "chunk_ids": [
+      "Koningsdag_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Koningsdag_0",
+    "Oranjegekte_0"
+   ]
+  },
+  {
+   "id": "5ae37c765542992f92d822d4",
+   "question": "What was the name of the 1996 loose adaptation of William Shakespeare's \"Romeo & Juliet\" written by James Gunn?",
+   "answer": "Tromeo and Juliet",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "James Gunn",
+     "sent_id": 1,
+     "sentence": "He started his career as a screenwriter in the mid-1990s, writing the scripts for \"Tromeo and Juliet\" (1996), \"Scooby-Doo\" (2002) and its sequel \"\" (2004), and the 2004 version of \"Dawn of the Dead\".",
+     "chunk_ids": [
+      "James_Gunn_0"
+     ]
+    },
+    {
+     "title": "Tromeo and Juliet",
+     "sent_id": 0,
+     "sentence": "Tromeo and Juliet is a 1996 American independent transgressive romantic comedy film and a loose adaptation of William Shakespeare's \"Romeo & Juliet\" from Troma Entertainment.",
+     "chunk_ids": [
+      "Tromeo_and_Juliet_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "James_Gunn_0",
+    "Tromeo_and_Juliet_0"
+   ]
+  },
+  {
+   "id": "5abdf12255429976d4830a2f",
+   "question": "The Album Against the Wind was the 11th Album of a Rock singer Robert C Seger born may 6 1945. What was the Rock singers stage name ?",
+   "answer": "Bob Seger",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Against the Wind (album)",
+     "sent_id": 0,
+     "sentence": "Against the Wind is the eleventh album by American rock singer Bob Seger and his fourth with the Silver Bullet Band.",
+     "chunk_ids": [
+      "Against_the_Wind_(album)_0"
+     ]
+    },
+    {
+     "title": "Bob Seger",
+     "sent_id": 0,
+     "sentence": "Robert Clark Seger ( , born May 6, 1945) is an American singer-songwriter, guitarist and pianist.",
+     "chunk_ids": [
+      "Bob_Seger_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Against_the_Wind_(album)_0",
+    "Bob_Seger_0"
+   ]
+  },
+  {
+   "id": "5a88658955429938390d3f47",
+   "question": "Rostker v. Goldberg held that the practice of what way of filling armed forces vacancies was consitutional?",
+   "answer": "Conscription",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Rostker v. Goldberg",
+     "sent_id": 0,
+     "sentence": "Rostker v. Goldberg, 453 U.S. 57 (1981) , was a decision of the United States Supreme Court holding that the practice of requiring only men to register for the draft was constitutional.",
+     "chunk_ids": [
+      "Rostker_v._Goldberg_0"
+     ]
+    },
+    {
+     "title": "Conscription in the United States",
+     "sent_id": 0,
+     "sentence": "Conscription in the United States, commonly known as the draft, has been employed by the federal government of the United States in four conflicts: the American Civil War, World War I, World War II, and the Cold War (including both the Korean and Vietnam Wars).",
+     "chunk_ids": [
+      "Conscription_in_the_United_States_0"
+     ]
+    },
+    {
+     "title": "Conscription in the United States",
+     "sent_id": 3,
+     "sentence": "From 1940 until 1973, during both peacetime and periods of conflict, men were drafted to fill vacancies in the United States Armed Forces that could not be filled through voluntary means.",
+     "chunk_ids": [
+      "Conscription_in_the_United_States_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Conscription_in_the_United_States_0",
+    "Rostker_v._Goldberg_0"
+   ]
+  },
+  {
+   "id": "5a86ebac55429960ec39b6d6",
+   "question": "Handi-Snacks are a snack food product line sold by what American multinational confectionery, food, and beverage company that is based in Illinois?",
+   "answer": "Mondelez International, Inc.",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Handi-Snacks",
+     "sent_id": 0,
+     "sentence": "Handi-Snacks are a snack food product line sold by Mondelez International.",
+     "chunk_ids": [
+      "Handi-Snacks_0"
+     ]
+    },
+    {
+     "title": "Mondelez International",
+     "sent_id": 0,
+     "sentence": "Mondelez International, Inc., styled Mondel\u0113z ( ), is an American multinational confectionery, food, and beverage company based in Illinois which employs about 107,000 people around the world.",
+     "chunk_ids": [
+      "Mondelez_International_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Handi-Snacks_0",
+    "Mondelez_International_0"
+   ]
+  },
+  {
+   "id": "5aba5d2e55429901930fa799",
+   "question": "What was the name of a woman from the book titled \"Their Lives: The Women Targeted by the Clinton Machine \" and was also a former white house intern?",
+   "answer": "Monica Lewinsky",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Their Lives",
+     "sent_id": 0,
+     "sentence": "Their Lives: The Women Targeted by the Clinton Machine is a book by Candice E. Jackson.",
+     "chunk_ids": [
+      "Their_Lives_0"
+     ]
+    },
+    {
+     "title": "Their Lives",
+     "sent_id": 1,
+     "sentence": "Published by conservative publisher World Ahead Publishing on May 31, 2005, it recounts the stories of seven women who crossed paths with Bill Clinton: Monica Lewinsky, Paula Jones, Gennifer Flowers, Kathleen Willey, Elizabeth Gracen, Juanita Broaddrick, and Sally Perdue.",
+     "chunk_ids": [
+      "Their_Lives_0"
+     ]
+    },
+    {
+     "title": "Monica Lewinsky",
+     "sent_id": 0,
+     "sentence": "Monica Samille Lewinsky (born July 23, 1973) is an American activist, television personality, fashion designer, and former White House intern.",
+     "chunk_ids": [
+      "Monica_Lewinsky_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Monica_Lewinsky_0",
+    "Their_Lives_0"
+   ]
+  },
+  {
+   "id": "5a7759fc5542993569682d60",
+   "question": "Where are Teide National Park and Garajonay National Park located?",
+   "answer": "Canary Islands, Spain",
+   "type": "comparison",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Teide National Park",
+     "sent_id": 0,
+     "sentence": "Teide National Park (Spanish: \"Parque nacional del Teide\" , ] ) is a national park located in Tenerife (Canary Islands, Spain).",
+     "chunk_ids": [
+      "Teide_National_Park_0"
+     ]
+    },
+    {
+     "title": "Garajonay National Park",
+     "sent_id": 0,
+     "sentence": "Garajonay National Park (Spanish: \"Parque nacional de Garajonay\" , ] ) is located in the center and north of the island of La Gomera, one of the Canary Islands (Spain).",
+     "chunk_ids": [
+      "Garajonay_National_Park_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Garajonay_National_Park_0",
+    "Teide_National_Park_0"
+   ]
+  },
+  {
+   "id": "5abfb3425542990832d3a1c0",
+   "question": "Andrew Jaspan was the co-founder of what not-for-profit media outlet?",
+   "answer": "The Conversation",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Andrew Jaspan",
+     "sent_id": 0,
+     "sentence": "Andrew Jaspan, (b. 20 April 1952) British-Australian journalist, the co-founder of \"The Conversation\", an independent not-for-profit website of analysis and news from the university and research sector and its Editor-in-Chief from The Conversation's launch in March 2011 until March 2017.",
+     "chunk_ids": [
+      "Andrew_Jaspan_0"
+     ]
+    },
+    {
+     "title": "The Conversation (website)",
+     "sent_id": 0,
+     "sentence": "The Conversation is an independent, not-for-profit media outlet that uses content sourced from the academic and research community.",
+     "chunk_ids": [
+      "The_Conversation_(website)_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Andrew_Jaspan_0",
+    "The_Conversation_(website)_0"
+   ]
+  },
+  {
+   "id": "5ae2b770554299495565db0f",
+   "question": "In what month is the annual documentary film festival, that is presented by the fortnightly published British journal of literary essays, held? ",
+   "answer": "March and April",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "London International Documentary Festival",
+     "sent_id": 0,
+     "sentence": "The London International Documentary Festival (or LIDF) is an annual documentary film festival that takes place in the months of March and April every year.",
+     "chunk_ids": [
+      "London_International_Documentary_Festival_0"
+     ]
+    },
+    {
+     "title": "London International Documentary Festival",
+     "sent_id": 1,
+     "sentence": "The event is presented in association with the London Review of Books.",
+     "chunk_ids": [
+      "London_International_Documentary_Festival_0"
+     ]
+    },
+    {
+     "title": "London Review of Books",
+     "sent_id": 0,
+     "sentence": "The London Review of Books (LRB) is a British journal of literary essays.",
+     "chunk_ids": [
+      "London_Review_of_Books_0"
+     ]
+    },
+    {
+     "title": "London Review of Books",
+     "sent_id": 1,
+     "sentence": "It is published fortnightly.",
+     "chunk_ids": [
+      "London_Review_of_Books_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "London_International_Documentary_Festival_0",
+    "London_Review_of_Books_0"
+   ]
+  },
+  {
+   "id": "5a80b3a9554299485f5986cc",
+   "question": "Tysons Galleria is located in what county?",
+   "answer": "Fairfax County",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "McLean, Virginia",
+     "sent_id": 0,
+     "sentence": "McLean ( ) is a census-designated place (CDP) in Fairfax County in Northern Virginia.",
+     "chunk_ids": [
+      "McLean,_Virginia_0"
+     ]
+    },
+    {
+     "title": "Tysons Galleria",
+     "sent_id": 0,
+     "sentence": "Tysons Galleria is a three-level super-regional mall owned by General Growth Properties located at 2001 International Drive, McLean, Virginia, in Tysons Corner.",
+     "chunk_ids": [
+      "Tysons_Galleria_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "McLean,_Virginia_0",
+    "Tysons_Galleria_0"
+   ]
+  },
+  {
+   "id": "5adfe37c554299025d62a377",
+   "question": "Kasper Peter Schmeichel is the son of a professional footballer who was voted what in 1992 and 1993?",
+   "answer": "IFFHS World's Best Goalkeeper",
+   "type": "bridge",
+   "level": "hard",
+   "gold": [
+    {
+     "title": "Kasper Schmeichel",
+     "sent_id": 0,
+     "sentence": "Kasper Peter Schmeichel (] ; born 5 November 1986) is a Danish professional footballer who plays as a goalkeeper for Premier League club Leicester City and the Denmark national team.",
+     "chunk_ids": [
+      "Kasper_Schmeichel_0"
+     ]
+    },
+    {
+     "title": "Kasper Schmeichel",
+     "sent_id": 1,
+     "sentence": "He is the son of former Manchester United and Danish international goalkeeper Peter Schmeichel.",
+     "chunk_ids": [
+      "Kasper_Schmeichel_0"
+     ]
+    },
+    {
+     "title": "Peter Schmeichel",
+     "sent_id": 0,
+     "sentence": "Peter Boles\u0142aw Schmeichel MBE (] ; born 18 November 1963) is a Danish former professional footballer who played as a goalkeeper, and was voted the IFFHS World's Best Goalkeeper in 1992 and 1993.",
+     "chunk_ids": [
+      "Peter_Schmeichel_0"
+     ]
+    }
+   ],
+   "gold_chunk_ids": [
+    "Kasper_Schmeichel_0",
+    "Peter_Schmeichel_0"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1179 @@
+{
+ "rows": [
+  {
+   "basis": "Won Adapted Screenplay (with Mario Puzo). Corpus: The_Godfather_1 names Coppola for Adapted Screenplay.",
+   "expected_director": "Francis Ford Coppola",
+   "film": "The Godfather",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Francis Ford Coppola. Nominated for Academy Awards (no win evidence in provided contexts). Citations: [1].",
+     "career_wins": [],
+     "director_found": "Francis Ford Coppola",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "wrong",
+     "score": "wrong",
+     "verdict": "nominated",
+     "verdict_passage": {
+      "chunk_id": "The_Godfather_41",
+      "matched_text": "When the nominations for the 45th Academy Awards were revealed on February 12, 1973, The Godfather was nominated for eleven awards.",
+      "type": "nom"
+     }
+    },
+    "hybrid": {
+     "answer": "Director: Francis Ford Coppola. Nominated for Academy Awards (no win evidence in provided contexts). Citations: [1].",
+     "career_wins": [],
+     "director_found": "Francis Ford Coppola",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "wrong",
+     "score": "wrong",
+     "verdict": "nominated",
+     "verdict_passage": {
+      "chunk_id": "The_Godfather_41",
+      "matched_text": "When the nominations for the 45th Academy Awards were revealed on February 12, 1973, The Godfather was nominated for eleven awards.",
+      "type": "nom"
+     }
+    },
+    "semantic": {
+     "answer": "Director: Francis Ford Coppola. Won at least one Academy Award (supported by contexts). Citations: [1, 10].",
+     "career_wins": [],
+     "director_found": "Francis Ford Coppola",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
+     "score": "correct",
+     "verdict": "won",
+     "verdict_passage": {
+      "chunk_id": "The_Godfather_1",
+      "matched_text": "At the 45th Academy Awards, the film won Best Picture, Best Actor (Brando), and Best Adapted Screenplay (for Puzo and Coppola).",
+      "type": "win"
+     }
+    }
+   },
+   "split": "test",
+   "truth": "won"
+  },
+  {
+   "basis": "Won Director, Picture, Film Editing. Corpus: James_Cameron_0, Titanic_(1997_film)_1.",
+   "expected_director": "James Cameron",
+   "film": "Titanic (1997 film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: James Cameron. Won at least one Academy Award (supported by contexts). Citations: [1].",
+     "career_wins": [],
+     "director_found": "James Cameron",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
+     "score": "correct",
+     "verdict": "won",
+     "verdict_passage": {
+      "chunk_id": "James_Cameron_38",
+      "matched_text": "For Titanic, he won Best Director, Best Picture (shared with Jon Landau) and Best Film Editing (shared with Conrad Buff and Richard A.",
+      "type": "win"
+     }
+    },
+    "hybrid": {
+     "answer": "Director: James Cameron. Won at least one Academy Award (supported by contexts). Citations: [1].",
+     "career_wins": [],
+     "director_found": "James Cameron",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
+     "score": "correct",
+     "verdict": "won",
+     "verdict_passage": {
+      "chunk_id": "James_Cameron_38",
+      "matched_text": "For Titanic, he won Best Director, Best Picture (shared with Jon Landau) and Best Film Editing (shared with Conrad Buff and Richard A.",
+      "type": "win"
+     }
+    },
+    "semantic": {
+     "answer": "Director: James Cameron. Won at least one Academy Award (supported by contexts). Citations: [1, 16].",
+     "career_wins": [],
+     "director_found": "James Cameron",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
+     "score": "correct",
+     "verdict": "won",
+     "verdict_passage": {
+      "chunk_id": "James_Cameron_0",
+      "matched_text": "He directed, wrote, co-produced, and co-edited the historical romance epic Titanic (1997), winning Academy Awards for Best Picture, Best Director, and Best Film Editing.",
+      "type": "win"
+     }
+    }
+   },
+   "split": "dev",
+   "truth": "won"
+  },
+  {
+   "basis": "Won Best Director. Corpus: Damien_Chazelle_0.",
+   "expected_director": "Damien Chazelle",
+   "film": "La La Land",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Damien Chazelle. Won at least one Academy Award (supported by contexts). Citations: [1].",
+     "career_wins": [],
+     "director_found": "Damien Chazelle",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
+     "score": "correct",
+     "verdict": "won",
+     "verdict_passage": {
+      "chunk_id": "Damien_Chazelle_0",
+      "matched_text": "His biggest commercial success came with La La Land, which was nominated for 14 Academy Awards, winning six including Best Director, making him the youngest person to win the award at age 32.",
+      "type": "win"
+     }
+    },
+    "hybrid": {
+     "answer": "Director: Damien Chazelle. Won at least one Academy Award (supported by contexts). Citations: [1].",
+     "career_wins": [],
+     "director_found": "Damien Chazelle",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
+     "score": "correct",
+     "verdict": "won",
+     "verdict_passage": {
+      "chunk_id": "Damien_Chazelle_0",
+      "matched_text": "His biggest commercial success came with La La Land, which was nominated for 14 Academy Awards, winning six including Best Director, making him the youngest person to win the award at age 32.",
+      "type": "win"
+     }
+    },
+    "semantic": {
+     "answer": "Director: Damien Chazelle. Won at least one Academy Award (supported by contexts). Citations: [1, 4].",
+     "career_wins": [],
+     "director_found": "Damien Chazelle",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "correct",
+     "score": "correct",
+     "verdict": "won",
+     "verdict_passage": {
+      "chunk_id": "Damien_Chazelle_0",
+      "matched_text": "His biggest commercial success came with La La Land, which was nominated for 14 Academy Awards, winning six including Best Director, making him the youngest person to win the award at age 32.",
+      "type": "win"
+     }
+    }
+   },
+   "split": "test",
+   "truth": "won"
+  },
+  {
+   "basis": "Nominated for this film (Best Picture as producer, Original Screenplay); did not win. Nolan's Oscars are for Oppenheimer.",
+   "expected_director": "Christopher Nolan",
+   "film": "Inception",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Christopher Nolan. Unknown based on provided contexts. Career: won Academy Awards for Oppenheimer (not this film). Citations: [1].",
+     "career_wins": [
+      {
+       "chunk_id": "Christopher_Nolan_0",
+       "work": "Oppenheimer"
+      }
+     ],
+     "director_found": "Christopher Nolan",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Christopher Nolan. Unknown based on provided contexts. Career: won Academy Awards for Oppenheimer (not this film). Citations: [1, 3].",
+     "career_wins": [
+      {
+       "chunk_id": "Christopher_Nolan_25",
+       "work": null
+      },
+      {
+       "chunk_id": "Christopher_Nolan_1",
+       "work": "Oppenheimer"
+      }
+     ],
+     "director_found": "Christopher Nolan",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Christopher Nolan. Unknown based on provided contexts. Career: won Academy Awards for Oppenheimer (not this film). Citations: [1, 3].",
+     "career_wins": [
+      {
+       "chunk_id": "Christopher_Nolan_25",
+       "work": null
+      },
+      {
+       "chunk_id": "Christopher_Nolan_1",
+       "work": "Oppenheimer"
+      }
+     ],
+     "director_found": "Christopher Nolan",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "nominated"
+  },
+  {
+   "basis": "Weitz brothers nominated for Best Adapted Screenplay; did not win.",
+   "expected_director": "Chris Weitz and Paul Weitz",
+   "film": "About a Boy (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "brothers Chris Weitz and Paul Weitz with music by Badly Drawn Boy and written by Peter Hedges",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "nominated"
+  },
+  {
+   "basis": "Film nominated for Visual Effects; director not nominated.",
+   "expected_director": "Scott Derrickson",
+   "film": "Doctor Strange (2016 film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Scott Derrickson. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Scott Derrickson. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Scott Derrickson. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "Film won two Oscars (Supporting Actor, Makeup); Burton not nominated.",
+   "expected_director": "Tim Burton",
+   "film": "Ed Wood (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Unknown based on provided contexts. Unknown based on provided contexts.",
+     "career_wins": [],
+     "director_found": "Unknown based on provided contexts",
+     "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Unknown based on provided contexts. Unknown based on provided contexts.",
+     "career_wins": [],
+     "director_found": "Unknown based on provided contexts",
+     "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Unknown based on provided contexts. Unknown based on provided contexts.",
+     "career_wins": [],
+     "director_found": "Unknown based on provided contexts",
+     "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "Film nominated for Visual Effects only; Cameron not nominated. Career wins (Titanic) are for another film.",
+   "expected_director": "James Cameron",
+   "film": "True Lies",
+   "modes": {
+    "bm25": {
+     "answer": "Director: James Cameron. Unknown based on provided contexts. Career: won Academy Awards for Titanic (not this film). Citations: [1, 4].",
+     "career_wins": [
+      {
+       "chunk_id": "James_Cameron_0",
+       "work": "Titanic"
+      }
+     ],
+     "director_found": "James Cameron",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: James Cameron. Unknown based on provided contexts. Career: won Academy Awards for Titanic (not this film). Citations: [1, 4].",
+     "career_wins": [
+      {
+       "chunk_id": "James_Cameron_0",
+       "work": "Titanic"
+      }
+     ],
+     "director_found": "James Cameron",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: James Cameron. Unknown based on provided contexts. Career: won Academy Awards for Titanic (not this film). Citations: [1, 4].",
+     "career_wins": [
+      {
+       "chunk_id": "James_Cameron_0",
+       "work": "Titanic"
+      }
+     ],
+     "director_found": "James Cameron",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "Film got a Special Achievement Award (visual effects) and sound nominations; Verhoeven not nominated.",
+   "expected_director": "Paul Verhoeven",
+   "film": "Total Recall (1990 film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Paul Verhoeven. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Paul Verhoeven",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Paul Verhoeven. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Paul Verhoeven",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Paul Verhoeven. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Paul Verhoeven",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "Film won Visual Effects; Dante not nominated.",
+   "expected_director": "Joe Dante",
+   "film": "Innerspace",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Joe Dante and produced by Michael Finnell. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Joe Dante and produced by Michael Finnell",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Joe Dante and produced by Michael Finnell. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Joe Dante and produced by Michael Finnell",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Joe Dante and produced by Michael Finnell. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Joe Dante and produced by Michael Finnell",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "Film nominated for Art Direction only; Luhrmann not nominated.",
+   "expected_director": "Baz Luhrmann",
+   "film": "Romeo + Juliet",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Unknown based on provided contexts. Unknown based on provided contexts.",
+     "career_wins": [],
+     "director_found": "Unknown based on provided contexts",
+     "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: William Woodman and starring Alex Hyde-White as Romeo and Blanche Baker as Juliet. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "William Woodman and starring Alex Hyde-White as Romeo and Blanche Baker as Juliet",
+     "director_ok": false,
+     "director_status": "wrong",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Unknown based on provided contexts. Unknown based on provided contexts.",
+     "career_wins": [],
+     "director_found": "Unknown based on provided contexts",
+     "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations for this film. Menges's Oscars (cinematography) are for The Killing Fields and The Mission: a career-win case.",
+   "expected_director": "Chris Menges",
+   "film": "A World Apart (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Chris Menges. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Chris Menges",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Chris Menges. Unknown based on provided contexts. Career: won Academy Awards for Damien Chazelle (not this film). Citations: [1, 8, 17].",
+     "career_wins": [
+      {
+       "chunk_id": "Christopher_Nolan_25",
+       "work": null
+      },
+      {
+       "chunk_id": "Damien_Chazelle_4",
+       "work": "Damien Chazelle"
+      }
+     ],
+     "director_found": "Chris Menges",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Chris Menges. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Chris Menges",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Dominic Sena",
+   "film": "Gone in 60 Seconds (2000 film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Dominic Sena. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Dominic Sena",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Dominic Sena. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Dominic Sena",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Dominic Sena. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Dominic Sena",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Brett Ratner",
+   "film": "The Family Man",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Brett Ratner. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Brett Ratner",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Brett Ratner. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Brett Ratner",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Brett Ratner. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Brett Ratner",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Brad Silberling",
+   "film": "City of Angels (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Brad Silberling and starring Nicolas Cage and Meg Ryan. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Brad Silberling and starring Nicolas Cage and Meg Ryan",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Brad Silberling and starring Nicolas Cage and Meg Ryan. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Brad Silberling and starring Nicolas Cage and Meg Ryan",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Brad Silberling and starring Nicolas Cage and Meg Ryan. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Brad Silberling and starring Nicolas Cage and Meg Ryan",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Peter Hyams",
+   "film": "End of Days (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Peter Hyams and starring Arnold Schwarzenegger. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Peter Hyams and starring Arnold Schwarzenegger",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Peter Hyams and starring Arnold Schwarzenegger. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Peter Hyams and starring Arnold Schwarzenegger",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Peter Hyams and starring Arnold Schwarzenegger. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Peter Hyams and starring Arnold Schwarzenegger",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "John McTiernan",
+   "film": "Last Action Hero",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Unknown based on provided contexts. Unknown based on provided contexts.",
+     "career_wins": [],
+     "director_found": "Unknown based on provided contexts",
+     "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Unknown based on provided contexts. Unknown based on provided contexts.",
+     "career_wins": [],
+     "director_found": "Unknown based on provided contexts",
+     "director_ok": false,
+     "director_status": "no answer",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Kathryn Bigelow. After the success of The Terminator. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Kathryn Bigelow",
+     "director_ok": false,
+     "director_status": "wrong",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Iain Softley",
+   "film": "Hackers (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Iain Softley and starring Jonny Lee Miller. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Iain Softley and starring Jonny Lee Miller",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Iain Softley and starring Jonny Lee Miller. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Iain Softley and starring Jonny Lee Miller",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Iain Softley and starring Jonny Lee Miller. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Iain Softley and starring Jonny Lee Miller",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Michael Patrick King",
+   "film": "Sex and the City (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Michael Patrick King in his feature film directorial debut. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Michael Patrick King in his feature film directorial debut",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Michael Patrick King in his feature film directorial debut. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Michael Patrick King in his feature film directorial debut",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Michael Patrick King in his feature film directorial debut. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Michael Patrick King in his feature film directorial debut",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Scott Derrickson",
+   "film": "The Exorcism of Emily Rose",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Scott Derrickson and starring Laura Linney and Tom Wilkinson. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and starring Laura Linney and Tom Wilkinson",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Scott Derrickson and starring Laura Linney and Tom Wilkinson. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and starring Laura Linney and Tom Wilkinson",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Scott Derrickson and starring Laura Linney and Tom Wilkinson. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and starring Laura Linney and Tom Wilkinson",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Scott Derrickson",
+   "film": "Sinister (film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Scott Derrickson and written by Derrickson and C. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and written by Derrickson and C",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Scott Derrickson and written by Derrickson and C. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and written by Derrickson and C",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Scott Derrickson and written by Derrickson and C. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and written by Derrickson and C",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "dev",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Scott Derrickson",
+   "film": "Deliver Us from Evil (2014 film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Scott Derrickson and produced by Jerry Bruckheimer. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and produced by Jerry Bruckheimer",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Scott Derrickson and produced by Jerry Bruckheimer. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and produced by Jerry Bruckheimer",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Scott Derrickson and produced by Jerry Bruckheimer. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and produced by Jerry Bruckheimer",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Scott Derrickson",
+   "film": "Hellraiser: Inferno",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Scott Derrickson and released on October. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and released on October",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Scott Derrickson and released on October. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and released on October",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Scott Derrickson and released on October. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Scott Derrickson and released on October",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Carlos Reygadas",
+   "film": "Silent Light",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Carlos Reygadas. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Carlos Reygadas",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Carlos Reygadas. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Carlos Reygadas",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Carlos Reygadas. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Carlos Reygadas",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Dominic Sena",
+   "film": "Season of the Witch (2011 film)",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Dominic Sena with extensive uncredited reshoots by Brett Ratner. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Dominic Sena with extensive uncredited reshoots by Brett Ratner",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Dominic Sena with extensive uncredited reshoots by Brett Ratner. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Dominic Sena with extensive uncredited reshoots by Brett Ratner",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Dominic Sena with extensive uncredited reshoots by Brett Ratner. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Dominic Sena with extensive uncredited reshoots by Brett Ratner",
+     "director_ok": true,
+     "director_status": "malformed",
+     "overall": "wrong",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  },
+  {
+   "basis": "No Oscar nominations.",
+   "expected_director": "Patrick Lussier",
+   "film": "Drive Angry",
+   "modes": {
+    "bm25": {
+     "answer": "Director: Patrick Lussier. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Patrick Lussier",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "hybrid": {
+     "answer": "Director: Patrick Lussier. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Patrick Lussier",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    },
+    "semantic": {
+     "answer": "Director: Patrick Lussier. Unknown based on provided contexts. Citations: [1].",
+     "career_wins": [],
+     "director_found": "Patrick Lussier",
+     "director_ok": true,
+     "director_status": "correct",
+     "overall": "no answer",
+     "score": "no answer",
+     "verdict": "unknown",
+     "verdict_passage": null
+    }
+   },
+   "split": "test",
+   "truth": "no_win"
+  }
+ ]
+}

@@ -1,0 +1,734 @@
+{
+ "description": "Hand-checked director->Oscar outcome for films whose pages are in the corpus. truth = the director's Academy Award outcome FOR THIS FILM: won / nominated / no_win. Labels were written from the corpus and general knowledge (basis field) and are for the owner to verify.",
+ "films": [
+  {
+   "film": "The Godfather",
+   "director": "Francis Ford Coppola",
+   "truth": "won",
+   "basis": "Won Adapted Screenplay (with Mario Puzo). Corpus: The_Godfather_1 names Coppola for Adapted Screenplay.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/The_Godfather",
+   "supporting_text": "At the 45th Academy Awards, the film won Best Picture, Brando won Best Actor, and Puzo and Coppola won for Best Adapted Screenplay.",
+   "support_type": "quote",
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Titanic (1997 film)",
+   "director": "James Cameron",
+   "truth": "won",
+   "basis": "Won Director, Picture, Film Editing. Corpus: James_Cameron_0, Titanic_(1997_film)_1.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/70th_Academy_Awards",
+   "supporting_text": "James Cameron – Titanic ‡",
+   "support_type": "quote",
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "La La Land",
+   "director": "Damien Chazelle",
+   "truth": "won",
+   "basis": "Won Best Director. Corpus: Damien_Chazelle_0.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/89th_Academy_Awards",
+   "supporting_text": "Damien Chazelle – La La Land ‡",
+   "support_type": "quote",
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Inception",
+   "director": "Christopher Nolan",
+   "truth": "nominated",
+   "basis": "Nominated for this film (Best Picture as producer, Original Screenplay); did not win. Nolan's Oscars are for Oppenheimer.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/83rd_Academy_Awards",
+   "supporting_text": "Inception – Emma Thomas and Christopher Nolan , producers",
+   "support_type": "quote",
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "About a Boy (film)",
+   "director": "Chris Weitz and Paul Weitz",
+   "truth": "nominated",
+   "basis": "Weitz brothers nominated for Best Adapted Screenplay; did not win.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/About_a_Boy_(film)",
+   "supporting_text": "Academy Awards Best Adapted Screenplay Chris Weitz , Paul Weitz and Peter Hedges Nominated",
+   "support_type": "quote",
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Doctor Strange (2016 film)",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "Film nominated for Visual Effects; director not nominated.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/Doctor_Strange_(2016_film)",
+   "supporting_text": "The film received an Academy Award nomination for Best Visual Effects.",
+   "support_type": "quote",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/89th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/90th_Academy_Awards"
+    ],
+    "director_names": [
+     "Scott Derrickson"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Ed Wood (film)",
+   "director": "Tim Burton",
+   "truth": "no_win",
+   "basis": "Film won two Oscars (Supporting Actor, Makeup); Burton not nominated.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/Ed_Wood_(film)",
+   "supporting_text": "Landau and Rick Baker won Academy Awards for their work on the film.",
+   "support_type": "quote",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/67th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/68th_Academy_Awards"
+    ],
+    "director_names": [
+     "Tim Burton"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Tim Burton": [
+      "Tim Burton",
+      "Timothy Burton",
+      "Burton"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "Burton",
+      "page": "67th_Academy_Awards",
+      "context": "Elliot Tyson , Michael Herbick and Willie D. Burton Best Sound Effects Editing Speed – Stephen H"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'Burton' on the 67th page is Willie D. Burton (sound), not Tim Burton."
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "True Lies",
+   "director": "James Cameron",
+   "truth": "no_win",
+   "basis": "Film nominated for Visual Effects only; Cameron not nominated. Career wins (Titanic) are for another film.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/True_Lies",
+   "supporting_text": "It was also nominated at the Academy Awards and BAFTAs in the Best Visual Effects category",
+   "support_type": "quote",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/67th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/68th_Academy_Awards"
+    ],
+    "director_names": [
+     "James Cameron"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "James Cameron": [
+      "James Cameron",
+      "Cameron"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "Cameron",
+      "page": "67th_Academy_Awards",
+      "context": ", honored the following people: Fernando Rey Cameron Mitchell Barry Sullivan Giulietta Masina Pet"
+     },
+     {
+      "variant": "Cameron",
+      "page": "68th_Academy_Awards",
+      "context": "ton , the production featured models such as Cameron Alborzian , Tyson Beckford , Tyra Banks , Ma"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'Cameron' on the 67th and 68th pages are Cameron Mitchell (in memoriam) and Cameron Alborzian (a model in a production number); James Cameron is not on either page."
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Total Recall (1990 film)",
+   "director": "Paul Verhoeven",
+   "truth": "no_win",
+   "basis": "Film got a Special Achievement Award (visual effects) and sound nominations; Verhoeven not nominated.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/Total_Recall_(1990_film)",
+   "supporting_text": "The practical special effects were well received, earning the film an Academy Award",
+   "support_type": "quote",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/63rd_Academy_Awards",
+     "https://en.wikipedia.org/wiki/64th_Academy_Awards"
+    ],
+    "director_names": [
+     "Paul Verhoeven"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Paul Verhoeven": [
+      "Paul Verhoeven",
+      "Pablo Verhoeven",
+      "Verhoeven"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "Verhoeven",
+      "page": "63rd_Academy_Awards",
+      "context": "e Nasty Girl ( Germany ) in German – Michael Verhoeven Open Doors ( Italy ) in Italian – Gianni Ame"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'Verhoeven' on the 63rd page is Michael Verhoeven (German director of The Nasty Girl), not Paul Verhoeven."
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Innerspace",
+   "director": "Joe Dante",
+   "truth": "no_win",
+   "basis": "Film won Visual Effects; Dante not nominated.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/Innerspace",
+   "supporting_text": "won an Academy Award for Best Visual Effects , the only film directed by Dante to do so.",
+   "support_type": "quote",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/60th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/61st_Academy_Awards"
+    ],
+    "director_names": [
+     "Joe Dante"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Joe Dante": [
+      "Joe Dante",
+      "Joseph Dante",
+      "Dante"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Romeo + Juliet",
+   "director": "Baz Luhrmann",
+   "truth": "no_win",
+   "basis": "Film nominated for Art Direction only; Luhrmann not nominated.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/Romeo_%2B_Juliet",
+   "supporting_text": "The film received a single nomination for Best Art Direction at the 69th Academy Awards .",
+   "support_type": "quote",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/69th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/70th_Academy_Awards"
+    ],
+    "director_names": [
+     "Baz Luhrmann"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Baz Luhrmann": [
+      "Baz Luhrmann",
+      "Bazmark Luhrmann",
+      "Luhrmann"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "A World Apart (film)",
+   "director": "Chris Menges",
+   "truth": "no_win",
+   "basis": "No Oscar nominations for this film. Menges's Oscars (cinematography) are for The Killing Fields and The Mission: a career-win case.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/61st_Academy_Awards",
+   "supporting_text": "Best Directing Barry Levinson – Rain Man Charles Crichton – A Fish Called Wanda Martin Scorsese – The Last Temptation of Christ Alan Parker –",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/61st_Academy_Awards",
+     "https://en.wikipedia.org/wiki/62nd_Academy_Awards"
+    ],
+    "director_names": [
+     "Chris Menges"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Chris Menges": [
+      "Chris Menges",
+      "Christopher Menges",
+      "Menges"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Gone in 60 Seconds (2000 film)",
+   "director": "Dominic Sena",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/73rd_Academy_Awards",
+   "supporting_text": "Best Directing Steven Soderbergh – Traffic ‡ Stephen Daldry – Billy Elliot Ang Lee – Crouching Tiger, Hidden Dragon Steven Soderbergh – Erin Brockovich Ridley",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/73rd_Academy_Awards",
+     "https://en.wikipedia.org/wiki/74th_Academy_Awards"
+    ],
+    "director_names": [
+     "Dominic Sena"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Dominic Sena": [
+      "Dominic Sena",
+      "Sena"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "The Family Man",
+   "director": "Brett Ratner",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/73rd_Academy_Awards",
+   "supporting_text": "Best Directing Steven Soderbergh – Traffic ‡ Stephen Daldry – Billy Elliot Ang Lee – Crouching Tiger, Hidden Dragon Steven Soderbergh – Erin Brockovich Ridley",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/73rd_Academy_Awards",
+     "https://en.wikipedia.org/wiki/74th_Academy_Awards"
+    ],
+    "director_names": [
+     "Brett Ratner"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Brett Ratner": [
+      "Brett Ratner",
+      "Ratner"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "City of Angels (film)",
+   "director": "Brad Silberling",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/71st_Academy_Awards",
+   "supporting_text": "Best Directing Steven Spielberg – Saving Private Ryan ‡ Roberto Benigni – Life Is Beautiful John Madden – Shakespeare in Love Terrence Malick – The",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/71st_Academy_Awards",
+     "https://en.wikipedia.org/wiki/72nd_Academy_Awards"
+    ],
+    "director_names": [
+     "Brad Silberling"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Brad Silberling": [
+      "Brad Silberling",
+      "Bradley Silberling",
+      "Silberling"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "End of Days (film)",
+   "director": "Peter Hyams",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/72nd_Academy_Awards",
+   "supporting_text": "Best Directing Sam Mendes – American Beauty ‡ Lasse Hallström – The Cider House Rules Spike Jonze – Being John Malkovich Michael Mann – The",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/72nd_Academy_Awards",
+     "https://en.wikipedia.org/wiki/73rd_Academy_Awards"
+    ],
+    "director_names": [
+     "Peter Hyams"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Peter Hyams": [
+      "Peter Hyams",
+      "Hyams"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Last Action Hero",
+   "director": "John McTiernan",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/66th_Academy_Awards",
+   "supporting_text": "Best Directing Steven Spielberg – Schindler's List ‡ Jim Sheridan – In the Name of the Father Jane Campion – The Piano James Ivory –",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/66th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/67th_Academy_Awards"
+    ],
+    "director_names": [
+     "John McTiernan"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "John McTiernan": [
+      "John McTiernan",
+      "Jon McTiernan",
+      "McTiernan"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Hackers (film)",
+   "director": "Iain Softley",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/68th_Academy_Awards",
+   "supporting_text": "Best Directing Mel Gibson – Braveheart Chris Noonan – Babe Tim Robbins – Dead Man Walking Mike Figgis – Leaving Las Vegas Michael Radford –",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/68th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/69th_Academy_Awards"
+    ],
+    "director_names": [
+     "Iain Softley"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Iain Softley": [
+      "Iain Softley",
+      "Ian Softley",
+      "Softley"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Sex and the City (film)",
+   "director": "Michael Patrick King",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/81st_Academy_Awards",
+   "supporting_text": "Best Directing Danny Boyle – Slumdog Millionaire ‡ David Fincher – The Curious Case of Benjamin Button Ron Howard – Frost/Nixon Gus Van Sant –",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/81st_Academy_Awards",
+     "https://en.wikipedia.org/wiki/82nd_Academy_Awards"
+    ],
+    "director_names": [
+     "Michael Patrick King"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Michael Patrick King": [
+      "Michael Patrick King",
+      "Michael King",
+      "Mike King",
+      "King"
+     ]
+    },
+    "variant_hits": [
+     {
+      "variant": "King",
+      "page": "81st_Academy_Awards",
+      "context": "Best Sound Editing The Dark Knight – Richard King ‡ Iron Man – Frank Eulner and Christopher Bo"
+     }
+    ],
+    "all_variants_absent": false,
+    "review": "'King' on the 81st page is Richard King (Best Sound Editing winner for The Dark Knight), not Michael Patrick King."
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "The Exorcism of Emily Rose",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/78th_Academy_Awards",
+   "supporting_text": "Best Directing Ang Lee – Brokeback Mountain Bennett Miller – Capote Paul Haggis – Crash George Clooney – Good Night, and Good Luck Steven Spielberg",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/78th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/79th_Academy_Awards"
+    ],
+    "director_names": [
+     "Scott Derrickson"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Sinister (film)",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/85th_Academy_Awards",
+   "supporting_text": "Best Directing Ang Lee – Life of Pi ‡ Michael Haneke – Amour Benh Zeitlin – Beasts of the Southern Wild Steven Spielberg – Lincoln",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/85th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/86th_Academy_Awards"
+    ],
+    "director_names": [
+     "Scott Derrickson"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Deliver Us from Evil (2014 film)",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/87th_Academy_Awards",
+   "supporting_text": "Best Directing Alejandro G. Iñárritu – Birdman or (The Unexpected Virtue of Ignorance) ‡ Richard Linklater – Boyhood Bennett Miller – Foxcatcher Wes Anderson –",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/87th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/88th_Academy_Awards"
+    ],
+    "director_names": [
+     "Scott Derrickson"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Hellraiser: Inferno",
+   "director": "Scott Derrickson",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/73rd_Academy_Awards",
+   "supporting_text": "Best Directing Steven Soderbergh – Traffic ‡ Stephen Daldry – Billy Elliot Ang Lee – Crouching Tiger, Hidden Dragon Steven Soderbergh – Erin Brockovich Ridley",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/73rd_Academy_Awards",
+     "https://en.wikipedia.org/wiki/74th_Academy_Awards"
+    ],
+    "director_names": [
+     "Scott Derrickson"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Scott Derrickson": [
+      "Scott Derrickson",
+      "Scot Derrickson",
+      "Derrickson"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Silent Light",
+   "director": "Carlos Reygadas",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/80th_Academy_Awards",
+   "supporting_text": "Best Directing Joel Coen and Ethan Coen – No Country for Old Men ‡ Julian Schnabel – The Diving Bell and the Butterfly Jason Reitman",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/80th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/81st_Academy_Awards"
+    ],
+    "director_names": [
+     "Carlos Reygadas"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Carlos Reygadas": [
+      "Carlos Reygadas",
+      "Reygadas"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Season of the Witch (2011 film)",
+   "director": "Dominic Sena",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/84th_Academy_Awards",
+   "supporting_text": "Best Directing Michel Hazanavicius – The Artist ‡ Alexander Payne – The Descendants Martin Scorsese – Hugo Woody Allen – Midnight in Paris Terrence Malick",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/84th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/85th_Academy_Awards"
+    ],
+    "director_names": [
+     "Dominic Sena"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Dominic Sena": [
+      "Dominic Sena",
+      "Sena"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  },
+  {
+   "film": "Drive Angry",
+   "director": "Patrick Lussier",
+   "truth": "no_win",
+   "basis": "No Oscar nominations.",
+   "owner_verified": false,
+   "source_url": "https://en.wikipedia.org/wiki/84th_Academy_Awards",
+   "supporting_text": "Best Directing Michel Hazanavicius – The Artist ‡ Alexander Payne – The Descendants Martin Scorsese – Hugo Woody Allen – Midnight in Paris Terrence Malick",
+   "support_type": "ceremony Best Directing row (negative claim: see absence_check)",
+   "absence_check": {
+    "ceremony_pages": [
+     "https://en.wikipedia.org/wiki/84th_Academy_Awards",
+     "https://en.wikipedia.org/wiki/85th_Academy_Awards"
+    ],
+    "director_names": [
+     "Patrick Lussier"
+    ],
+    "name_absent_from_all_pages": true,
+    "variants_checked": {
+     "Patrick Lussier": [
+      "Patrick Lussier",
+      "Lussier"
+     ]
+    },
+    "variant_hits": [],
+    "all_variants_absent": true,
+    "review": null
+   },
+   "verified_by": "agent-sourced"
+  }
+ ]
+}
