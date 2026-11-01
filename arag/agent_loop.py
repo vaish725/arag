@@ -194,6 +194,10 @@ def _call_chunk_read(chunk_id: Optional[str]) -> Dict[str, Any]:
 
 
 EVIDENCE_ONLY_REASON = "evidence-only mode: the LLM is never called (LLM fallback is off)"
+NO_ROUTE_MESSAGE = (
+    "In evidence-only mode this demo answers questions like 'Who directed X and did they win an Oscar?'. "
+    "For other questions, turn on LLM fallback."
+)
 
 
 def _consider_llm(
@@ -862,8 +866,25 @@ def _run_agent(
         if llm_result:
             answer = str(llm_result["answer"])
             citations = [int(c) for c in llm_result.get("citations", []) if isinstance(c, int)]
+        elif not allow_fallback:
+            # Evidence-only with no specialised route: retrieved passages are never the answer.
+            return {
+                "answer": NO_ROUTE_MESSAGE,
+                "no_specialised_route": True,
+                "related_passages": [
+                    {"chunk_id": t.get("chunk_id") or "", "source": t.get("source") or "",
+                     "text": whole_sentence_passage(t.get("text") or "", t.get("chunk_id") or "")}
+                    for t in retrieval.get("retrieved_texts", [])[:3]
+                ],
+                "tool_trace": generic_trace,
+                "retrieved_texts": retrieval.get("retrieved_texts", []),
+                "citations": [],
+                "step_count": retrieval.get("step_count", 0),
+                "token_count": retrieval.get("token_count", 0),
+                "budget_exhausted": False,
+            }
         else:
-            answer = "\n\n".join(contexts)  # no LLM answer: the retrieved passages themselves
+            answer = "\n\n".join(contexts)  # LLM fallback on but no LLM answer (failed): the retrieved passages
             citations = []
         return {
             "answer": answer,

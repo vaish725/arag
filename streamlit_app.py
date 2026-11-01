@@ -160,31 +160,7 @@ def render_llm_status(res: dict) -> None:
         st.caption("LLM not considered for this question.")
 
 
-# Results come from session state so they survive reruns (e.g. ticking the box).
-res = st.session_state.get("result")
-if res is not None:
-    _top_banner.empty()  # the banner moves down, directly above the answer
-    _vs = res.get("vector_search") or {"enabled": True, "reason": ""}
-    if not _vs["enabled"]:
-        st.warning(degraded_line(_vs["reason"]))  # never show a keyword-only answer without saying so
-    if res.get("budget_exhausted"):
-        st.warning(f"Step budget exhausted after {res.get('tool_calls')} tool calls: the answer may be incomplete. Raise Max steps to allow more.")
-    if (res.get("llm") or {}).get("decision") == "called":
-        # The LLM answered: keep its answer visibly apart from the answer built from the corpus.
-        st.subheader("Evidence answer (from the corpus)")
-        st.write(res.get("template_answer") or "No answer was built from the corpus for this question; see the passages under Evidence.")
-        st.subheader(LLM_ANSWER_LABEL)
-        with st.container(border=True):
-            st.write(res.get("answer"))
-        render_llm_status(res)
-    else:
-        st.subheader("Answer")
-        st.write(res.get("answer"))
-        render_llm_status(res)
-    # If the agent returned an explicit provenance note about fallback, make it visible
-    if isinstance(res.get("answer"), str) and "external knowledge" in res.get("answer"):
-        st.warning("This answer used external knowledge beyond the retrieved corpus.")
-
+def render_evidence(res: dict) -> None:
     st.subheader("Evidence")
     details = res.get("citation_details")
     if details:
@@ -212,6 +188,42 @@ if res is not None:
             st.markdown(f"**[[{i}] {title}]({url})**" if url else f"**[{i}] {title}**")
             with st.expander("Show full passage", expanded=False):
                 st.write(entry.get("text") or entry.get("full_context") or "")
+
+
+# Results come from session state so they survive reruns (e.g. ticking the box).
+res = st.session_state.get("result")
+if res is not None:
+    _top_banner.empty()  # the banner moves down, directly above the answer
+    _vs = res.get("vector_search") or {"enabled": True, "reason": ""}
+    if not _vs["enabled"]:
+        st.warning(degraded_line(_vs["reason"]))  # never show a keyword-only answer without saying so
+    if res.get("budget_exhausted"):
+        st.warning(f"Step budget exhausted after {res.get('tool_calls')} tool calls: the answer may be incomplete. Raise Max steps to allow more.")
+    if (res.get("llm") or {}).get("decision") == "called":
+        # The LLM answered: keep its answer visibly apart from the answer built from the corpus.
+        st.subheader("Evidence answer (from the corpus)")
+        st.write(res.get("template_answer") or "No answer was built from the corpus for this question; see the passages under Evidence.")
+        st.subheader(LLM_ANSWER_LABEL)
+        with st.container(border=True):
+            st.write(res.get("answer"))
+        render_llm_status(res)
+    else:
+        st.subheader("Answer")
+        st.write(res.get("answer"))
+        render_llm_status(res)
+    # If the agent returned an explicit provenance note about fallback, make it visible
+    if isinstance(res.get("answer"), str) and "external knowledge" in res.get("answer"):
+        st.warning("This answer used external knowledge beyond the retrieved corpus.")
+
+    if res.get("no_specialised_route"):
+        with st.expander("Related passages (not an answer)", expanded=False):
+            for i, entry in enumerate(res.get("related_passages") or [], start=1):
+                title = entry.get("source") or entry.get("chunk_id") or "source"
+                url = build_source_url(entry)
+                st.markdown(f"**[[{i}] {title}]({url})**" if url else f"**[{i}] {title}**")
+                st.caption(md_escape(entry.get("text") or ""))
+    else:
+        render_evidence(res)
 
     with st.expander("Tool trace", expanded=False):
         for step in res.get("tool_trace", []):
