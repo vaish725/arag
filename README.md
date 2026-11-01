@@ -40,7 +40,7 @@ Quickstart
 
 Prerequisites
 
-- Python 3.10 to 3.12 (the versions CI tests)
+- Python 3.10 to 3.14 (the versions CI tests; Streamlit Cloud runs 3.14)
 - A virtual environment (recommended)
 - Network access once, to download the embedding model (about 65 MB from Hugging Face)
 - An Anthropic API key **only if** you want the optional LLM-fallback mode
