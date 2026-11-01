@@ -153,7 +153,7 @@ def render_llm_status(res: dict) -> None:
         )
         st.info(f"LLM called ({llm.get('model') or 'model unknown'}; {usage}). The answer above is the LLM's and may use knowledge from outside the corpus.")
     elif decision == "failed":
-        st.error(f"LLM call failed: {llm.get('error')}. Showing the corpus-evidence answer instead.")
+        st.error(f"LLM call failed: {llm.get('error')}." + ("" if res.get("related_passages") is not None else " Showing the corpus-evidence answer instead."))
     elif decision == "skipped":
         st.caption("LLM not called: " + md_escape(llm.get("reason") or "no reason recorded"))
     else:
@@ -215,7 +215,7 @@ if res is not None:
     if isinstance(res.get("answer"), str) and "external knowledge" in res.get("answer"):
         st.warning("This answer used external knowledge beyond the retrieved corpus.")
 
-    if res.get("no_specialised_route"):
+    if res.get("related_passages") is not None:
         with st.expander("Related passages (not an answer)", expanded=False):
             for i, entry in enumerate(res.get("related_passages") or [], start=1):
                 title = entry.get("source") or entry.get("chunk_id") or "source"

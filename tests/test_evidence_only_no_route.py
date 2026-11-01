@@ -76,3 +76,40 @@ def test_with_llm_fallback_the_generic_route_still_asks_the_llm(fake_anthropic):
     at = ask(QUESTION, MODE_LLM)
     assert fake_anthropic.calls == 1
     assert MESSAGE not in " ".join(m.value for m in at.markdown)
+
+
+def _only_message_and_collapsed_passages(at, message_start):
+    text = " ".join(m.value for m in at.markdown)
+    assert message_start in text
+    assert not any(len(m.value) > 400 for m in at.markdown), "no raw passage dump in the answer area"
+    related = {e.label: e for e in at.expander}["Related passages (not an answer)"]
+    assert related.proto.expanded is False
+    shown = " ".join(c.value for c in related.caption)
+    assert shown and "==" not in shown
+    assert len([m for m in related.markdown if m.value.startswith("**[[")]) == 3
+    assert "Evidence" not in [s.value for s in at.subheader]
+
+
+def test_llm_failure_on_the_generic_route_shows_a_short_reason_and_collapsed_passages(fake_anthropic):
+    fake_anthropic.fail = "service overloaded\n" + "x" * 500
+    res = run_agent(QUESTION, allow_fallback=True, enable_director_flow=True)
+    assert res["answer"].startswith("The LLM call failed: ") and "service overloaded" in res["answer"]
+    assert "\n" not in res["answer"] and len(res["answer"]) < 220, "the reason is short and one line"
+    assert len(res["related_passages"]) == 3 and res["llm"]["decision"] == "failed"
+    assert not any(p["text"] in res["answer"] for p in res["related_passages"])
+    at = ask(QUESTION, MODE_LLM)
+    _only_message_and_collapsed_passages(at, "The LLM call failed: ")
+    assert not any("Showing the corpus-evidence answer" in e.value for e in at.error)
+
+
+def test_director_flow_exception_shows_could_not_answer_and_collapsed_passages(monkeypatch, fake_anthropic):
+    def boom(*a, **k):
+        raise RuntimeError("extractor broke")
+
+    monkeypatch.setattr(agent_loop, "attribute_award_evidence", boom)
+    res = run_agent("Who directed La La Land and did they win any Academy Awards?", allow_fallback=False, enable_director_flow=True)
+    assert res["answer"] == "Couldn't answer this question" and len(res["related_passages"]) == 3
+    assert not any(p["text"] in res["answer"] for p in res["related_passages"])
+    at = ask("Who directed La La Land and did they win any Academy Awards?")
+    _only_message_and_collapsed_passages(at, "Couldn't answer this question")
+    assert fake_anthropic.calls == 0, "evidence-only: 0 LLM calls on the exception path too"
