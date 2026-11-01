@@ -50,19 +50,9 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: |
-          # install dev deps (cached) and run linters
-          if [ -f requirements-dev.txt ]; then python -m pip install --upgrade pip && pip install -r requirements-dev.txt; fi
           black --check . || true
           isort --check-only . || true
           flake8 || true
-
-      - name: Cache dev pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-dev-${{ hashFiles('requirements-dev.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}-dev-
 
       # The regression tests use the real local embedding model. Download it once
       # (cached across runs) BEFORE pytest; pytest then runs with HF_HUB_OFFLINE=1
@@ -87,55 +77,4 @@ jobs:
           ARAG_REQUIRE_MODEL: '1'
         run: |
           mypy --ignore-missing-imports . || true
-          coverage run -m pytest -q
-          coverage xml
-
-      - name: Upload coverage artifact (if generated)
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.xml
-          if-no-files-found: ignore
-
-  test-faiss:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
-    strategy:
-      matrix:
-        python-version: ["3.11"]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Cache pip (faiss job)
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-faiss-${{ hashFiles('requirements-faiss.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}-faiss-
-
-      - name: Install FAISS and heavy deps
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements-faiss.txt ]; then pip install -r requirements-faiss.txt; fi
-
-      - name: Run FAISS smoke test
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-        run: |
-          python - <<'PY'
-          try:
-              import faiss
-              print('faiss OK')
-          except Exception as e:
-              print('faiss import failed:', e)
-              raise
-          PY
+          pytest -q

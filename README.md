@@ -50,7 +50,7 @@ Install
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt   # the single dependency file: the app, tests and code checks, evaluation scripts
 PYTHONPATH=. python scripts/download_model.py   # one-time model download
 ```
 

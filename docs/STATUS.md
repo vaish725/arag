@@ -21,6 +21,7 @@ tool calls per question is enforced, but the choice of steps is code, not a mode
 - **Corpus:** 1,000 HotpotQA validation paragraphs plus 8 hand-added Wikipedia articles (1,494 chunks, 8,283
   sentences). Committed in `data/` with `data/index_meta.json`, which records the model, dimension, counts and
   the model's file hashes.
+- **Dependencies:** a single `requirements.txt` (the app, tests and code checks, and the evaluation scripts).
 - **Keys:** none needed. `ANTHROPIC_API_KEY` is optional and only enables the LLM-fallback answer mode.
 - **Spend controls:** per-question and per-day caps on API calls and tokens (`arag/runtime_ops.py`), a
   per-session question limit in the Streamlit app, and a per-question tool-call budget (`max_steps`).
@@ -57,7 +58,9 @@ Open: [#6](https://github.com/vaish725/arag/pull/6), the evaluation (retrieval a
 - The recipe can use many tool calls per question (up to 59 observed). Every call, including the `chunk_read`
   probes, is recorded in `tool_trace` and counts toward `max_steps` (default 100).
 - `llm_backend` has an OpenAI path that is **opt-in only**: it runs only with `ARAG_LLM_PROVIDER=openai` (default
-  `anthropic`); `OPENAI_API_KEY` alone activates nothing. It is not documented as supported.
+  `anthropic`) and `OPENAI_API_KEY`; the key alone activates nothing. The `openai` package is deliberately not in
+  `requirements.txt`; with the provider selected but the package missing, `synthesize_answer` raises a clear
+  "install openai" error. It is not documented as supported.
 - The index loader reads pickles from `data/` (trusted files only). Paths resolve from the package, or from
   `ARAG_DATA_DIR`.
 - CI lint, format and type checks (`black`, `isort`, `flake8`, `mypy`) are informational (`|| true`); they are not
