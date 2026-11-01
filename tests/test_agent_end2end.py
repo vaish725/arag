@@ -49,8 +49,9 @@ def test_agent_with_mocked_llm(monkeypatch):
         llm_backend, "synthesize_answer", lambda q, ctxs, **kw: {"answer": "SYNTHESIZED BY LLM", "citations": [], "used_fallback": False}
     )
 
+    # The LLM writes the answer only in fallback mode (allow_fallback=True); evidence-only never calls it.
     res = agent_loop.run_agent(
-        "Who directed X?", max_steps=4, max_tokens=1000, allow_fallback=False
+        "Who directed X?", max_steps=4, max_tokens=1000, allow_fallback=True
     )
 
     assert isinstance(res, dict)

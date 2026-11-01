@@ -45,11 +45,11 @@ def test_skipped_because_the_corpus_already_gave_a_verdict(fake_anthropic):
 
 
 @pytest.mark.needs_model
-def test_skipped_because_fallback_is_not_allowed(fake_anthropic):
+def test_skipped_in_evidence_only_mode(fake_anthropic):
     res = run(INCEPTION, allow_fallback=False)
     assert fake_anthropic.calls == 0
     (entry,) = llm_entries(res)
-    assert entry["decision"] == "skipped" and "fallback not allowed" in entry["reason"]
+    assert entry["decision"] == "skipped" and "evidence-only mode" in entry["reason"]
 
 
 @pytest.mark.needs_model
@@ -101,3 +101,54 @@ def test_generic_route_records_its_decision(fake_anthropic, monkeypatch):
 def test_every_decision_shows_up_as_the_top_level_llm_field(fake_anthropic):
     assert run(LA_LA_LAND)["llm"]["decision"] == "skipped"
     assert run("Who is the president of nowhere?", allow_fallback=False)["llm"]["decision"] in ("called", "skipped", "failed")
+
+
+# ---- evidence-only (allow_fallback=False) NEVER calls the LLM, on any route, even with a key set -----------
+EVIDENCE_ONLY_QUESTIONS = [
+    "What is the capital of France?",  # generic route
+    "Who is the president of nowhere?",  # generic route
+    INCEPTION,  # director route, verdict Unknown
+    LA_LA_LAND,  # director route, verdict Won
+    UNKNOWN_FILM,  # director route, director not found
+    "Tell me about the Eiffel Tower.",
+]
+
+
+@pytest.mark.parametrize("question", EVIDENCE_ONLY_QUESTIONS)
+def test_evidence_only_never_calls_the_llm_on_any_route(fake_anthropic, question):
+    res = run(question, allow_fallback=False)
+    assert fake_anthropic.calls == 0
+    (entry,) = llm_entries(res)
+    assert entry["decision"] == "skipped" and entry["reason"].startswith("evidence-only mode")
+    assert res["llm"]["decision"] == "skipped" and "evidence-only mode" in res["llm"]["reason"]
+
+
+def test_capital_of_france_with_a_key_set_makes_zero_calls_but_still_answers(fake_anthropic):
+    res = run("What is the capital of France?", allow_fallback=False)
+    assert fake_anthropic.calls == 0
+    assert res["answer"].strip(), "evidence-only still returns the retrieved passages"
+    assert res["tool_calls"] > 0  # retrieval ran; only the LLM did not
+
+
+def test_the_early_return_route_also_records_the_evidence_only_decision(fake_anthropic):
+    res = agent_loop.run_agent("What is the capital of France?", allow_fallback=False, enable_director_flow=False)
+    assert fake_anthropic.calls == 0 and res["answer"] == ""
+    (entry,) = llm_entries(res)
+    assert entry["decision"] == "skipped" and "evidence-only mode" in entry["reason"]
+
+
+def test_the_same_question_in_fallback_mode_does_call_the_llm(fake_anthropic):
+    res = run("What is the capital of France?", allow_fallback=True)
+    assert fake_anthropic.calls == 1 and res["answer"] == "LLM ANSWER" and llm_entries(res)[0]["decision"] == "called"
+
+
+def test_the_gate_holds_at_the_single_call_site_even_if_the_llm_is_forced_available(monkeypatch):
+    """Whatever llm_backend says, _consider_llm with fallback off must not reach synthesize_answer."""
+    import arag.llm_backend as llm_backend
+
+    calls = []
+    monkeypatch.setattr(llm_backend, "llm_available", lambda: True)
+    monkeypatch.setattr(llm_backend, "synthesize_answer", lambda *a, **k: calls.append(1) or {"answer": "x"})
+    trace = []
+    assert agent_loop._consider_llm("q", ["c"], 100, False, trace, needed=True) is None
+    assert calls == [] and trace[0]["decision"] == "skipped"

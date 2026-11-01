@@ -193,6 +193,9 @@ def _call_chunk_read(chunk_id: Optional[str]) -> Dict[str, Any]:
         return {}
 
 
+EVIDENCE_ONLY_REASON = "evidence-only mode: the LLM is never called (LLM fallback is off)"
+
+
 def _consider_llm(
     question: str,
     contexts: List[str],
@@ -201,22 +204,24 @@ def _consider_llm(
     trace: List[Dict[str, Any]],
     needed: bool,
     not_needed_reason: str = "",
-    gate_on_fallback: bool = True,
 ) -> Optional[Dict[str, Any]]:
     """Decide whether to ask the LLM, ask it if so, and RECORD the decision in ``trace``.
 
     The entry is {"tool": "llm", "decision": "called" | "skipped" | "failed", ...}:
       called  -> model, input_tokens, output_tokens (None if the provider reports none)
-      skipped -> reason (verdict already established, fallback not allowed, key or package missing)
+      skipped -> reason (evidence-only mode, verdict already established, key or package missing)
       failed  -> error (the caller keeps its own answer)
     Returns the backend's result dict when the LLM answered, else None.
     """
     entry: Dict[str, Any] = {"tool": "llm", "decision": "skipped"}
     result: Optional[Dict[str, Any]] = None
-    if not needed:
+    # This is the ONLY place the LLM is called. With fallback off (evidence-only mode) it is never
+    # called, on any route, whatever else is true; that is checked first so the recorded reason is
+    # always the mode.
+    if not allow_fallback:
+        entry["reason"] = EVIDENCE_ONLY_REASON
+    elif not needed:
         entry["reason"] = not_needed_reason or "the LLM was not needed for this answer"
-    elif gate_on_fallback and not allow_fallback:
-        entry["reason"] = "LLM fallback not allowed (evidence-only mode, or the fallback option is off)"
     else:
         try:
             import arag.llm_backend as llm_backend
@@ -400,7 +405,7 @@ def _run_agent(
         if not re.search(r"\bdirector\b|\bdirected\b", q, re.IGNORECASE):
             return {
                 "answer": "",
-                "tool_trace": [],
+                "tool_trace": [{"tool": "llm", "decision": "skipped", "reason": EVIDENCE_ONLY_REASON}],
                 "retrieved_texts": [],
                 "step_count": 0,
                 "token_count": 0,
@@ -798,11 +803,10 @@ def _run_agent(
         # Use the generic two-hop helper to gather contexts and trace
         retrieval = two_hop_generic(q)
         contexts = [t.get("text", "") for t in retrieval.get("retrieved_texts", [])]
-        # Ask the LLM to write the answer from the contexts when one is configured. This route keeps its
-        # earlier behaviour (context-only synthesis even without the fallback option), but the decision
-        # is now recorded in the trace like every other LLM decision.
+        # Ask the LLM to write the answer from the contexts, but only in fallback mode: in evidence-only
+        # mode (allow_fallback=False) it is never called. The decision is recorded in the trace.
         generic_trace = retrieval.setdefault("tool_trace", [])
-        llm_result = _consider_llm(q, contexts, max_tokens, allow_fallback, generic_trace, needed=True, gate_on_fallback=False)
+        llm_result = _consider_llm(q, contexts, max_tokens, allow_fallback, generic_trace, needed=True)
         if llm_result:
             answer = str(llm_result["answer"])
             citations = [int(c) for c in llm_result.get("citations", []) if isinstance(c, int)]

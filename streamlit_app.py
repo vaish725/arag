@@ -112,6 +112,8 @@ if st.button("Run"):
             enable_director_flow=True,
         )
 
+LLM_ANSWER_LABEL = "LLM answer (model knowledge, not from the corpus)"
+
 ROLE_LABEL = {
     "director": "supports: the director",
     "verdict": "supports: the Oscar verdict",
@@ -167,11 +169,18 @@ if res is not None:
         st.warning(degraded_line(_vs["reason"]))  # never show a keyword-only answer without saying so
     if res.get("budget_exhausted"):
         st.warning(f"Step budget exhausted after {res.get('tool_calls')} tool calls: the answer may be incomplete. Raise Max steps to allow more.")
-    st.subheader("Answer")
-    st.write(res.get("answer"))
-    render_llm_status(res)
-    if res.get("template_answer") and res.get("template_answer") != res.get("answer"):
-        st.caption("What the corpus evidence alone says: " + md_escape(res["template_answer"]))
+    if (res.get("llm") or {}).get("decision") == "called":
+        # The LLM answered: keep its answer visibly apart from the answer built from the corpus.
+        st.subheader("Evidence answer (from the corpus)")
+        st.write(res.get("template_answer") or "No answer was built from the corpus for this question; see the passages under Evidence.")
+        st.subheader(LLM_ANSWER_LABEL)
+        with st.container(border=True):
+            st.write(res.get("answer"))
+        render_llm_status(res)
+    else:
+        st.subheader("Answer")
+        st.write(res.get("answer"))
+        render_llm_status(res)
     # If the agent returned an explicit provenance note about fallback, make it visible
     if isinstance(res.get("answer"), str) and "external knowledge" in res.get("answer"):
         st.warning("This answer used external knowledge beyond the retrieved corpus.")
