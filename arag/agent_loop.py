@@ -194,6 +194,11 @@ def _call_chunk_read(chunk_id: Optional[str]) -> Dict[str, Any]:
 
 
 EVIDENCE_ONLY_REASON = "evidence-only mode: the LLM is never called (LLM fallback is off)"
+COULD_NOT_ANSWER_MESSAGE = "Couldn't answer this question"
+NO_ROUTE_MESSAGE = (
+    "In evidence-only mode this demo answers questions like 'Who directed X and did they win an Oscar?'. "
+    "For other questions, turn on LLM fallback."
+)
 
 
 def _consider_llm(
@@ -247,6 +252,32 @@ def _consider_llm(
             result = None
     trace.append(entry)
     return result if result and result.get("answer") else None
+
+
+def _short_reason(text: Any, limit: int = 160) -> str:
+    one_line = " ".join(str(text or "").split())
+    return one_line if len(one_line) <= limit else one_line[: limit - 1].rstrip() + "\u2026"
+
+
+def _message_with_related(message: str, retrieval: Dict[str, Any], trace: Any, citations: Optional[List[int]] = None) -> Dict[str, Any]:
+    """A result whose answer is a message, never the retrieved passages: the top 3 passages ride along as
+    ``related_passages`` (whole sentences, headings stripped) for the UI to show collapsed."""
+    texts = retrieval.get("retrieved_texts", []) or []
+    return {
+        "answer": message,
+        "no_specialised_route": message == NO_ROUTE_MESSAGE,
+        "related_passages": [
+            {"chunk_id": t.get("chunk_id") or "", "source": t.get("source") or "",
+             "text": whole_sentence_passage(t.get("text") or "", t.get("chunk_id") or "")}
+            for t in texts[:3]
+        ],
+        "tool_trace": trace,
+        "retrieved_texts": texts,
+        "citations": citations or [],
+        "step_count": retrieval.get("step_count", 0),
+        "token_count": retrieval.get("token_count", 0),
+        "budget_exhausted": False,
+    }
 
 
 def _llm_summary(trace: Any) -> Dict[str, Any]:
@@ -830,19 +861,8 @@ def _run_agent(
                 }
                 return out
         except Exception:
-            # Fallback: join contexts if deterministic assembly fails
-            answer = "\n\n".join(contexts)
-
-        out = {
-            "answer": answer,
-            "tool_trace": retrieval.get("tool_trace", []),
-            "retrieved_texts": retrieval.get("retrieved_texts", []),
-            "citations": local_citations,
-            "step_count": retrieval.get("step_count", 0),
-            "token_count": retrieval.get("token_count", 0),
-            "budget_exhausted": False,
-        }
-        return out
+            # Deterministic assembly failed: say so; the passages are offered, never shown as the answer
+            return _message_with_related(COULD_NOT_ANSWER_MESSAGE, retrieval, retrieval.get("tool_trace", []))
 
     # Non-director queries should fall through to the generic retrieval->LLM
     # flow below. The specialized director flow returned earlier when
@@ -862,9 +882,19 @@ def _run_agent(
         if llm_result:
             answer = str(llm_result["answer"])
             citations = [int(c) for c in llm_result.get("citations", []) if isinstance(c, int)]
+        elif not allow_fallback:
+            # Evidence-only with no specialised route: retrieved passages are never the answer.
+            return _message_with_related(NO_ROUTE_MESSAGE, retrieval, generic_trace)
         else:
-            answer = "\n\n".join(contexts)  # no LLM answer: the retrieved passages themselves
-            citations = []
+            # LLM fallback is on but there is no LLM answer: say why; the passages are offered, not shown as the answer.
+            llm = _llm_summary(generic_trace)
+            if llm.get("decision") == "failed":
+                why = f"The LLM call failed: {_short_reason(llm.get('error'))}"
+            elif llm.get("decision") == "skipped":
+                why = f"The LLM is not available: {_short_reason(llm.get('reason'))}"
+            else:
+                why = "The LLM call failed: it returned no answer"
+            return _message_with_related(why, retrieval, generic_trace)
         return {
             "answer": answer,
             "tool_trace": generic_trace,

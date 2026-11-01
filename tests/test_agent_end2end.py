@@ -63,7 +63,8 @@ def test_agent_with_mocked_llm(monkeypatch):
 
 
 def test_agent_without_llm_falls_back(monkeypatch):
-    """When no LLM is available, agent should return concatenated retrieved contexts."""
+    """Evidence-only with no specialised route: the answer is the explanatory message, never the retrieved passages
+    (those are offered separately as related_passages)."""
     import arag.agent_loop as agent_loop
     import arag.llm_backend as llm_backend
     import arag.retrieval_tools as retrieval_tools
@@ -96,7 +97,8 @@ def test_agent_without_llm_falls_back(monkeypatch):
         "Who directed Y?", max_steps=4, max_tokens=1000, allow_fallback=False
     )
     assert isinstance(res, dict)
-    assert "Some full context here." in res["answer"]
+    assert res["answer"] == agent_loop.NO_ROUTE_MESSAGE
+    assert "Some full context here." not in res["answer"]
 
 
 from arag import agent_loop  # noqa: E402
