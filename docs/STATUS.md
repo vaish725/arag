@@ -53,6 +53,11 @@ Open: [#6](https://github.com/vaish725/arag/pull/6), the evaluation (retrieval a
   by", "directed, co-produced, and co-written by"), the name stops where it ends, and the director sentence must
   name the film or come from the film's own page. It was developed on the 26 + 7 evaluation films (all exact
   afterwards), so how it behaves on unseen films is unknown.
+- **LLM use is recorded, not yet restricted, on the generic route.** Every LLM decision is a `{"tool": "llm"}` entry in
+  `tool_trace` (called with model and tokens, skipped with a reason, or failed with the error) and is shown next to the
+  answer. For director questions the LLM is asked only when the corpus gives no verdict and fallback is allowed. For
+  other questions the LLM still writes the answer from the retrieved passages whenever a key is configured, **even in the
+  "evidence-only (no LLM)" mode**; the mode label is inaccurate for those questions.
 - The corpus is tiny and shaped around the demo films. Retrieval constants (boosts, thresholds, blend weights,
   top-k) are hand-picked and untuned.
 - The recipe can use many tool calls per question (up to 59 observed). Every call, including the `chunk_read`

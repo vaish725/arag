@@ -66,7 +66,7 @@ if not _vs_enabled and st.session_state.get("result") is None:
     # Before the first answer: say so up front. Once an answer is shown, the banner sits above it.
     _top_banner.warning(degraded_line(_vs_reason))
 
-mode = st.selectbox("Mode", ["evidence-only (no LLM)", "semantic + BM25 + optional LLM fallback"])
+mode = st.selectbox("Mode", ["evidence-only (no LLM)", "evidence + LLM fallback (LLM only if the corpus gives no verdict)"])
 question = st.text_input(
     "Question", "",
     placeholder="Ask something like: Who directed Inception and did they win any Academy Awards?",
@@ -112,6 +112,52 @@ if st.button("Run"):
             enable_director_flow=True,
         )
 
+ROLE_LABEL = {
+    "director": "supports: the director",
+    "verdict": "supports: the Oscar verdict",
+    "career": "supports: the career note (a win for another film)",
+    "cited": "cited by the answer",
+}
+
+
+def md_escape(text: str) -> str:
+    """Escape characters Streamlit would render as markdown or LaTeX (e.g. the $ in "$975 million")."""
+    for ch in ("\\", "$", "*", "_", "`", "#", "[", "]", "<", ">"):
+        text = text.replace(ch, "\\" + ch)
+    return text
+
+
+def build_source_url(entry: dict) -> str | None:
+    from urllib.parse import quote
+
+    for key in ("url", "source_url", "link"):  # an explicit URL wins
+        if entry.get(key):
+            return entry.get(key)
+    candidate = entry.get("source") or entry.get("chunk_id")
+    if not candidate:
+        return None
+    return "https://en.wikipedia.org/wiki/" + quote(candidate.replace(" ", "_"), safe="()!$&'()*+,;=:@/[]~")
+
+
+def render_llm_status(res: dict) -> None:
+    """Say what the LLM did for this answer: called, skipped (why), or failed (error)."""
+    llm = res.get("llm") or {}
+    decision = llm.get("decision")
+    if decision == "called":
+        usage = (
+            f"{llm.get('input_tokens')} input / {llm.get('output_tokens')} output tokens"
+            if llm.get("input_tokens") is not None
+            else "token usage not reported"
+        )
+        st.info(f"LLM called ({llm.get('model') or 'model unknown'}; {usage}). The answer above is the LLM's and may use knowledge from outside the corpus.")
+    elif decision == "failed":
+        st.error(f"LLM call failed: {llm.get('error')}. Showing the corpus-evidence answer instead.")
+    elif decision == "skipped":
+        st.caption("LLM not called: " + md_escape(llm.get("reason") or "no reason recorded"))
+    else:
+        st.caption("LLM not considered for this question.")
+
+
 # Results come from session state so they survive reruns (e.g. ticking the box).
 res = st.session_state.get("result")
 if res is not None:
@@ -123,69 +169,42 @@ if res is not None:
         st.warning(f"Step budget exhausted after {res.get('tool_calls')} tool calls: the answer may be incomplete. Raise Max steps to allow more.")
     st.subheader("Answer")
     st.write(res.get("answer"))
+    render_llm_status(res)
+    if res.get("template_answer") and res.get("template_answer") != res.get("answer"):
+        st.caption("What the corpus evidence alone says: " + md_escape(res["template_answer"]))
     # If the agent returned an explicit provenance note about fallback, make it visible
     if isinstance(res.get("answer"), str) and "external knowledge" in res.get("answer"):
         st.warning("This answer used external knowledge beyond the retrieved corpus.")
 
-    st.subheader("Cited snippets")
-    # Prefer explicit citations returned by the agent (1-based indices).
-    citations = res.get("citations") or res.get("citations_list") or []
-    retrieved = res.get("retrieved_texts", [])
-
-    from urllib.parse import quote
-
-    def build_source_url(entry: dict) -> str | None:
-        # Prefer explicit URL fields if present
-        for key in ("url", "source_url", "link"):
-            if entry.get(key):
-                return entry.get(key)
-        # Try to build a Wikipedia link from the `source` or `chunk_id`
-        candidate = entry.get("source") or entry.get("chunk_id")
-        if not candidate:
-            return None
-        # Normalize to a wiki path: replace spaces with underscores
-        path = candidate.replace(" ", "_")
-        # Quote the path to be safe for parentheses and other chars
-        path_quoted = quote(path, safe="()!$&'()*+,;=:@/[]~")
-        return f"https://en.wikipedia.org/wiki/{path_quoted}"
-
-    def render_entry_with_link(label: str, entry: dict, idx_str: str | None = None):
-        url = build_source_url(entry)
-        source = entry.get("source") or entry.get("chunk_id") or "source"
-        label_text = f"[{idx_str}] {source}" if idx_str else source
-        if url:
-            # Show clickable link above the expander
-            st.markdown(f"**[{label_text}]({url})**")
-        else:
-            st.markdown(f"**{label_text}**")
-        with st.expander(source):
-            st.write(entry.get("text") or entry.get("full_context") or "")
-
-    if citations:
-        # Render only the cited snippets in order
-        for c in citations:
-            try:
-                idx = int(c) - 1
-            except Exception:
-                continue
-            if idx < 0 or idx >= len(retrieved):
-                continue
-            entry = retrieved[idx]
-            render_entry_with_link(str(c), entry, idx_str=str(c))
+    st.subheader("Evidence")
+    details = res.get("citation_details")
+    if details:
+        for d in details:
+            title = d.get("source") or d.get("chunk_id") or "source"
+            url = build_source_url({"source": d.get("source"), "chunk_id": d.get("chunk_id")})
+            label = f"[{d['citation']}] {title}"
+            st.markdown(f"**[{label}]({url})**" if url else f"**{label}**")
+            for sp in d["supports"]:
+                st.markdown(f"*{ROLE_LABEL.get(sp['role'], sp['role'])}*")
+                if sp.get("sentence"):
+                    if sp.get("before"):
+                        st.caption(md_escape(sp["before"]))
+                    st.markdown("> **" + md_escape(sp["sentence"]) + "**")
+                    if sp.get("after"):
+                        st.caption(md_escape(sp["after"]))
+                else:
+                    st.caption("(the answer cites this passage without naming a single sentence)")
+            with st.expander("Show full passage", expanded=False):
+                st.write(d.get("full_text") or "")
     else:
-        # Fallback: show all retrieved_texts
-        for i, entry in enumerate(retrieved, start=1):
-                render_entry_with_link(str(i), entry, idx_str=str(i))
-                # show a compact metadata line under each snippet
-                meta = []
-                if entry.get("chunk_id"):
-                    meta.append(f"chunk_id={entry.get('chunk_id')}")
-                if entry.get("source"):
-                    meta.append(f"source={entry.get('source')}")
-                if meta:
-                    st.caption(" | ".join(meta))
+        for i, entry in enumerate(res.get("retrieved_texts", []), start=1):
+            title = entry.get("source") or entry.get("chunk_id") or "source"
+            url = build_source_url(entry)
+            st.markdown(f"**[[{i}] {title}]({url})**" if url else f"**[{i}] {title}**")
+            with st.expander("Show full passage", expanded=False):
+                st.write(entry.get("text") or entry.get("full_context") or "")
 
-    st.subheader("Tool trace")
-    for step in res.get("tool_trace", []):
-        st.json(step)
+    with st.expander("Tool trace", expanded=False):
+        for step in res.get("tool_trace", []):
+            st.json(step)
     st.write("Step count:", res.get("step_count"), "Token count:", res.get("token_count"))

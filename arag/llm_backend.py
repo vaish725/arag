@@ -6,7 +6,7 @@ import json
 import logging
 import os
 import re
-from typing import Any, List
+from typing import Any, List, Optional
 
 from arag.runtime_ops import BudgetExceededError, get_global_budget, get_global_rate_limiter
 
@@ -31,20 +31,37 @@ def get_llm_provider() -> str:
     return provider
 
 
-def llm_available() -> bool:
+def llm_unavailable_reason() -> Optional[str]:
+    """Why no LLM call can be made right now, or None if one can.
+
+    Used to record a skipped LLM step with its reason. A bad ARAG_LLM_PROVIDER raises ValueError.
+    """
     import importlib
 
     provider = get_llm_provider()
     key, package = ("OPENAI_API_KEY", "openai") if provider == "openai" else ("ANTHROPIC_API_KEY", "anthropic")
     if not os.environ.get(key):
-        return False
+        return f"{key} is not set" + (" (ARAG_LLM_PROVIDER=openai is selected)" if provider == "openai" else "")
     try:
         importlib.import_module(package)
-        return True
     except Exception:
-        if provider == "openai":
-            log.warning(OPENAI_MISSING_MESSAGE)  # an explicit choice must not fail silently
-        return False
+        return f"the '{package}' package is not installed"
+    return None
+
+
+def llm_available() -> bool:
+    reason = llm_unavailable_reason()
+    if reason and get_llm_provider() == "openai" and "package" in reason:
+        log.warning(OPENAI_MISSING_MESSAGE)  # an explicit choice must not fail silently
+    return reason is None
+
+
+def _with_usage(result: dict[str, Any], model: str, usage: Any, in_attr: str, out_attr: str) -> dict[str, Any]:
+    """Attach the model name and token usage reported by the provider (None when it reports none)."""
+    result["model"] = model
+    result["input_tokens"] = getattr(usage, in_attr, None) if usage is not None else None
+    result["output_tokens"] = getattr(usage, out_attr, None) if usage is not None else None
+    return result
 
 
 def _parse_reply(text: str, allow_fallback: bool) -> dict[str, Any]:
@@ -162,7 +179,7 @@ def synthesize_answer(
             m = choice0.message if hasattr(choice0, "message") else choice0.get("message")
             content = m.content if hasattr(m, "content") else (m or {}).get("content")
             _record_usage(budget, max_tokens)
-            return _parse_reply(content or "", allow_fallback)
+            return _with_usage(_parse_reply(content or "", allow_fallback), chat_model, getattr(resp, "usage", None), "prompt_tokens", "completion_tokens")
         except BudgetExceededError:
             raise
         except Exception as e:
@@ -190,7 +207,7 @@ def synthesize_answer(
                 getattr(block, "text", "") for block in res.content if getattr(block, "type", "text") == "text"
             )
             _record_usage(budget, max_tokens)
-            return _parse_reply(text, allow_fallback)
+            return _with_usage(_parse_reply(text, allow_fallback), model_name, getattr(res, "usage", None), "input_tokens", "output_tokens")
         except BudgetExceededError:
             raise
         except Exception as e:

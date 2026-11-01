@@ -133,7 +133,8 @@ def test_synthesize_answer_uses_openai(monkeypatch):
     importlib.reload(llm_backend)
 
     out = llm_backend.synthesize_answer("q", ["ctx1", "ctx2"])
-    assert out == {"answer": "fake answer", "citations": [], "used_fallback": False}
+    assert (out["answer"], out["citations"], out["used_fallback"]) == ("fake answer", [], False)
+    assert out["model"] == "gpt-4o-mini" and out["input_tokens"] is None and out["output_tokens"] is None  # the fake reports no usage
 
 
 def test_synthesize_answer_uses_anthropic_messages_api(monkeypatch):

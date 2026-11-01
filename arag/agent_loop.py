@@ -193,6 +193,158 @@ def _call_chunk_read(chunk_id: Optional[str]) -> Dict[str, Any]:
         return {}
 
 
+def _consider_llm(
+    question: str,
+    contexts: List[str],
+    max_tokens: int,
+    allow_fallback: bool,
+    trace: List[Dict[str, Any]],
+    needed: bool,
+    not_needed_reason: str = "",
+    gate_on_fallback: bool = True,
+) -> Optional[Dict[str, Any]]:
+    """Decide whether to ask the LLM, ask it if so, and RECORD the decision in ``trace``.
+
+    The entry is {"tool": "llm", "decision": "called" | "skipped" | "failed", ...}:
+      called  -> model, input_tokens, output_tokens (None if the provider reports none)
+      skipped -> reason (verdict already established, fallback not allowed, key or package missing)
+      failed  -> error (the caller keeps its own answer)
+    Returns the backend's result dict when the LLM answered, else None.
+    """
+    entry: Dict[str, Any] = {"tool": "llm", "decision": "skipped"}
+    result: Optional[Dict[str, Any]] = None
+    if not needed:
+        entry["reason"] = not_needed_reason or "the LLM was not needed for this answer"
+    elif gate_on_fallback and not allow_fallback:
+        entry["reason"] = "LLM fallback not allowed (evidence-only mode, or the fallback option is off)"
+    else:
+        try:
+            import arag.llm_backend as llm_backend
+
+            if not llm_backend.llm_available():
+                entry["reason"] = f"LLM not available: {llm_backend.llm_unavailable_reason() or 'no LLM is configured'}"
+            else:
+                out = llm_backend.synthesize_answer(question, contexts, max_tokens=max_tokens, allow_fallback=allow_fallback)
+                if isinstance(out, dict):
+                    result = out
+                elif isinstance(out, (tuple, list)):  # older mocks: (answer, citations, used_fallback)
+                    result = {"answer": out[0] if out else "", "citations": out[1] if len(out) > 1 else []}
+                else:
+                    result = {"answer": str(out)}
+                entry.update(
+                    decision="called",
+                    model=result.get("model"),
+                    input_tokens=result.get("input_tokens"),
+                    output_tokens=result.get("output_tokens"),
+                )
+        except Exception as e:  # a failing LLM must never hide the corpus-evidence answer
+            entry.update(decision="failed", error=f"{type(e).__name__}: {e}")
+            result = None
+    trace.append(entry)
+    return result if result and result.get("answer") else None
+
+
+def _llm_summary(trace: Any) -> Dict[str, Any]:
+    """The last LLM decision in a trace, for the result's top-level "llm" field."""
+    for e in reversed(trace or []):
+        if isinstance(e, dict) and e.get("tool") == "llm":
+            return {k: v for k, v in e.items() if k != "tool"}
+    return {"decision": "not considered", "reason": "this path made no LLM decision"}
+
+
+
+def _norm_ws(text: str) -> str:
+    return re.sub(r"\s+", " ", text or "").strip()
+
+
+_TERMINAL = (".", "!", "?", '"', "\u201d", ")", "]")
+
+
+_ABBREVIATIONS = {
+    "bros.", "inc.", "co.", "ltd.", "corp.", "mr.", "mrs.", "ms.", "dr.", "prof.", "st.", "mt.", "jr.", "sr.", "vs.",
+    "no.", "vol.", "gen.", "col.", "lt.", "sgt.", "rev.", "u.s.", "u.k.", "ft.",
+}
+_HEADING_TOKEN_RE = re.compile(r"={2,}\s*[^=]+?\s*={2,}\s*")
+
+
+def split_sentences(text: str) -> List[str]:
+    """Sentence split that does not break after abbreviations ("Warner Bros. Pictures") or initials ("C. Robert")."""
+    pieces: List[str] = []
+    start = 0
+    for m in re.finditer(r"(?<=[.?!])\s+", text or ""):
+        last_word = (text[start:m.start()].split() or [""])[-1].lower()
+        if last_word in _ABBREVIATIONS or re.fullmatch(r"[a-z]\.", last_word):
+            continue
+        pieces.append(text[start:m.start()])
+        start = m.end()
+    pieces.append((text or "")[start:])
+    return [x.strip() for x in pieces if x.strip()]
+
+
+def _without_headings(sentence: str) -> str:
+    return _HEADING_TOKEN_RE.sub("", sentence).strip()
+
+
+def evidence_window(chunk_text: str, evidence: str, chunk_id: str = "") -> Dict[str, Any]:
+    """The evidence sentence of a chunk with at most one neighbouring sentence on each side.
+
+    Chunks are 200-word windows that start and end mid-sentence. The window is trimmed at sentence
+    boundaries: a neighbour that is itself a cut-off fragment (the start of a chunk that is not the first
+    chunk of its page, or an end without closing punctuation) is dropped, and the evidence sentence gets an
+    ellipsis on the cut side if it is such a fragment.
+    """
+    sentences = split_sentences(chunk_text)
+    target = _norm_ws(evidence)
+    idx = next((i for i, x in enumerate(sentences) if _norm_ws(x) == target), None)
+    if idx is None:
+        idx = next((i for i, x in enumerate(sentences) if target and (target in _norm_ws(x) or _norm_ws(x) in target)), None)
+    if idx is None:
+        return {"sentence": target[:400], "before": "", "after": ""}
+    last = len(sentences) - 1
+    page_start = chunk_id.endswith("_0")
+    cut_start = idx == 0 and not page_start  # a chunk after the first starts mid-sentence
+    cut_end = idx == last and not sentences[idx].rstrip().endswith(_TERMINAL)
+    before = sentences[idx - 1] if idx >= 1 and not (idx - 1 == 0 and not page_start) else ""
+    after = sentences[idx + 1] if idx + 1 <= last and not (idx + 1 == last and not sentences[idx + 1].rstrip().endswith(_TERMINAL)) else ""
+    sentence = ("\u2026 " if cut_start else "") + _without_headings(sentences[idx]) + (" \u2026" if cut_end else "")
+    return {"sentence": sentence, "before": _without_headings(before), "after": _without_headings(after)}
+
+
+def build_citation_details(result: Dict[str, Any], question: str) -> List[Dict[str, Any]]:
+    """For each citation: the source, the exact evidence sentence(s) with what each supports
+    ("director", "verdict", "career"; "cited" when the answer gave no sentence), and the full passage."""
+    retrieved = result.get("retrieved_texts") or []
+    verdict = result.get("verdict_evidence") or {}
+    careers = result.get("career_wins") or []
+    m = re.match(r"Director:\s*(.+?)\.\s", result.get("template_answer") or result.get("answer") or "")
+    director = m.group(1).strip() if m and not m.group(1).lower().startswith("unknown") else None
+    title = extract_asked_title(question)
+    details: List[Dict[str, Any]] = []
+    for n in result.get("citations") or []:
+        if not isinstance(n, int) or not 1 <= n <= len(retrieved):
+            continue
+        entry = retrieved[n - 1]
+        text, cid = entry.get("text") or "", entry.get("chunk_id") or ""
+        supports: List[Dict[str, Any]] = []
+        if director and title:
+            for sent in split_sentences(text):
+                if has_directed_by(sent) and director in sent and (re.search(re.escape(title), sent, re.IGNORECASE) or _is_film_page(cid, title)):
+                    supports.append({"role": "director", "evidence": sent})
+                    break
+        if verdict.get("citation") == n and verdict.get("matched_text"):
+            supports.append({"role": "verdict", "evidence": verdict["matched_text"]})
+        for c in careers:
+            if c.get("citation") == n and c.get("matched_text"):
+                supports.append({"role": "career", "evidence": c["matched_text"]})
+        if not supports:
+            supports.append({"role": "cited", "evidence": ""})
+        for sp in supports:
+            sp.update(evidence_window(text, sp["evidence"], cid) if sp["evidence"] else {"sentence": "", "before": "", "after": ""})
+            sp.pop("evidence")
+        details.append({"citation": n, "chunk_id": cid, "source": entry.get("source") or "", "supports": supports, "full_text": text})
+    return details
+
+
 def run_agent(
     question: str,
     max_steps: Optional[int] = DEFAULT_MAX_STEPS,
@@ -220,6 +372,9 @@ def run_agent(
     result["budget_exhausted"] = budget.exhausted
     result["tool_calls"] = budget.used
     result["tool_trace"] = _complete_trace(budget.log, result.get("tool_trace"))
+    result["step_count"] = budget.used  # one step = one recorded tool call (it used to be an internal counter)
+    result["llm"] = _llm_summary(result["tool_trace"])
+    result["citation_details"] = build_citation_details(result, question)
     result["vector_search"] = runtime_status(result.get("tool_trace"), vector_search_status())
     return result
 
@@ -583,24 +738,20 @@ def _run_agent(
                 cite_str = f" Citations: {final_citations}." if final_citations else ""
                 answer = " ".join(parts) + cite_str
                 local_citations = final_citations
-                # The evidence-only template is always built first. Only when it
-                # could not find the director and the caller allows fallback do
-                # we hand the contexts to the LLM instead.
-                if not director and allow_fallback:
-                    try:
-                        import arag.llm_backend as llm_backend
-
-                        if llm_backend.llm_available():
-                            llm_out = llm_backend.synthesize_answer(
-                                q, contexts, max_tokens=max_tokens, allow_fallback=True
-                            )
-                            llm_ans = llm_out.get("answer") if isinstance(llm_out, dict) else (llm_out[0] if isinstance(llm_out, (tuple, list)) else llm_out)
-                            if llm_ans:
-                                answer = str(llm_ans)
-                    except Exception as e:
-                        logging.getLogger(__name__).warning("LLM fallback failed: %s", e)
+                # The corpus-evidence template is always built first. The LLM is asked only when the
+                # VERDICT is Unknown (whether or not the director was found) and fallback is allowed;
+                # every decision, including a skip or a failure, is recorded in the trace.
+                template_answer = answer
+                llm_result = _consider_llm(
+                    q, contexts, max_tokens, allow_fallback, retrieval.setdefault("tool_trace", []),
+                    needed=award_verdict.startswith("Unknown"),
+                    not_needed_reason=f"the corpus already gave a verdict ({award_verdict.split(' (')[0].rstrip('.')})",
+                )
+                if llm_result:
+                    answer = str(llm_result["answer"])
                 out = {
                     "answer": answer,
+                    "template_answer": template_answer,
                     "tool_trace": retrieval.get("tool_trace", []),
                     "retrieved_texts": retrieval.get("retrieved_texts", []),
                     "citations": local_citations,
@@ -647,67 +798,26 @@ def _run_agent(
         # Use the generic two-hop helper to gather contexts and trace
         retrieval = two_hop_generic(q)
         contexts = [t.get("text", "") for t in retrieval.get("retrieved_texts", [])]
-        # Attempt to synthesize via LLM backend if available
-        try:
-            import arag.llm_backend as llm_backend
-
-            if callable(getattr(llm_backend, "llm_available", None)) and llm_backend.llm_available():
-                try:
-                    out = llm_backend.synthesize_answer(q, contexts, max_tokens=max_tokens, allow_fallback=allow_fallback)
-                except TypeError:
-                    # older/mock synthesize may accept different params
-                    out = llm_backend.synthesize_answer(q, contexts)
-                # accept either (ans, citations, used_fallback) or plain string
-                ans = ""
-                citations = []
-                used_fallback = False
-                if isinstance(out, tuple) or isinstance(out, list):
-                    if len(out) >= 1:
-                        ans = out[0] or ""
-                    if len(out) >= 2 and isinstance(out[1], list):
-                        citations = [int(c) for c in out[1] if isinstance(c, int)]
-                    if len(out) >= 3:
-                        used_fallback = bool(out[2])
-                elif isinstance(out, dict):
-                    ans = out.get("answer") or ""
-                    citations = [c for c in out.get("citations", []) if isinstance(c, int)]
-                    used_fallback = bool(out.get("used_fallback"))
-                elif isinstance(out, str):
-                    ans = out
-                answer = ans or ""
-                return {
-                    "answer": answer,
-                    "tool_trace": retrieval.get("tool_trace", []),
-                    "retrieved_texts": retrieval.get("retrieved_texts", []),
-                    "citations": citations,
-                    "step_count": retrieval.get("step_count", 0),
-                    "token_count": retrieval.get("token_count", 0),
-                    "budget_exhausted": False,
-                }
-            else:
-                # No LLM: return concatenated contexts as a graceful fallback
-                answer = "\n\n".join(contexts)
-                return {
-                    "answer": answer,
-                    "tool_trace": retrieval.get("tool_trace", []),
-                    "retrieved_texts": retrieval.get("retrieved_texts", []),
-                    "citations": [],
-                    "step_count": retrieval.get("step_count", 0),
-                    "token_count": retrieval.get("token_count", 0),
-                    "budget_exhausted": False,
-                }
-        except Exception:
-            # If LLM backend import or call fails, fall back to concatenated contexts
-            answer = "\n\n".join(contexts)
-            return {
-                "answer": answer,
-                "tool_trace": retrieval.get("tool_trace", []),
-                "retrieved_texts": retrieval.get("retrieved_texts", []),
-                "citations": [],
-                "step_count": retrieval.get("step_count", 0),
-                "token_count": retrieval.get("token_count", 0),
-                "budget_exhausted": False,
-            }
+        # Ask the LLM to write the answer from the contexts when one is configured. This route keeps its
+        # earlier behaviour (context-only synthesis even without the fallback option), but the decision
+        # is now recorded in the trace like every other LLM decision.
+        generic_trace = retrieval.setdefault("tool_trace", [])
+        llm_result = _consider_llm(q, contexts, max_tokens, allow_fallback, generic_trace, needed=True, gate_on_fallback=False)
+        if llm_result:
+            answer = str(llm_result["answer"])
+            citations = [int(c) for c in llm_result.get("citations", []) if isinstance(c, int)]
+        else:
+            answer = "\n\n".join(contexts)  # no LLM answer: the retrieved passages themselves
+            citations = []
+        return {
+            "answer": answer,
+            "tool_trace": generic_trace,
+            "retrieved_texts": retrieval.get("retrieved_texts", []),
+            "citations": citations,
+            "step_count": retrieval.get("step_count", 0),
+            "token_count": retrieval.get("token_count", 0),
+            "budget_exhausted": False,
+        }
     except Exception:
         # Generic fallback: empty answer
         return {

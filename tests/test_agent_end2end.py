@@ -116,15 +116,17 @@ def _stub_llm(monkeypatch):
 
 
 def test_director_flow_with_fallback_uses_template_not_blank(monkeypatch):
-    """C-02: fallback mode used to return answer == '' for director questions."""
+    """C-02: fallback mode used to return answer == '' for director questions. When the corpus already gives a
+    verdict (La La Land: won), the template answer is used and the LLM is not called. (For an Unknown verdict
+    the LLM is asked: see tests/test_llm_decisions.py.)"""
     calls = _stub_llm(monkeypatch)
     res = agent_loop.run_agent(
-        "Who directed Inception and did they win any Academy Awards?",
+        "Who directed La La Land and did they win any Academy Awards?",
         allow_fallback=True,
         enable_director_flow=True,
     )
-    assert "Christopher Nolan" in res["answer"]
-    assert calls == [], "LLM must not be called when the template found the director"
+    assert "Damien Chazelle" in res["answer"] and "Won at least one" in res["answer"]
+    assert calls == [], "LLM must not be called when the corpus already gave a verdict"
 
 
 def test_director_flow_with_fallback_calls_llm_when_director_unknown(monkeypatch):
