@@ -76,7 +76,7 @@ def streamlit_mode() -> None:
     if at is None or at.exception:
         print("app raised:", at.exception if at is not None else "n/a")
         return
-    at.selectbox[0].select("semantic + BM25 + optional LLM fallback")
+    at.selectbox[0].select("evidence + LLM fallback (LLM only if the corpus gives no verdict)")
     at.text_input[0].set_value(QUESTION)
     at = phase("click Run (one full question)", lambda: at.button[0].click().run())
     shown = " ".join(m.value for m in at.markdown) if at is not None else ""

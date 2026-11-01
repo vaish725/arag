@@ -107,3 +107,11 @@ def test_a_blocked_semantic_search_is_not_reported_as_degraded_vector_search():
     assert health.runtime_status(trace, (True, ""))["enabled"] is True
     trace = [{"tool": "semantic_search", "error": "model exploded"}]
     assert health.runtime_status(trace, (True, ""))["enabled"] is False
+
+
+def test_step_count_equals_the_number_of_recorded_tool_calls(actual_calls):
+    """It used to report an internal counter (7) while the trace held 29 calls."""
+    for question in QUESTIONS:
+        res = agent_loop.run_agent(question, allow_fallback=False, enable_director_flow=True)
+        recorded_calls = sum(1 for e in res["tool_trace"] if e["tool"] in TOOLS and not e.get("blocked"))
+        assert res["step_count"] == res["tool_calls"] == recorded_calls > 0

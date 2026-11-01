@@ -75,3 +75,29 @@ def pytest_runtest_setup(item):
         if os.environ.get("ARAG_REQUIRE_MODEL") == "1":
             pytest.fail(msg)
         pytest.skip(msg)
+
+
+@pytest.fixture
+def fake_anthropic(monkeypatch):
+    """A fake Anthropic SDK plus a key, so the real llm_backend path runs with no network.
+
+    Returns an object with .calls (number of messages.create calls). Set .fail = "text" to make it raise.
+    """
+    import sys
+    from types import SimpleNamespace
+
+    state = SimpleNamespace(calls=0, fail=None, models=[])
+
+    class FakeMessages:
+        @staticmethod
+        def create(model=None, max_tokens=None, system=None, messages=None):
+            state.calls += 1
+            state.models.append(model)
+            if state.fail:
+                raise RuntimeError(state.fail)
+            block = SimpleNamespace(type="text", text='{"answer": "LLM ANSWER", "citations": []}')
+            return SimpleNamespace(content=[block], usage=SimpleNamespace(input_tokens=812, output_tokens=64))
+
+    monkeypatch.setitem(sys.modules, "anthropic", SimpleNamespace(Anthropic=lambda api_key=None: SimpleNamespace(messages=FakeMessages)))
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-not-real")
+    return state

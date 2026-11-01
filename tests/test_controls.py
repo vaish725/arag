@@ -13,7 +13,7 @@ from streamlit.testing.v1 import AppTest
 from arag import agent_loop
 
 APP = str(Path(__file__).resolve().parents[1] / "streamlit_app.py")
-MODE_LLM = "semantic + BM25 + optional LLM fallback"
+MODE_LLM = "evidence + LLM fallback (LLM only if the corpus gives no verdict)"
 Q = "Who directed Inception and did they win any Academy Awards?"
 
 

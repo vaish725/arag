@@ -22,6 +22,11 @@ tool calls per question is enforced, but the choice of steps is code, not a mode
   sentences). Committed in `data/` with `data/index_meta.json`, which records the model, dimension, counts and
   the model's file hashes.
 - **Dependencies:** a single `requirements.txt` (the app, tests and code checks, and the evaluation scripts).
+- **LLM:** optional (`ANTHROPIC_API_KEY`). In evidence-only mode (fallback off) the LLM is never called, on any
+  route, even with a key set. In fallback mode, for director questions it is asked only when the corpus gives no
+  verdict. Every LLM decision (called with model and tokens, skipped with a reason, or failed with the error) is a
+  `{"tool": "llm"}` entry in `tool_trace` and is shown next to the answer; an LLM answer is shown apart from the
+  corpus-evidence answer under "LLM answer (model knowledge, not from the corpus)".
 - **Keys:** none needed. `ANTHROPIC_API_KEY` is optional and only enables the LLM-fallback answer mode.
 - **Spend controls:** per-question and per-day caps on API calls and tokens (`arag/runtime_ops.py`), a
   per-session question limit in the Streamlit app, and a per-question tool-call budget (`max_steps`).

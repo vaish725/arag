@@ -8,7 +8,7 @@ from streamlit.testing.v1 import AppTest  # noqa: E402
 
 APP = str(Path(__file__).resolve().parents[1] / "streamlit_app.py")
 QUESTION = "Who directed Inception and did they win any Academy Awards?"
-MODES = ["evidence-only (no LLM)", "semantic + BM25 + optional LLM fallback"]
+MODES = ["evidence-only (no LLM)", "evidence + LLM fallback (LLM only if the corpus gives no verdict)"]
 
 
 def _shown(at):
