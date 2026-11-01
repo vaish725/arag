@@ -290,15 +290,50 @@ def _without_headings(sentence: str) -> str:
     return _HEADING_TOKEN_RE.sub("", sentence).strip()
 
 
-def evidence_window(chunk_text: str, evidence: str, chunk_id: str = "") -> Dict[str, Any]:
-    """The evidence sentence of a chunk with at most one neighbouring sentence on each side.
+_CHUNK_ID_RE = re.compile(r"^(.*)_(\d+)$")
 
-    Chunks are 200-word windows that start and end mid-sentence. The window is trimmed at sentence
-    boundaries: a neighbour that is itself a cut-off fragment (the start of a chunk that is not the first
-    chunk of its page, or an end without closing punctuation) is dropped, and the evidence sentence gets an
-    ellipsis on the cut side if it is such a fragment.
+
+def _neighbour_text(chunk_id: str, delta: int) -> str:
+    """Text of the previous (-1) / next (+1) chunk of the same article, "" if there is none.
+    Display only: not a tool call, so it is never recorded or counted."""
+    m = _CHUNK_ID_RE.match(chunk_id or "")
+    if not m or int(m.group(2)) + delta < 0:
+        return ""
+    try:
+        from arag import retrieval_tools
+
+        return retrieval_tools.chunk_text(f"{m.group(1)}_{int(m.group(2)) + delta}")
+    except Exception:
+        return ""
+
+
+def _join_chunks(first: str, second: str) -> str:
+    """Join two consecutive chunks, dropping the words they share (chunks overlap)."""
+    a, b = first.split(), second.split()
+    for k in range(min(len(a), len(b), 80), 0, -1):
+        if a[-k:] == b[:k]:
+            return " ".join(a + b[k:])
+    return " ".join(a + b)
+
+
+def _ends_cleanly(sentence: str) -> bool:
+    return sentence.rstrip().endswith(_TERMINAL)
+
+
+def evidence_window(chunk_text: str, evidence: str, chunk_id: str = "", prev_text: str = "", next_text: str = "") -> Dict[str, Any]:
+    """The evidence sentence with at most one neighbouring sentence on each side, all whole sentences.
+
+    Chunks are 200-word windows that start and end mid-sentence. A sentence cut at a chunk edge is completed
+    from the neighbouring chunk of the same article (``prev_text`` / ``next_text``). Only where there is no
+    neighbour (page start or end) is a cut kept, with an ellipsis; neighbour sentences that are still
+    fragments are dropped.
     """
-    sentences = split_sentences(chunk_text)
+    context = chunk_text
+    if prev_text:
+        context = _join_chunks(prev_text, context)
+    if next_text:
+        context = _join_chunks(context, next_text)
+    sentences = split_sentences(context)
     target = _norm_ws(evidence)
     idx = next((i for i, x in enumerate(sentences) if _norm_ws(x) == target), None)
     if idx is None:
@@ -306,13 +341,29 @@ def evidence_window(chunk_text: str, evidence: str, chunk_id: str = "") -> Dict[
     if idx is None:
         return {"sentence": target[:400], "before": "", "after": ""}
     last = len(sentences) - 1
-    page_start = chunk_id.endswith("_0")
-    cut_start = idx == 0 and not page_start  # a chunk after the first starts mid-sentence
-    cut_end = idx == last and not sentences[idx].rstrip().endswith(_TERMINAL)
-    before = sentences[idx - 1] if idx >= 1 and not (idx - 1 == 0 and not page_start) else ""
-    after = sentences[idx + 1] if idx + 1 <= last and not (idx + 1 == last and not sentences[idx + 1].rstrip().endswith(_TERMINAL)) else ""
+    # the context starts mid-sentence unless it begins at the first chunk of the page
+    first_id = (_CHUNK_ID_RE.sub(lambda m: f"{m.group(1)}_{max(int(m.group(2)) - 1, 0)}", chunk_id) if prev_text else chunk_id)
+    start_is_page_start = first_id.endswith("_0")
+    cut_start = idx == 0 and not start_is_page_start
+    cut_end = idx == last and not _ends_cleanly(sentences[idx])
+    before = sentences[idx - 1] if idx >= 1 and not (idx - 1 == 0 and not start_is_page_start) else ""
+    after = sentences[idx + 1] if idx + 1 <= last and not (idx + 1 == last and not _ends_cleanly(sentences[idx + 1])) else ""
     sentence = ("\u2026 " if cut_start else "") + _without_headings(sentences[idx]) + (" \u2026" if cut_end else "")
     return {"sentence": sentence, "before": _without_headings(before), "after": _without_headings(after)}
+
+
+def whole_sentence_passage(text: str, chunk_id: str = "") -> str:
+    """A chunk for display: heading markup removed, the partial sentence dropped at each end, "\u2026" where cut."""
+    sentences = [x for x in (_without_headings(x) for x in split_sentences(text)) if x]
+    if not sentences:
+        return ""
+    cut_start = not chunk_id.endswith("_0")
+    if cut_start and len(sentences) > 1:
+        sentences = sentences[1:]
+    cut_end = not _ends_cleanly(sentences[-1])
+    if cut_end and len(sentences) > 1:
+        sentences = sentences[:-1]
+    return ("\u2026 " if cut_start else "") + " ".join(sentences) + (" \u2026" if cut_end else "")
 
 
 def build_citation_details(result: Dict[str, Any], question: str) -> List[Dict[str, Any]]:
@@ -330,6 +381,7 @@ def build_citation_details(result: Dict[str, Any], question: str) -> List[Dict[s
             continue
         entry = retrieved[n - 1]
         text, cid = entry.get("text") or "", entry.get("chunk_id") or ""
+        prev_text, next_text = _neighbour_text(cid, -1), _neighbour_text(cid, +1)
         supports: List[Dict[str, Any]] = []
         if director and title:
             for sent in split_sentences(text):
@@ -344,9 +396,9 @@ def build_citation_details(result: Dict[str, Any], question: str) -> List[Dict[s
         if not supports:
             supports.append({"role": "cited", "evidence": ""})
         for sp in supports:
-            sp.update(evidence_window(text, sp["evidence"], cid) if sp["evidence"] else {"sentence": "", "before": "", "after": ""})
+            sp.update(evidence_window(text, sp["evidence"], cid, prev_text, next_text) if sp["evidence"] else {"sentence": "", "before": "", "after": ""})
             sp.pop("evidence")
-        details.append({"citation": n, "chunk_id": cid, "source": entry.get("source") or "", "supports": supports, "full_text": text})
+        details.append({"citation": n, "chunk_id": cid, "source": entry.get("source") or "", "supports": supports, "full_text": whole_sentence_passage(text, cid)})
     return details
 
 
