@@ -876,6 +876,16 @@ def chunk_read(chunk_id: str) -> Dict:
     }
 
 
+def chunk_text(chunk_id: str) -> str:
+    """Text of a chunk for display ("" if unknown). Not an agent tool: it is never recorded in a tool trace."""
+    global _chunks
+    if _chunks is None:
+        load_indexes()
+    assert _chunks is not None
+    chunk = next((c for c in _chunks if c["id"] == chunk_id), None)
+    return (chunk.get("text") or "") if chunk else ""
+
+
 def find_award_mentions(name: str, max_results: int = 10) -> List[Dict]:
     """
     Heuristic scan across all chunks to find sentences that mention the
