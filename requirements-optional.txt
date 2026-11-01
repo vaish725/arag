@@ -1,7 +1,0 @@
-streamlit==1.57.0
-pandas==3.0.3
-pyarrow==24.0.0
-# Optional visualization/runtime deps
-prometheus_client==0.25.0
-# Optional OpenAI embeddings / answers (ARAG_EMBEDDING_PROVIDER=openai or OPENAI_API_KEY)
-openai==1.109.1

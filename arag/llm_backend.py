@@ -13,6 +13,10 @@ from arag.runtime_ops import BudgetExceededError, get_global_budget, get_global_
 log = logging.getLogger(__name__)
 
 LLM_PROVIDERS = ("anthropic", "openai")
+OPENAI_MISSING_MESSAGE = (
+    "ARAG_LLM_PROVIDER=openai needs the 'openai' package, which is not installed "
+    "(it is not in requirements.txt). Install it with `pip install openai`, or unset ARAG_LLM_PROVIDER to use Anthropic."
+)
 
 
 def get_llm_provider() -> str:
@@ -38,6 +42,8 @@ def llm_available() -> bool:
         importlib.import_module(package)
         return True
     except Exception:
+        if provider == "openai":
+            log.warning(OPENAI_MISSING_MESSAGE)  # an explicit choice must not fail silently
         return False
 
 
@@ -129,6 +135,10 @@ def synthesize_answer(
 
     provider = get_llm_provider()
     if provider == "openai" and os.environ.get("OPENAI_API_KEY"):
+        try:
+            import openai  # noqa: F401
+        except ImportError as e:
+            raise RuntimeError(OPENAI_MISSING_MESSAGE) from e
         try:
             from openai import OpenAI  # type: ignore
 

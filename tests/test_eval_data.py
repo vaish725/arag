@@ -95,10 +95,16 @@ def test_no_win_rows_record_variant_hits_with_a_review():
             assert check["review"], f"{row['film']}: variant hits need a written review"
 
 
-def test_requirements_eval_lists_the_eval_packages():
-    packages = {line.strip() for line in (ROOT / "requirements-eval.txt").read_text().splitlines() if line.strip() and not line.startswith("#")}
-    assert {"datasets", "matplotlib", "beautifulsoup4"} <= packages
-    assert not (ROOT / "eval" / "requirements.txt").exists()
+def test_the_single_requirements_file_lists_the_eval_packages_and_the_extra_files_are_gone():
+    import re
+
+    lines = [l.split("#")[0].strip() for l in (ROOT / "requirements.txt").read_text().splitlines()]
+    packages = {re.split(r"[=<>;\s]", l, maxsplit=1)[0] for l in lines if l}
+    assert {"datasets", "matplotlib", "beautifulsoup4", "pytest", "black", "isort", "flake8", "mypy"} <= packages
+    assert not {"coverage", "prometheus_client", "openai", "pandas", "pyarrow"} & packages
+    for gone in ("requirements-dev.txt", "requirements-eval.txt", "requirements-optional.txt", "requirements-faiss.txt", "eval/requirements.txt"):
+        assert not (ROOT / gone).exists(), gone
+
 
 
 def test_the_documented_director_failures_match_the_results_and_splits():

@@ -273,3 +273,21 @@ def test_unknown_llm_provider_is_rejected(monkeypatch):
     importlib.reload(llm_backend)
     with pytest.raises(ValueError, match="ARAG_LLM_PROVIDER"):
         llm_backend.llm_available()
+
+
+# ---- ARAG_LLM_PROVIDER=openai without the openai package: a clear error, not an ImportError traceback -------
+def test_openai_provider_without_the_package_fails_with_a_clear_message(monkeypatch, caplog):
+    monkeypatch.setitem(sys.modules, "openai", None)  # `import openai` now raises ImportError
+    monkeypatch.setenv("ARAG_LLM_PROVIDER", "openai")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    import arag.llm_backend as llm_backend
+
+    importlib.reload(llm_backend)
+    with caplog.at_level("WARNING"):
+        assert llm_backend.llm_available() is False
+    assert "pip install openai" in caplog.text  # the explicit choice is not silently ignored
+    with pytest.raises(RuntimeError) as err:
+        llm_backend.synthesize_answer("q", ["ctx"])
+    assert err.type is RuntimeError and not isinstance(err.value, ImportError)
+    assert "ARAG_LLM_PROVIDER=openai" in str(err.value) and "pip install openai" in str(err.value)
+    assert "No module named" not in str(err.value)

@@ -1,5 +1,0 @@
-# Extra packages for the evaluation scripts (eval/build_hotpot_subset.py, eval/make_chart.py, eval/verify_award_labels.py).
-# Install with: pip install -r requirements-eval.txt
-datasets
-matplotlib
-beautifulsoup4

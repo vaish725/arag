@@ -1,7 +1,7 @@
 # Evaluation (free, no LLM calls)
 
 Everything here runs on the committed indexes and the local embedding model. Reproduce with
-`pip install -r requirements-eval.txt`, then `PYTHONPATH=. python eval/run_eval.py --out <dir>` and
+`pip install -r requirements.txt` (it includes the evaluation packages), then `PYTHONPATH=. python eval/run_eval.py --out <dir>` and
 `python eval/make_chart.py`. **These are small-sample results, not a general accuracy claim.**
 
 ## Method
